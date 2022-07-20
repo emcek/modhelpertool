@@ -1,7 +1,10 @@
 import os
 import re
+import shutil
 import tkinter as tk
 from pprint import pprint
+import shlex
+from subprocess import Popen, PIPE
 from tkinter import filedialog
 from functools import partial
 from logging import getLogger
@@ -31,8 +34,8 @@ class MhtTkGui(tk.Frame):
         self.status_txt.set(f'ver. {__version__}')
         # self.mod_dir.set('/home/emc/.local/share/openmw/data')
         self.mod_dir.set('/home/emc/CitiesTowns/')
-        self.tes3cmd.set('/home/emc/tes3cmd-0.37w')
-        self.morr_dir.set('/home/emc/.wine/drive_c/Morrowind/Data\ Files/')
+        self.tes3cmd.set('/home/emc/git/Modding-OpenMW/modhelpertool/mht/tes3cmd-0.37w')
+        self.morr_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')
 
     def _init_widgets(self) -> None:
         self.master.columnconfigure(index=0, weight=10)
@@ -107,3 +110,15 @@ class MhtTkGui(tk.Frame):
         pprint(c, width=200)
         print(len(l))
         print(len(c))
+        print('----------------------------------------------------')
+        shutil.move(c[0], self.morr_dir.get())
+        os.chdir(self.morr_dir.get())
+        mod_filename = c[0].split('/')[-1]
+        out, err = Popen(shlex.split(f'{self.tes3cmd.get()} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
+        out, err = out.decode('utf-8'), err.decode('utf-8')
+        print(out)
+        print(err)
+        print('----------------------------------------------------')
+        shutil.move(f'{self.morr_dir.get()}/1/{mod_filename}', c[0], )
+        os.remove(f'{self.morr_dir.get()}/{mod_filename}')
+        print('----------------------------------------------------')
