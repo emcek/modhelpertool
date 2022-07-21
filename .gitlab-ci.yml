@@ -18,7 +18,7 @@ test:
   script:
     - python setup.py test
     - pip install tox
-    - tox
+    - tox -e cov310,flake8,pycodestyle,pydocstyle
 
 run:
   script:
