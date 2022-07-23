@@ -1,4 +1,4 @@
-image: python:latest
+image: python:3.10
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
@@ -29,6 +29,20 @@ run:
   artifacts:
     paths:
       - dist/*.whl
+
+'.review':
+  script:
+    - 'export TOXENV="${CI_JOB_NAME##review}"'
+    - 'python3 -m pip install tox'
+    - 'python3 -m tox'
+
+'review py37':
+  extends: '.review'
+  image: 'python:3.7'
+
+'review py38':
+  extends: '.review'
+  image: 'python:3.8'
 
 #pages:
 #  script:
