@@ -22,4 +22,4 @@ def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:
     for data in ceases.values():
         match = re.search(*data['args'])
         if match:
-            return data['result'], match.group(1)
+            return bool(data['result']), str(match.group(1))
