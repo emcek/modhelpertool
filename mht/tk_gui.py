@@ -23,16 +23,16 @@ class MhtTkGui(tk.Frame):
         super().__init__(master)
         self.master = master
         self.master.title('MHT')
-        self.status_txt = tk.StringVar()
-        self.mod_dir = tk.StringVar()
-        self.morr_dir = tk.StringVar()
-        self.chk_backup = tk.BooleanVar()
+        self.statusbar = tk.StringVar()
+        self.mods_dir = tk.StringVar()
+        self.morrowind_dir = tk.StringVar()
+        self.chkbox_backup = tk.BooleanVar()
         self._init_widgets()
-        self.status_txt.set(f'ver. {__version__}')
+        self.statusbar.set(f'ver. {__version__}')
         # self.mod_dir.set('/home/emc/.local/share/openmw/data')
-        self.mod_dir.set('/home/emc/CitiesTowns/')
-        self.morr_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')
-        self.chk_backup.set(True)
+        self.mods_dir.set('/home/emc/CitiesTowns/')
+        self.morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')
+        self.chkbox_backup.set(True)
 
     def _init_widgets(self) -> None:
         self.master.columnconfigure(index=0, weight=10)
@@ -43,32 +43,32 @@ class MhtTkGui(tk.Frame):
         self.master.rowconfigure(index=3, weight=1)
         self.master.rowconfigure(index=4, weight=1)
 
-        dir_entry = tk.Entry(master=self.master, textvariable=self.mod_dir)
-        morr_dir = tk.Entry(master=self.master, textvariable=self.morr_dir)
+        mods_dir = tk.Entry(master=self.master, textvariable=self.mods_dir)
+        morrowind_dir = tk.Entry(master=self.master, textvariable=self.morrowind_dir)
 
-        browse = tk.Button(master=self.master, text='Mod Dir', width=7, command=self.select_dir)
-        data_dir = tk.Button(master=self.master, text='Morr Dir', width=7, command=self.select_dir)
-        clean = tk.Button(master=self.master, text='Clean', width=7, command=self.start_clean)
-        close = tk.Button(master=self.master, text='Close', width=7, command=self.master.destroy)
-        status = tk.Label(master=self.master, textvariable=self.status_txt)
+        mods_btn = tk.Button(master=self.master, text='Select Mods Dir', width=16, command=self.select_dir)
+        morrowind_btn = tk.Button(master=self.master, text='Select Morrowind Dir', width=16, command=self.select_dir)
+        clean_btn = tk.Button(master=self.master, text='Clean Mods', width=16, command=self.start_clean)
+        close_btn = tk.Button(master=self.master, text='Close Tool', width=16, command=self.master.destroy)
+        statusbar = tk.Label(master=self.master, textvariable=self.statusbar)
 
-        check_backup = tk.Checkbutton(master=self.master, text='Remove backup', variable=self.chk_backup)
+        chkbox_backup = tk.Checkbutton(master=self.master, text='Remove backup after successful clean-up', variable=self.chkbox_backup)
 
-        dir_entry.grid(row=0, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
-        morr_dir.grid(row=1, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
-        check_backup.grid(row=2, column=0, padx=2, pady=2, sticky=tk.W)
-        browse.grid(row=0, column=1, padx=2, pady=2)
-        data_dir.grid(row=1, column=1, padx=2, pady=2)
-        clean.grid(row=3, column=1, padx=2, pady=2)
-        close.grid(row=4, column=1, padx=2, pady=2)
-        status.grid(row=5, column=0, columnspan=3, sticky=tk.W)
+        mods_dir.grid(row=0, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
+        morrowind_dir.grid(row=1, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
+        chkbox_backup.grid(row=2, column=0, padx=2, pady=2, sticky=tk.W)
+        mods_btn.grid(row=0, column=1, padx=2, pady=2)
+        morrowind_btn.grid(row=1, column=1, padx=2, pady=2)
+        clean_btn.grid(row=3, column=1, padx=2, pady=2)
+        close_btn.grid(row=4, column=1, padx=2, pady=2)
+        statusbar.grid(row=5, column=0, columnspan=3, sticky=tk.W)
 
     def select_dir(self) -> None:
         """Select directory location."""
-        self.status_txt.set('You can close GUI')
+        self.statusbar.set('You can close GUI')
         directory = filedialog.askdirectory(initialdir='/home/emc/', title='Select directory')
         LOG.debug(f'Directory: {directory}')
-        self.mod_dir.set(f'{directory}')
+        self.mods_dir.set(f'{directory}')
 
     def start_clean(self) -> None:
         """Start cleaning process."""
@@ -92,20 +92,20 @@ class MhtTkGui(tk.Frame):
                    "Vurt's BC Tree Replacer II.ESP", "Windows Glow - Bloodmoon Eng.esp", "Windows Glow - Raven Rock Eng.esp",
                    "Windows Glow - Tribunal Eng.esp", "Windows Glow.esp"]
 
-        all_plugins = [path.join(root, f) for root, _, files in walk(self.mod_dir.get()) for f in files if f.lower().endswith('.esp') or f.lower().endswith('.esm')]
+        all_plugins = [path.join(root, f) for root, _, files in walk(self.mods_dir.get()) for f in files if f.lower().endswith('.esp') or f.lower().endswith('.esm')]
         pprint(all_plugins, width=200)
         plugins_to_clean = [f for f in all_plugins if f.split('/')[-1] in plugins]
         print('----------------------------------------------------')
         pprint(plugins_to_clean, width=200)
         print(len(all_plugins))
         print(len(plugins_to_clean))
-        chdir(self.morr_dir.get())
+        chdir(self.morrowind_dir.get())
         here = path.abspath(path.dirname(__file__))
         print('----------------------------------------------------')
         for plug in plugins_to_clean:
             print(plug)
-            print('Copy:', plug, self.morr_dir.get())
-            copy2(plug, self.morr_dir.get())
+            print('Copy:', plug, self.morrowind_dir.get())
+            copy2(plug, self.morrowind_dir.get())
             mod_filename = plug.split('/')[-1]
             stdout, stderr = Popen(split(f'{path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
             out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
@@ -115,11 +115,11 @@ class MhtTkGui(tk.Frame):
             print(result, reason)
             print('----------------------------------------------------')
             if result:
-                print(f'Move: {self.morr_dir.get()}1/{mod_filename}', plug)
-                move(f'{self.morr_dir.get()}1/{mod_filename}', plug)  # detect success
-            if self.chk_backup.get():
-                print(f'Remove: {self.morr_dir.get()}{mod_filename}')
-                remove(f'{self.morr_dir.get()}{mod_filename}')
+                print(f'Move: {self.morrowind_dir.get()}1/{mod_filename}', plug)
+                move(f'{self.morrowind_dir.get()}1/{mod_filename}', plug)  # detect success
+            if self.chkbox_backup.get():
+                print(f'Remove: {self.morrowind_dir.get()}{mod_filename}')
+                remove(f'{self.morrowind_dir.get()}{mod_filename}')
                 print('----------------------------------------------------')
-        removedirs(f'{self.morr_dir.get()}1')
-        self.status_txt.set('Cleaning done')
+        removedirs(f'{self.morrowind_dir.get()}1')
+        self.statusbar.set('Cleaning done')
