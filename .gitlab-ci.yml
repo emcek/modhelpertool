@@ -14,12 +14,6 @@ before_script:
   - virtualenv venv
   - source venv/bin/activate
 
-test:
-  script:
-    - python setup.py test
-    - pip install tox
-    - tox -e cov310,flake8,pycodestyle,pydocstyle
-
 run:
   script:
     - python setup.py bdist_wheel
@@ -30,19 +24,42 @@ run:
     paths:
       - dist/*.whl
 
-'.review':
+'.check':
   script:
-    - 'export TOXENV="${CI_JOB_NAME##review}"'
+    - 'export TOXENV="${CI_JOB_NAME##check}"'
     - 'python3 -m pip install tox'
     - 'python3 -m tox'
 
-'review py37':
-  extends: '.review'
+'check py37':
+  extends: '.check'
   image: 'python:3.7'
 
-'review py38':
-  extends: '.review'
+'check py38':
+  extends: '.check'
   image: 'python:3.8'
+
+'check py39':
+  extends: '.check'
+  image: 'python:3.9'
+
+'check py310':
+  extends: '.check'
+
+'check cov310':
+  extends: '.check'
+
+'check mypy':
+  extends: '.check'
+
+'check flake8':
+  extends: '.check'
+  image: 'python:3.10'
+
+'check pycodestyle':
+  extends: '.check'
+
+'check pydocstyle':
+  extends: '.check'
 
 #pages:
 #  script:
