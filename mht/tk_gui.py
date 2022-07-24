@@ -86,6 +86,7 @@ class MhtTkGui(tk.Frame):
         chdir(self.morrowind_dir.get())
         LOG.debug('----------------------------------------------------')
         here = path.abspath(path.dirname(__file__))
+        stats = {'all': len(plugins_to_clean), 'cleaned': 0, 'clean': 0}
         for plug in plugins_to_clean:
             LOG.debug(f'Copy: {plug} -> {self.morrowind_dir.get()}')
             copy2(plug, self.morrowind_dir.get())
@@ -99,9 +100,12 @@ class MhtTkGui(tk.Frame):
             if result:
                 LOG.debug(f'Move: {self.morrowind_dir.get()}1/{mod_file} -> {plug}')
                 move(f'{self.morrowind_dir.get()}1/{mod_file}', plug)
+                stats['cleaned'] += 1
+            if not result and reason == 'not modified':
+                stats['clean'] += 1
             if self.chkbox_backup.get():
                 LOG.debug(f'Remove: {self.morrowind_dir.get()}{mod_file}')
                 remove(f'{self.morrowind_dir.get()}{mod_file}')
             LOG.debug('----------------------------------------------------')
         removedirs(f'{self.morrowind_dir.get()}1')
-        self.statusbar.set('Cleaning done')
+        self.statusbar.set(f'Done: {stats}')
