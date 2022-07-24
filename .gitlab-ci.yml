@@ -26,9 +26,10 @@ run:
 
 '.check':
   script:
-    - 'export TOXENV="${CI_JOB_NAME##check}"'
-    - 'python3 -m pip install tox'
-    - 'python3 -m tox'
+    - export TOXENV="${CI_JOB_NAME##check}"
+    - pip install tox
+    - pip list
+    - tox
 
 'check py37':
   extends: '.check'
