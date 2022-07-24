@@ -1,7 +1,6 @@
 import tkinter as tk
 from logging import getLogger
 from os import path, removedirs, chdir, walk, remove
-from pprint import pprint
 from shlex import split
 from shutil import move, copy2
 from subprocess import Popen, PIPE
@@ -93,33 +92,33 @@ class MhtTkGui(tk.Frame):
                    "Windows Glow - Tribunal Eng.esp", "Windows Glow.esp"]
 
         all_plugins = [path.join(root, f) for root, _, files in walk(self.mods_dir.get()) for f in files if f.lower().endswith('.esp') or f.lower().endswith('.esm')]
-        pprint(all_plugins, width=200)
+        LOG.debug(all_plugins)
         plugins_to_clean = [f for f in all_plugins if f.split('/')[-1] in plugins]
-        print('----------------------------------------------------')
-        pprint(plugins_to_clean, width=200)
-        print(len(all_plugins))
-        print(len(plugins_to_clean))
+        LOG.debug('----------------------------------------------------')
+        LOG.debug(plugins_to_clean)
+        LOG.debug(len(all_plugins))
+        LOG.debug(len(plugins_to_clean))
         chdir(self.morrowind_dir.get())
         here = path.abspath(path.dirname(__file__))
-        print('----------------------------------------------------')
+        LOG.debug('----------------------------------------------------')
         for plug in plugins_to_clean:
-            print(plug)
-            print('Copy:', plug, self.morrowind_dir.get())
+            LOG.debug(plug)
+            LOG.debug(f'Copy:, {plug}, {self.morrowind_dir.get()}')
             copy2(plug, self.morrowind_dir.get())
             mod_filename = plug.split('/')[-1]
             stdout, stderr = Popen(split(f'{path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
             out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
             result, reason = parse_cleaning(out, err, mod_filename)
-            print(out)
-            print(err)
-            print(result, reason)
-            print('----------------------------------------------------')
+            LOG.debug(out)
+            LOG.debug(err)
+            LOG.debug(f'{result}, {reason}')
+            LOG.debug('----------------------------------------------------')
             if result:
-                print(f'Move: {self.morrowind_dir.get()}1/{mod_filename}', plug)
+                LOG.debug(f'Move: {self.morrowind_dir.get()}1/{mod_filename}', plug)
                 move(f'{self.morrowind_dir.get()}1/{mod_filename}', plug)  # detect success
             if self.chkbox_backup.get():
-                print(f'Remove: {self.morrowind_dir.get()}{mod_filename}')
+                LOG.debug(f'Remove: {self.morrowind_dir.get()}{mod_filename}')
                 remove(f'{self.morrowind_dir.get()}{mod_filename}')
-                print('----------------------------------------------------')
+                LOG.debug('----------------------------------------------------')
         removedirs(f'{self.morrowind_dir.get()}1')
         self.statusbar.set('Cleaning done')
