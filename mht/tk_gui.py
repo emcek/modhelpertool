@@ -35,6 +35,7 @@ class MhtTkGui(tk.Frame):
         # self.mod_dir.set('/home/emc/.local/share/openmw/data')
         self.mod_dir.set('/home/emc/CitiesTowns/')
         self.morr_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')
+        self.chk_backup.set(True)
 
     def _init_widgets(self) -> None:
         self.master.columnconfigure(index=0, weight=10)
@@ -72,13 +73,6 @@ class MhtTkGui(tk.Frame):
         LOG.debug(f'Directory: {directory}')
         self.mod_dir.set(f'{directory}')
 
-    def select_file(self) -> None:
-        self.event = Event()
-        self.status_txt.set('You can close GUI')
-        tes3cmd_file = filedialog.askopenfilename(initialdir='/home/emc/.local/share/openmw/data', title='Select tes3cmd')
-        LOG.debug(f'Directory: {tes3cmd_file}')
-        self.tes3cmd.set(f'{tes3cmd_file}')
-
     def start_clean(self) -> None:
         # add check for tes3cmd exaple of error when per initconfig not instaled
         # Can't locate Config/IniFiles.pm in @INC (you may need to install the Config::IniFiles module) (@INC contains: /usr/lib/perl5/5.36/site_perl
@@ -107,17 +101,33 @@ class MhtTkGui(tk.Frame):
         pprint(c, width=200)
         print(len(l))
         print(len(c))
-
-        print('----------------------------------------------------')
-        shutil.move(c[0], self.morr_dir.get())
         os.chdir(self.morr_dir.get())
-        mod_filename = c[0].split('/')[-1]
-        out, err = Popen(shlex.split(f'{os.path.join(os.path.dirname(__file__), "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
-        out, err = out.decode('utf-8'), err.decode('utf-8')
-        print(out)
-        print(err)
         print('----------------------------------------------------')
-        if self.chk_backup.get():
-            shutil.move(f'{self.morr_dir.get()}/1/{mod_filename}', c[0], )
-            os.remove(f'{self.morr_dir.get()}/{mod_filename}')
+        for plug in c:
+            print(plug)
+            print('Copy:', plug, self.morr_dir.get())
+            shutil.copy2(plug, self.morr_dir.get())
+            mod_filename = plug.split('/')[-1]
+            out, err = Popen(shlex.split(f'{os.path.join(os.path.dirname(__file__), "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
+            out, err = out.decode('utf-8'), err.decode('utf-8')
+            result = parse_cleaning(out, mod_filename)
+            print(out)
+            print(err)
             print('----------------------------------------------------')
+            if result:
+                print(f'Move: {self.morr_dir.get()}1/{mod_filename}', plug)
+                shutil.move(f'{self.morr_dir.get()}1/{mod_filename}', plug)  # detect success
+            if self.chk_backup.get():
+                print(f'Remove: {self.morr_dir.get()}{mod_filename}')
+                os.remove(f'{self.morr_dir.get()}{mod_filename}')
+                print('----------------------------------------------------')
+        os.removedirs(f'{self.morr_dir.get()}1')
+        self.status_txt.set('Cleaning done')
+
+
+def parse_cleaning(out, mod_filename):
+    match = re.search(r'^{} was not modified$'.format(mod_filename), out, re.MULTILINE)
+    if match:
+        return False
+    else:
+        return True
