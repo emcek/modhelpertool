@@ -78,34 +78,30 @@ class MhtTkGui(tk.Frame):
         # at /home/emc/tes3cmd-0.37w line 107.
         # BEGIN failed--compilation aborted at /home/emc/tes3cmd-0.37w line 107.
 
-        all_plugins = [path.join(root, f) for root, _, files in walk(self.mods_dir.get()) for f in files if f.lower().endswith('.esp') or f.lower().endswith('.esm')]
+        all_plugins = [path.join(root, filename) for root, _, files in walk(self.mods_dir.get()) for filename in files if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
         LOG.debug(all_plugins)
-        plugins_to_clean = [f for f in all_plugins if f.split('/')[-1] in PLUGINS2CLEAN]
-        LOG.debug('----------------------------------------------------')
-        LOG.debug(plugins_to_clean)
-        LOG.debug(len(all_plugins))
-        LOG.debug(len(plugins_to_clean))
+        plugins_to_clean = [plugin_file for plugin_file in all_plugins if plugin_file.split('/')[-1] in PLUGINS2CLEAN]
+        LOG.debug(f'{len(all_plugins)}: {all_plugins}')
+        LOG.debug(f'{len(plugins_to_clean)}: {plugins_to_clean}')
         chdir(self.morrowind_dir.get())
-        here = path.abspath(path.dirname(__file__))
         LOG.debug('----------------------------------------------------')
+        here = path.abspath(path.dirname(__file__))
         for plug in plugins_to_clean:
-            LOG.debug(plug)
-            LOG.debug(f'Copy:, {plug}, {self.morrowind_dir.get()}')
+            LOG.debug(f'Copy: {plug} -> {self.morrowind_dir.get()}')
             copy2(plug, self.morrowind_dir.get())
             mod_file = plug.split('/')[-1]
             stdout, stderr = Popen(split(f'{path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_file}"'), stdout=PIPE, stderr=PIPE).communicate()
             out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
-            result, reason = parse_cleaning(out, err, mod_file)
             LOG.debug(out)
             LOG.debug(err)
-            LOG.debug(f'{result}, {reason}')
-            LOG.debug('----------------------------------------------------')
+            result, reason = parse_cleaning(out, err, mod_file)
+            LOG.debug(f'Result: {result}, Reason: {reason}')
             if result:
                 LOG.debug(f'Move: {self.morrowind_dir.get()}1/{mod_file} -> {plug}')
                 move(f'{self.morrowind_dir.get()}1/{mod_file}', plug)
             if self.chkbox_backup.get():
                 LOG.debug(f'Remove: {self.morrowind_dir.get()}{mod_file}')
                 remove(f'{self.morrowind_dir.get()}{mod_file}')
-                LOG.debug('----------------------------------------------------')
+            LOG.debug('----------------------------------------------------')
         removedirs(f'{self.morrowind_dir.get()}1')
         self.statusbar.set('Cleaning done')
