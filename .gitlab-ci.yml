@@ -50,12 +50,13 @@ run:
   extends: '.check'
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
+    paths:
+      - covhtml/*
+      - coverage.xml
     reports:
       coverage_report:
         coverage_format: cobertura
-        paths:
-          - coverage.xml
-          - covhtml/*
+        path: coverage.xml
 
 'check mypy':
   extends: '.check'
