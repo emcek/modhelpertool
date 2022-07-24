@@ -2,7 +2,7 @@ import re
 from typing import Tuple
 
 
-def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:
+def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:  # type: ignore
     """
     Parse output of cleaning command printout.
 
@@ -20,6 +20,6 @@ def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:
             'result': True},
     }
     for data in ceases.values():
-        match = re.search(*data['args'])
+        match = re.search(*data['args'])  # type: ignore
         if match:
-            return bool(data['result']), str(match.group(1))
+            return data['result'], match.group(1)  # type: ignore
