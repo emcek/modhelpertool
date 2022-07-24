@@ -111,9 +111,10 @@ class MhtTkGui(tk.Frame):
             mod_filename = plug.split('/')[-1]
             out, err = Popen(shlex.split(f'{os.path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
             out, err = out.decode('utf-8'), err.decode('utf-8')  # type: ignore
-            result = parse_cleaning(out, mod_filename)
+            result, reason = parse_cleaning(out, err, mod_filename)
             print(out)
             print(err)
+            print(result, reason)
             print('----------------------------------------------------')
             if result:
                 print(f'Move: {self.morr_dir.get()}1/{mod_filename}', plug)
@@ -126,9 +127,17 @@ class MhtTkGui(tk.Frame):
         self.status_txt.set('Cleaning done')
 
 
-def parse_cleaning(out, mod_filename):
-    result = False
+def parse_cleaning(out, err, mod_filename):
+    result = True
+    reason = ''
+    match = re.search(r'^\[ERROR \({}\): Master: (.*) not found in <DATADIR>]$'.format(mod_filename), err, re.MULTILINE)
+    if match:
+        result = False
+        reason = f'No master: {match.group(1)}'
+        return result, reason
     match = re.search(r'^{} was not modified$'.format(mod_filename), out, re.MULTILINE)
-    if not match:
-        result = True
-    return result
+    if match:
+        result = False
+        reason = 'Not modified'
+        return result, reason
+    return result, reason
