@@ -151,4 +151,9 @@ def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:
         result = False
         reason = 'Not modified'
         return result, reason
+    match = re.search(r'Output saved in: "{}"\nOriginal unaltered: "{}'.format(mod_filename, mod_filename), out, re.MULTILINE)
+    if match:
+        result = True
+        reason = ''
+        return result, reason
     return result, reason
