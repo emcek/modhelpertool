@@ -1,5 +1,4 @@
 import os
-import re
 import shutil
 import tkinter as tk
 from pprint import pprint
@@ -8,9 +7,9 @@ from subprocess import Popen, PIPE
 from tkinter import filedialog
 from functools import partial
 from logging import getLogger
-from threading import Thread, Event
+from threading import Event
 
-from typing import Tuple
+from mht.utils import parse_cleaning
 
 __version__ = '0.0.1'
 LOG = getLogger(__name__)
@@ -128,26 +127,3 @@ class MhtTkGui(tk.Frame):
                 print('----------------------------------------------------')
         os.removedirs(f'{self.morr_dir.get()}1')
         self.status_txt.set('Cleaning done')
-
-
-def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:
-    """
-    Parse output of cleaning command printout.
-
-    :param out: Command STANDARD OUTPUT
-    :param err: Command STANDARD ERROR
-    :param mod_filename: Mod filename
-    :return: Result and reason
-    """
-    ceases = {
-        1: {'args': (r'^\[ERROR \({}\): Master: (.* not found) in <DATADIR>]$'.format(mod_filename), err, re.MULTILINE),
-            'result': False},
-        2: {'args': (r'^{} was (not modified)$'.format(mod_filename), out, re.MULTILINE),
-            'result': False},
-        3: {'args': (r'Output (saved) in: "1/{}"\nOriginal unaltered: "{}"'.format(mod_filename, mod_filename), out, re.MULTILINE),
-            'result': True},
-    }
-    for data in ceases.values():
-        match = re.search(*data['args'])
-        if match:
-            return data['result'], match.group(1)

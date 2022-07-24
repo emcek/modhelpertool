@@ -1,4 +1,4 @@
-from mht.tk_gui import parse_cleaning
+from mht.utils import parse_cleaning
 
 
 def test_parse_cleaning_success():
