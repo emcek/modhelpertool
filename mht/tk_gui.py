@@ -139,13 +139,15 @@ def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:
     :param mod_filename: Mod filename
     :return: Result and reason
     """
-    match = re.search(r'^\[ERROR \({}\): Master: (.*) not found in <DATADIR>]$'.format(mod_filename), err, re.MULTILINE)
-    if match:
-        return False, f'No master: {match.group(1)}'
-    match = re.search(r'^{} was not modified$'.format(mod_filename), out, re.MULTILINE)
-    if match:
-        return False, 'Not modified'
-    match = re.search(r'Output saved in: "{}"\nOriginal unaltered: "{}'.format(mod_filename, mod_filename), out, re.MULTILINE)
-    if match:
-        return True, ''
-    return True, ''
+    ceases = {
+        1: {'args': (r'^\[ERROR \({}\): Master: (.* not found) in <DATADIR>]$'.format(mod_filename), err, re.MULTILINE),
+            'result': False},
+        2: {'args': (r'^{} was (not modified)$'.format(mod_filename), out, re.MULTILINE),
+            'result': False},
+        3: {'args': (r'Output (saved) in: "1/{}"\nOriginal unaltered: "{}"'.format(mod_filename, mod_filename), out, re.MULTILINE),
+            'result': True},
+    }
+    for data in ceases.values():
+        match = re.search(*data['args'])
+        if match:
+            return data['result'], match.group(1)

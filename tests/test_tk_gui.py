@@ -16,7 +16,7 @@ Cleaning Stats for "FLG - Balmora's Underworld V1.1.esp":
                 duplicate record:     1
              redundant CELL.AMBI:     1
              redundant CELL.WHGT:     1"""
-    assert parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (True, '')
+    assert parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (True, 'saved')
 
 
 def test_parse_cleaning_not_modified():
@@ -26,7 +26,7 @@ Loaded cached Master: <DATADIR>/morrowind.esm
 Loaded cached Master: <DATADIR>/tribunal.esm
 Loaded cached Master: <DATADIR>/bloodmoon.esm
 FLG - Balmora's Underworld V1.1.esp was not modified"""
-    assert parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (False, 'Not modified')
+    assert parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (False, 'not modified')
 
 
 def test_parse_cleaning_no_master():
@@ -42,4 +42,4 @@ Loaded cached Master: <DATADIR>/tribunal.esm
 Loaded cached Master: <DATADIR>/bloodmoon.esm
 Loading Master: oaab_data.esm
 Caldera.esp was not modified"""
-    assert parse_cleaning(out, err, 'Caldera.esp') == (False, 'No master: oaab_data.esm')
+    assert parse_cleaning(out, err, 'Caldera.esp') == (False, 'oaab_data.esm not found')
