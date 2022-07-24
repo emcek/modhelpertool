@@ -94,17 +94,17 @@ class MhtTkGui(tk.Frame):
                    "Vurt's BC Tree Replacer II.ESP", "Windows Glow - Bloodmoon Eng.esp", "Windows Glow - Raven Rock Eng.esp",
                    "Windows Glow - Tribunal Eng.esp", "Windows Glow.esp"]
 
-        l = [os.path.join(root, f) for root, _, files in os.walk(self.mod_dir.get()) for f in files if f.lower().endswith('.esp') or f.lower().endswith('.esm')]
-        pprint(l, width=200)
-        c = [f for f in l if f.split('/')[-1] in plugins]
+        all_plugins = [os.path.join(root, f) for root, _, files in os.walk(self.mod_dir.get()) for f in files if f.lower().endswith('.esp') or f.lower().endswith('.esm')]
+        pprint(all_plugins, width=200)
+        plugins_to_clean = [f for f in all_plugins if f.split('/')[-1] in plugins]
         print('----------------------------------------------------')
-        pprint(c, width=200)
-        print(len(l))
-        print(len(c))
+        pprint(plugins_to_clean, width=200)
+        print(len(all_plugins))
+        print(len(plugins_to_clean))
         os.chdir(self.morr_dir.get())
         here = os.path.abspath(os.path.dirname(__file__))
         print('----------------------------------------------------')
-        for plug in c:
+        for plug in plugins_to_clean:
             print(plug)
             print('Copy:', plug, self.morr_dir.get())
             shutil.copy2(plug, self.morr_dir.get())
