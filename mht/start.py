@@ -11,7 +11,7 @@ def run():
     """Function to start MHT GUI."""
     LOG.info(f'mht {__version__} https://gitlab.com/modding-openmw/modhelpertool')
     root = tk.Tk()
-    width, height = 400, 200
+    width, height = 500, 200
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
     here = path.abspath(path.dirname(__file__))
