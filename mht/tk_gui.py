@@ -127,8 +127,8 @@ class MhtTkGui(tk.Frame):
 
 
 def parse_cleaning(out, mod_filename):
+    result = False
     match = re.search(r'^{} was not modified$'.format(mod_filename), out, re.MULTILINE)
-    if match:
-        return False
-    else:
-        return True
+    if not match:
+        result = True
+    return result
