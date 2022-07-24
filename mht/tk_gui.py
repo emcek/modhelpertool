@@ -114,8 +114,8 @@ class MhtTkGui(tk.Frame):
             LOG.debug(f'{result}, {reason}')
             LOG.debug('----------------------------------------------------')
             if result:
-                LOG.debug(f'Move: {self.morrowind_dir.get()}1/{mod_filename}', plug)
-                move(f'{self.morrowind_dir.get()}1/{mod_filename}', plug)  # detect success
+                LOG.debug(f'Move: {self.morrowind_dir.get()}1/{mod_filename} -> {plug}')
+                move(f'{self.morrowind_dir.get()}1/{mod_filename}', plug)
             if self.chkbox_backup.get():
                 LOG.debug(f'Remove: {self.morrowind_dir.get()}{mod_filename}')
                 remove(f'{self.morrowind_dir.get()}{mod_filename}')
