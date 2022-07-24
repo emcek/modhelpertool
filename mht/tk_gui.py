@@ -110,7 +110,7 @@ class MhtTkGui(tk.Frame):
             shutil.copy2(plug, self.morr_dir.get())
             mod_filename = plug.split('/')[-1]
             out, err = Popen(shlex.split(f'{os.path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
-            out, err = out.decode('utf-8'), err.decode('utf-8')
+            out, err = out.decode('utf-8'), err.decode('utf-8')  # type: ignore
             result = parse_cleaning(out, mod_filename)
             print(out)
             print(err)
