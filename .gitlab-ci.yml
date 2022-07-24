@@ -48,7 +48,7 @@ run:
 
 'check cov310':
   extends: '.check'
-  coverage: '/TOTAL.*\s+(\d+%)$/'
+  coverage: '/TOTAL\s+\d+\s+\d+\s+(\d+%)/'
   artifacts:
     paths:
       - covhtml/*
