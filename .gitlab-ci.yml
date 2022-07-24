@@ -53,7 +53,9 @@ run:
     reports:
       coverage_report:
         coverage_format: cobertura
-        path: coverage.xml
+        paths:
+          - coverage.xml
+          - covhtml/*
 
 'check mypy':
   extends: '.check'
