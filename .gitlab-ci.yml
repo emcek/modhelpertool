@@ -6,13 +6,13 @@ variables:
 cache:
   paths:
     - .cache/pip
-    - venv/
+#    - venv/
 
-before_script:
-  - python --version  # For debugging
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
+#before_script:
+#  - python --version  # For debugging
+#  - pip install virtualenv
+#  - virtualenv venv
+#  - source venv/bin/activate
 
 run:
   script:
