@@ -68,9 +68,7 @@ class MhtTkGui(tk.Frame):
         status.grid(row=5, column=0, columnspan=3, sticky=tk.W)
 
     def select_dir(self) -> None:
-        """
-        Select directory location.
-        """
+        """Select directory location."""
         self.event = Event()
         self.status_txt.set('You can close GUI')
         directory = filedialog.askdirectory(initialdir='/home/emc/', title='Select directory')
@@ -78,9 +76,7 @@ class MhtTkGui(tk.Frame):
         self.mod_dir.set(f'{directory}')
 
     def start_clean(self) -> None:
-        """
-        Start cleaning process.
-        """
+        """Start cleaning process."""
         # add check for tes3cmd exaple of error when per initconfig not instaled
         # Can't locate Config/IniFiles.pm in @INC (you may need to install the Config::IniFiles module) (@INC contains: /usr/lib/perl5/5.36/site_perl
         # /usr/share/perl5/site_perl /usr/lib/perl5/5.36/vendor_perl /usr/share/perl5/vendor_perl /usr/lib/perl5/5.36/core_perl /usr/share/perl5/core_perl)
@@ -116,8 +112,8 @@ class MhtTkGui(tk.Frame):
             print('Copy:', plug, self.morr_dir.get())
             shutil.copy2(plug, self.morr_dir.get())
             mod_filename = plug.split('/')[-1]
-            out, err = Popen(shlex.split(f'{os.path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
-            out, err = out.decode('utf-8'), err.decode('utf-8')  # type: ignore
+            stdout, stderr = Popen(shlex.split(f'{os.path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
+            out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
             result, reason = parse_cleaning(out, err, mod_filename)
             print(out)
             print(err)
