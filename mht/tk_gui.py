@@ -10,6 +10,7 @@ from functools import partial
 from logging import getLogger
 from threading import Thread, Event
 
+from typing import Tuple
 
 __version__ = '0.0.1'
 LOG = getLogger(__name__)
@@ -67,6 +68,9 @@ class MhtTkGui(tk.Frame):
         status.grid(row=5, column=0, columnspan=3, sticky=tk.W)
 
     def select_dir(self) -> None:
+        """
+        Select directory location.
+        """
         self.event = Event()
         self.status_txt.set('You can close GUI')
         directory = filedialog.askdirectory(initialdir='/home/emc/', title='Select directory')
@@ -74,6 +78,9 @@ class MhtTkGui(tk.Frame):
         self.mod_dir.set(f'{directory}')
 
     def start_clean(self) -> None:
+        """
+        Start cleaning process.
+        """
         # add check for tes3cmd exaple of error when per initconfig not instaled
         # Can't locate Config/IniFiles.pm in @INC (you may need to install the Config::IniFiles module) (@INC contains: /usr/lib/perl5/5.36/site_perl
         # /usr/share/perl5/site_perl /usr/lib/perl5/5.36/vendor_perl /usr/share/perl5/vendor_perl /usr/lib/perl5/5.36/core_perl /usr/share/perl5/core_perl)
@@ -127,7 +134,15 @@ class MhtTkGui(tk.Frame):
         self.status_txt.set('Cleaning done')
 
 
-def parse_cleaning(out, err, mod_filename):
+def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:
+    """
+    Parse output of cleaning command printout.
+
+    :param out: Command STANDARD OUTPUT
+    :param err: Command STANDARD ERROR
+    :param mod_filename: Mod filename
+    :return: Result and reason
+    """
     result = True
     reason = ''
     match = re.search(r'^\[ERROR \({}\): Master: (.*) not found in <DATADIR>]$'.format(mod_filename), err, re.MULTILINE)
