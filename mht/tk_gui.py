@@ -102,13 +102,14 @@ class MhtTkGui(tk.Frame):
         print(len(l))
         print(len(c))
         os.chdir(self.morr_dir.get())
+        here = os.path.abspath(os.path.dirname(__file__))
         print('----------------------------------------------------')
         for plug in c:
             print(plug)
             print('Copy:', plug, self.morr_dir.get())
             shutil.copy2(plug, self.morr_dir.get())
             mod_filename = plug.split('/')[-1]
-            out, err = Popen(shlex.split(f'{os.path.join(os.path.dirname(__file__), "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
+            out, err = Popen(shlex.split(f'{os.path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
             out, err = out.decode('utf-8'), err.decode('utf-8')
             result = parse_cleaning(out, mod_filename)
             print(out)
