@@ -1,13 +1,11 @@
-import os
-import shutil
 import tkinter as tk
+from logging import getLogger
+from os import path, removedirs, chdir, walk, remove
 from pprint import pprint
-import shlex
+from shlex import split
+from shutil import move, copy2
 from subprocess import Popen, PIPE
 from tkinter import filedialog
-from functools import partial
-from logging import getLogger
-from threading import Event
 
 from mht.utils import parse_cleaning
 
@@ -29,7 +27,6 @@ class MhtTkGui(tk.Frame):
         self.mod_dir = tk.StringVar()
         self.morr_dir = tk.StringVar()
         self.chk_backup = tk.BooleanVar()
-        self.event = Event()
         self._init_widgets()
         self.status_txt.set(f'ver. {__version__}')
         # self.mod_dir.set('/home/emc/.local/share/openmw/data')
@@ -68,7 +65,6 @@ class MhtTkGui(tk.Frame):
 
     def select_dir(self) -> None:
         """Select directory location."""
-        self.event = Event()
         self.status_txt.set('You can close GUI')
         directory = filedialog.askdirectory(initialdir='/home/emc/', title='Select directory')
         LOG.debug(f'Directory: {directory}')
@@ -96,22 +92,22 @@ class MhtTkGui(tk.Frame):
                    "Vurt's BC Tree Replacer II.ESP", "Windows Glow - Bloodmoon Eng.esp", "Windows Glow - Raven Rock Eng.esp",
                    "Windows Glow - Tribunal Eng.esp", "Windows Glow.esp"]
 
-        all_plugins = [os.path.join(root, f) for root, _, files in os.walk(self.mod_dir.get()) for f in files if f.lower().endswith('.esp') or f.lower().endswith('.esm')]
+        all_plugins = [path.join(root, f) for root, _, files in walk(self.mod_dir.get()) for f in files if f.lower().endswith('.esp') or f.lower().endswith('.esm')]
         pprint(all_plugins, width=200)
         plugins_to_clean = [f for f in all_plugins if f.split('/')[-1] in plugins]
         print('----------------------------------------------------')
         pprint(plugins_to_clean, width=200)
         print(len(all_plugins))
         print(len(plugins_to_clean))
-        os.chdir(self.morr_dir.get())
-        here = os.path.abspath(os.path.dirname(__file__))
+        chdir(self.morr_dir.get())
+        here = path.abspath(path.dirname(__file__))
         print('----------------------------------------------------')
         for plug in plugins_to_clean:
             print(plug)
             print('Copy:', plug, self.morr_dir.get())
-            shutil.copy2(plug, self.morr_dir.get())
+            copy2(plug, self.morr_dir.get())
             mod_filename = plug.split('/')[-1]
-            stdout, stderr = Popen(shlex.split(f'{os.path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
+            stdout, stderr = Popen(split(f'{path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_filename}"'), stdout=PIPE, stderr=PIPE).communicate()
             out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
             result, reason = parse_cleaning(out, err, mod_filename)
             print(out)
@@ -120,10 +116,10 @@ class MhtTkGui(tk.Frame):
             print('----------------------------------------------------')
             if result:
                 print(f'Move: {self.morr_dir.get()}1/{mod_filename}', plug)
-                shutil.move(f'{self.morr_dir.get()}1/{mod_filename}', plug)  # detect success
+                move(f'{self.morr_dir.get()}1/{mod_filename}', plug)  # detect success
             if self.chk_backup.get():
                 print(f'Remove: {self.morr_dir.get()}{mod_filename}')
-                os.remove(f'{self.morr_dir.get()}{mod_filename}')
+                remove(f'{self.morr_dir.get()}{mod_filename}')
                 print('----------------------------------------------------')
-        os.removedirs(f'{self.morr_dir.get()}1')
+        removedirs(f'{self.morr_dir.get()}1')
         self.status_txt.set('Cleaning done')
