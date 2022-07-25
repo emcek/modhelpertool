@@ -1,6 +1,7 @@
 import tkinter as tk
 from logging import getLogger
 from os import path, removedirs, chdir, walk, remove
+from pprint import pformat
 from shlex import split
 from shutil import move, copy2
 from subprocess import Popen, PIPE
@@ -27,6 +28,7 @@ class MhtTkGui(tk.Frame):
         self.mods_dir = tk.StringVar()
         self.morrowind_dir = tk.StringVar()
         self.chkbox_backup = tk.BooleanVar()
+        self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0}
         self._init_widgets()
         self.statusbar.set(f'ver. {__version__}')
         # self.mod_dir.set('/home/emc/.local/share/openmw/data')
@@ -45,13 +47,12 @@ class MhtTkGui(tk.Frame):
 
         mods_dir = tk.Entry(master=self.master, textvariable=self.mods_dir)
         morrowind_dir = tk.Entry(master=self.master, textvariable=self.morrowind_dir)
-
         mods_btn = tk.Button(master=self.master, text='Select Mods Dir', width=16, command=self.select_dir)
         morrowind_btn = tk.Button(master=self.master, text='Select Morrowind Dir', width=16, command=self.select_dir)
         clean_btn = tk.Button(master=self.master, text='Clean Mods', width=16, command=self.start_clean)
+        self.report_btn = tk.Button(master=self.master, text='Report', width=16, state=tk.DISABLED, command=self.report)
         close_btn = tk.Button(master=self.master, text='Close Tool', width=16, command=self.master.destroy)
         statusbar = tk.Label(master=self.master, textvariable=self.statusbar)
-
         chkbox_backup = tk.Checkbutton(master=self.master, text='Remove backup after successful clean-up', variable=self.chkbox_backup)
 
         mods_dir.grid(row=0, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
@@ -59,7 +60,8 @@ class MhtTkGui(tk.Frame):
         chkbox_backup.grid(row=2, column=0, padx=2, pady=2, sticky=tk.W)
         mods_btn.grid(row=0, column=1, padx=2, pady=2)
         morrowind_btn.grid(row=1, column=1, padx=2, pady=2)
-        clean_btn.grid(row=3, column=1, padx=2, pady=2)
+        clean_btn.grid(row=2, column=1, padx=2, pady=2)
+        self.report_btn.grid(row=3, column=1, padx=2, pady=2)
         close_btn.grid(row=4, column=1, padx=2, pady=2)
         statusbar.grid(row=5, column=0, columnspan=3, sticky=tk.W)
 
@@ -86,7 +88,7 @@ class MhtTkGui(tk.Frame):
         chdir(self.morrowind_dir.get())
         LOG.debug('----------------------------------------------------')
         here = path.abspath(path.dirname(__file__))
-        stats = {'all': len(plugins_to_clean), 'cleaned': 0, 'clean': 0, 'error': 0}
+        self.stats = {'all': len(plugins_to_clean), 'cleaned': 0, 'clean': 0, 'error': 0}
         for plug in plugins_to_clean:
             LOG.debug(f'Copy: {plug} -> {self.morrowind_dir.get()}')
             copy2(plug, self.morrowind_dir.get())
@@ -102,18 +104,23 @@ class MhtTkGui(tk.Frame):
             if result:
                 LOG.debug(f'Move: {self.morrowind_dir.get()}1/{mod_file} -> {plug}')
                 move(f'{self.morrowind_dir.get()}1/{mod_file}', plug)
-                stats['cleaned'] += 1
+                self.stats['cleaned'] += 1
             if not result and reason == 'not modified':
-                stats['clean'] += 1
+                self.stats['clean'] += 1
             if not result and 'not found' in reason:
-                stats['error'] += 1
-                esm = stats.get(reason, 0)
+                self.stats['error'] += 1
+                esm = self.stats.get(reason, 0)
                 esm += 1
-                stats.update({reason: esm})
+                self.stats.update({reason: esm})
             if self.chkbox_backup.get():
                 LOG.debug(f'Remove: {self.morrowind_dir.get()}{mod_file}')
                 remove(f'{self.morrowind_dir.get()}{mod_file}')
             LOG.debug('----------------------------------------------------')
         removedirs(f'{self.morrowind_dir.get()}1')
-        LOG.debug(f'Stats: {stats}')
-        self.statusbar.set(f'all: {stats["all"]} cleaned: {stats["cleaned"]} clean: {stats["clean"]} error: {stats["error"]}')
+        self.statusbar.set('Done. See report!')
+        self.report_btn.config(state=tk.NORMAL)
+
+    def report(self) -> None:
+        """Show report after clean-up."""
+        LOG.debug(f'Report: {self.stats}')
+        tk.messagebox.showinfo('Report', pformat(self.stats, width=15))
