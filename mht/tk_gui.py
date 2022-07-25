@@ -5,7 +5,7 @@ from pprint import pformat
 from shlex import split
 from shutil import move, copy2
 from subprocess import Popen, PIPE
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 
 from mht import PLUGINS2CLEAN
 from mht.utils import parse_cleaning
@@ -122,6 +122,6 @@ class MhtTkGui(tk.Frame):
     def report(self) -> None:
         """Show report after clean-up."""
         LOG.debug(f'Report: {self.stats}')
-        tk.messagebox.showinfo('Report', pformat(self.stats, width=15))
+        messagebox.showinfo('Report', pformat(self.stats, width=15))
         self.report_btn.config(state=tk.DISABLED)
         self.statusbar.set(f'ver. {__version__}')
