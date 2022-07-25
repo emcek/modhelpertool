@@ -123,3 +123,5 @@ class MhtTkGui(tk.Frame):
         """Show report after clean-up."""
         LOG.debug(f'Report: {self.stats}')
         tk.messagebox.showinfo('Report', pformat(self.stats, width=15))
+        self.report_btn.config(state=tk.DISABLED)
+        self.statusbar.set(f'ver. {__version__}')
