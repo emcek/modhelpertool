@@ -38,6 +38,7 @@ class MhtTkGui(tk.Frame):
         self.morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
+        self._check_clean_bin()
 
     def _init_widgets(self) -> None:
         self.master.columnconfigure(index=0, weight=10)
@@ -52,7 +53,7 @@ class MhtTkGui(tk.Frame):
         morrowind_dir = tk.Entry(master=self.master, textvariable=self.morrowind_dir)
         mods_btn = tk.Button(master=self.master, text='Select Mods Dir', width=16, command=self.select_dir)
         morrowind_btn = tk.Button(master=self.master, text='Select Morrowind Dir', width=16, command=self.select_dir)
-        clean_btn = tk.Button(master=self.master, text='Clean Mods', width=16, command=self.start_clean)
+        self.clean_btn = tk.Button(master=self.master, text='Clean Mods', width=16, command=self.start_clean)
         self.report_btn = tk.Button(master=self.master, text='Report', width=16, state=tk.DISABLED, command=self.report)
         close_btn = tk.Button(master=self.master, text='Close Tool', width=16, command=self.master.destroy)
         statusbar = tk.Label(master=self.master, textvariable=self.statusbar)
@@ -65,7 +66,7 @@ class MhtTkGui(tk.Frame):
         chkbox_cache.grid(row=3, column=0, padx=2, pady=2, sticky=tk.W)
         mods_btn.grid(row=0, column=1, padx=2, pady=2)
         morrowind_btn.grid(row=1, column=1, padx=2, pady=2)
-        clean_btn.grid(row=2, column=1, padx=2, pady=2)
+        self.clean_btn.grid(row=2, column=1, padx=2, pady=2)
         self.report_btn.grid(row=3, column=1, padx=2, pady=2)
         close_btn.grid(row=4, column=1, padx=2, pady=2)
         statusbar.grid(row=5, column=0, columnspan=3, sticky=tk.W)
@@ -137,3 +138,16 @@ class MhtTkGui(tk.Frame):
         messagebox.showinfo('Report', pformat(self.stats, width=15))
         self.report_btn.config(state=tk.DISABLED)
         self.statusbar.set(f'ver. {__version__}')
+
+    def _check_clean_bin(self):
+        here = path.abspath(path.dirname(__file__))
+        cmd = f'{path.join(here, "tes3cmd-0.37w")} -h'
+        LOG.debug(f'CMD: {cmd}')
+        stdout, stderr = Popen(split(cmd), stdout=PIPE, stderr=PIPE).communicate()
+        out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
+        result, reason = parse_cleaning(out, err, '')
+        if not result and 'Config::IniFiles' in reason:
+            msg = 'Use your package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
+            messagebox.showerror('Missing package', msg)
+            self.statusbar.set(f'Error: {reason}')
+            self.clean_btn.config(state=tk.DISABLED)
