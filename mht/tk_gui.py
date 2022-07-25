@@ -3,7 +3,7 @@ from logging import getLogger
 from os import path, removedirs, chdir, walk, remove
 from pprint import pformat
 from shlex import split
-from shutil import move, copy2
+from shutil import move, copy2, rmtree
 from subprocess import Popen, PIPE
 from time import time
 from tkinter import filedialog, messagebox
@@ -29,6 +29,7 @@ class MhtTkGui(tk.Frame):
         self.mods_dir = tk.StringVar()
         self.morrowind_dir = tk.StringVar()
         self.chkbox_backup = tk.BooleanVar()
+        self.chkbox_cache = tk.BooleanVar()
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0}
         self._init_widgets()
         self.statusbar.set(f'ver. {__version__}')
@@ -36,6 +37,7 @@ class MhtTkGui(tk.Frame):
         self.mods_dir.set('/home/emc/CitiesTowns/')
         self.morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')
         self.chkbox_backup.set(True)
+        self.chkbox_cache.set(True)
 
     def _init_widgets(self) -> None:
         self.master.columnconfigure(index=0, weight=10)
@@ -55,10 +57,12 @@ class MhtTkGui(tk.Frame):
         close_btn = tk.Button(master=self.master, text='Close Tool', width=16, command=self.master.destroy)
         statusbar = tk.Label(master=self.master, textvariable=self.statusbar)
         chkbox_backup = tk.Checkbutton(master=self.master, text='Remove backup after successful clean-up', variable=self.chkbox_backup)
+        chkbox_cache = tk.Checkbutton(master=self.master, text='Remove cache after successful clean-up', variable=self.chkbox_cache)
 
         mods_dir.grid(row=0, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
         morrowind_dir.grid(row=1, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
         chkbox_backup.grid(row=2, column=0, padx=2, pady=2, sticky=tk.W)
+        chkbox_cache.grid(row=3, column=0, padx=2, pady=2, sticky=tk.W)
         mods_btn.grid(row=0, column=1, padx=2, pady=2)
         morrowind_btn.grid(row=1, column=1, padx=2, pady=2)
         clean_btn.grid(row=2, column=1, padx=2, pady=2)
@@ -117,7 +121,9 @@ class MhtTkGui(tk.Frame):
                 LOG.debug(f'Remove: {self.morrowind_dir.get()}{mod_file}')
                 remove(f'{self.morrowind_dir.get()}{mod_file}')
             LOG.debug('----------------------------------------------------')
-        removedirs(f'{self.morrowind_dir.get()}1')
+        if self.chkbox_cache.get():
+            removedirs(f'{self.morrowind_dir.get()}1')
+            rmtree(f'{self.morrowind_dir.get()}.tes3cmd-3')
         LOG.debug(f'Total time: {time() - start:.2f} s')
         self.statusbar.set('Done. See report!')
         self.report_btn.config(state=tk.NORMAL)
