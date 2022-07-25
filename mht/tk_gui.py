@@ -79,12 +79,6 @@ class MhtTkGui(tk.Frame):
 
     def start_clean(self) -> None:
         """Start cleaning process."""
-        # add check for tes3cmd exaple of error when per initconfig not instaled
-        # Can't locate Config/IniFiles.pm in @INC (you may need to install the Config::IniFiles module) (@INC contains: /usr/lib/perl5/5.36/site_perl
-        # /usr/share/perl5/site_perl /usr/lib/perl5/5.36/vendor_perl /usr/share/perl5/vendor_perl /usr/lib/perl5/5.36/core_perl /usr/share/perl5/core_perl)
-        # at /home/emc/tes3cmd-0.37w line 107.
-        # BEGIN failed--compilation aborted at /home/emc/tes3cmd-0.37w line 107.
-
         all_plugins = [path.join(root, filename) for root, _, files in walk(self.mods_dir.get()) for filename in files if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
         LOG.debug(all_plugins)
         plugins_to_clean = [plugin_file for plugin_file in all_plugins if plugin_file.split('/')[-1] in PLUGINS2CLEAN]
