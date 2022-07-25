@@ -106,7 +106,7 @@ class MhtTkGui(tk.Frame):
             LOG.debug(f'Err: {err}')
             result, reason = parse_cleaning(out, err, mod_file)
             LOG.debug(f'Result: {result}, Reason: {reason}')
-            self._handle_stats(mod_file, plug, reason, result)
+            self._update_stats(mod_file, plug, reason, result)
             if self.chkbox_backup.get():
                 LOG.debug(f'Remove: {self.morrowind_dir.get()}{mod_file}')
                 remove(f'{self.morrowind_dir.get()}{mod_file}')
@@ -118,7 +118,7 @@ class MhtTkGui(tk.Frame):
         self.statusbar.set('Done. See report!')
         self.report_btn.config(state=tk.NORMAL)
 
-    def _handle_stats(self, mod_file: str, plug: str, reason: str, result: bool) -> None:
+    def _update_stats(self, mod_file: str, plug: str, reason: str, result: bool) -> None:
         if result:
             LOG.debug(f'Move: {self.morrowind_dir.get()}1/{mod_file} -> {plug}')
             move(f'{self.morrowind_dir.get()}1/{mod_file}', plug)
