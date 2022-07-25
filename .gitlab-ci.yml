@@ -71,13 +71,6 @@ run:
 'check pydocstyle':
   extends: '.check'
 
-'check manifest':
-  script:
-    - python -V
-    - pip install check-manifest
-    - pip list
-    - check-manifest || echo $(($? -1))
-
 #pages:
 #  script:
 #    - pip install sphinx sphinx-rtd-theme
