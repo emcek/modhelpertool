@@ -2,7 +2,7 @@ import tkinter as tk
 from logging import getLogger
 from os import path
 
-from mht.tk_gui import MhtTkGui
+from moht.tk_gui import MohtTkGui
 
 LOG = getLogger(__name__)
 __version__ = '0.0.1'
@@ -10,14 +10,14 @@ __version__ = '0.0.1'
 
 def run():
     """Function to start MHT GUI."""
-    LOG.info(f'mht {__version__} https://gitlab.com/modding-openmw/modhelpertool')
+    LOG.info(f'moht {__version__} https://gitlab.com/modding-openmw/modhelpertool')
     root = tk.Tk()
     width, height = 500, 200
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
     here = path.abspath(path.dirname(__file__))
-    # root.iconbitmap(default=path.join(here, 'mht.ico'))
-    gui = MhtTkGui(master=root)
+    # root.iconbitmap(default=path.join(here, 'moht.ico'))
+    gui = MohtTkGui(master=root)
     gui.mainloop()
 
 

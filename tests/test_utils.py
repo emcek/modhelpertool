@@ -1,4 +1,4 @@
-from mht.utils import parse_cleaning
+from moht.utils import parse_cleaning
 
 
 def test_parse_cleaning_success():
@@ -30,10 +30,10 @@ FLG - Balmora's Underworld V1.1.esp was not modified"""
 
 
 def test_parse_cleaning_no_master():
-    err = """Use of uninitialized value in -s at /home/emc/git/Modding-OpenMW/modhelpertool/mht/tes3cmd-0.37w line 6282.
-Use of uninitialized value $curr_size in numeric eq (==) at /home/emc/git/Modding-OpenMW/modhelpertool/mht/tes3cmd-0.37w line 6283.
-Use of uninitialized value $curr_size in concatenation (.) or string at /home/emc/git/Modding-OpenMW/modhelpertool/mht/tes3cmd-0.37w line 6287.
-Cache Invalidated for: oaab_data.esm (curr_size == , prev_size == 1269934) at /home/emc/git/Modding-OpenMW/modhelpertool/mht/tes3cmd-0.37w line 6287.
+    err = """Use of uninitialized value in -s at /home/emc/git/Modding-OpenMW/modhelpertool/moht/tes3cmd-0.37w line 6282.
+Use of uninitialized value $curr_size in numeric eq (==) at /home/emc/git/Modding-OpenMW/modhelpertool/moht/tes3cmd-0.37w line 6283.
+Use of uninitialized value $curr_size in concatenation (.) or string at /home/emc/git/Modding-OpenMW/modhelpertool/moht/tes3cmd-0.37w line 6287.
+Cache Invalidated for: oaab_data.esm (curr_size == , prev_size == 1269934) at /home/emc/git/Modding-OpenMW/modhelpertool/moht/tes3cmd-0.37w line 6287.
 
 [ERROR (Caldera.esp): Master: oaab_data.esm not found in <DATADIR>]"""
     out = """CLEANING: "Caldera.esp" ...
@@ -46,8 +46,8 @@ Caldera.esp was not modified"""
 
 
 def test_parse_cleaning_check_bin_no_config_inifiles():
-    err = """Can't locate Config/IniFiles.pm in @INC (you may need to install the Config::IniFiles module) (@INC contains: /usr/lib/perl5/5.36/site_perl /usr/share/perl5/site_perl /usr/lib/perl5/5.36/vendor_perl /usr/share/perl5/vendor_perl /usr/lib/perl5/5.36/core_perl /usr/share/perl5/core_perl) at /home/emc/git/Modding-OpenMW/modhelpertool/mht/tes3cmd-0.37w line 107.
-BEGIN failed--compilation aborted at /home/emc/git/Modding-OpenMW/modhelpertool/mht/tes3cmd-0.37w line 107."""
+    err = """Can't locate Config/IniFiles.pm in @INC (you may need to install the Config::IniFiles module) (@INC contains: /usr/lib/perl5/5.36/site_perl /usr/share/perl5/site_perl /usr/lib/perl5/5.36/vendor_perl /usr/share/perl5/vendor_perl /usr/lib/perl5/5.36/core_perl /usr/share/perl5/core_perl) at /home/emc/git/Modding-OpenMW/modhelpertool/moht/tes3cmd-0.37w line 107.
+BEGIN failed--compilation aborted at /home/emc/git/Modding-OpenMW/modhelpertool/moht/tes3cmd-0.37w line 107."""
     out = ""
     assert parse_cleaning(out, err, 'Caldera.esp') == (False, 'Config::IniFiles module')
 

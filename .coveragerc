@@ -1,9 +1,9 @@
 [run]
-source = mht
+source = moht
 
 [report]
 omit = tests/*
-       mht/tk_gui.py
+       moht/tk_gui.py
 
 [html]
 directory = covhtml

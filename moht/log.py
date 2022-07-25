@@ -13,7 +13,7 @@ def config_logger(logger: Logger, verbose=False) -> None:
     :param verbose: turn on/off verbose mode
     """
     logger.setLevel(DEBUG)
-    file_hand = RotatingFileHandler(filename=path.join(gettempdir(), 'mht.log'), mode='a', encoding='utf-8', maxBytes=5 * 1024 * 1024, backupCount=1)
+    file_hand = RotatingFileHandler(filename=path.join(gettempdir(), 'moht.log'), mode='a', encoding='utf-8', maxBytes=5 * 1024 * 1024, backupCount=1)
     file_hand.setLevel(DEBUG)
     file_hand.setFormatter(Formatter('%(asctime)s | %(name)-17s | %(levelname)-7s | %(threadName)-10s | %(message)s / %(funcName)s:%(lineno)d'))
     stream_hand = StreamHandler()

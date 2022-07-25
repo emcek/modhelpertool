@@ -8,23 +8,23 @@ from subprocess import Popen, PIPE
 from time import time
 from tkinter import filedialog, messagebox
 
-from mht import PLUGINS2CLEAN
-from mht.utils import parse_cleaning
+from moht import PLUGINS2CLEAN
+from moht.utils import parse_cleaning
 
 __version__ = '0.0.1'
 LOG = getLogger(__name__)
 
 
-class MhtTkGui(tk.Frame):
+class MohtTkGui(tk.Frame):
     def __init__(self, master: tk.Tk,) -> None:
         """
-        Create basic GUI for MHT application.
+        Create basic GUI for MOHT application.
 
         :param master: Top level widget
         """
         super().__init__(master)
         self.master = master
-        self.master.title('MHT')
+        self.master.title('MOHT')
         self.statusbar = tk.StringVar()
         self.mods_dir = tk.StringVar()
         self.morrowind_dir = tk.StringVar()
