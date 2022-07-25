@@ -14,16 +14,6 @@ image: python:3.10
 #  - virtualenv venv
 #  - source venv/bin/activate
 
-run:
-  script:
-    - python setup.py bdist_wheel
-    # an alternative approach is to install and run:
-    - pip install dist/*
-    # run the command here
-  artifacts:
-    paths:
-      - dist/*.whl
-
 '.check':
   script:
     - export TOXENV="${CI_JOB_NAME##check}"
@@ -32,21 +22,26 @@ run:
     - tox
 
 'check py37':
+  stage: test
   extends: '.check'
   image: 'python:3.7'
 
 'check py38':
+  stage: test
   extends: '.check'
   image: 'python:3.8'
 
 'check py39':
+  stage: test
   extends: '.check'
   image: 'python:3.9'
 
 'check py310':
+  stage: test
   extends: '.check'
 
 'check cov310':
+  stage: test
   extends: '.check'
   coverage: '/TOTAL\s+\d+\s+\d+\s+(\d+%)/'
   artifacts:
@@ -59,17 +54,32 @@ run:
         path: coverage.xml
 
 'check mypy':
+  stage: style
   extends: '.check'
 
 'check flake8':
+  stage: style
   extends: '.check'
   image: 'python:3.10'
 
 'check pycodestyle':
+  stage: style
   extends: '.check'
 
 'check pydocstyle':
+  stage: style
   extends: '.check'
+
+pypi:
+  stage: deploy
+  script:
+    - python -V
+    - pip install twine wheel
+    - pip list
+    - python setup.py bdist bdist_wheel
+    - twine upload dist/*
+  only:
+    - tags
 
 #pages:
 #  script:
