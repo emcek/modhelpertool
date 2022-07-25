@@ -43,3 +43,28 @@ Loaded cached Master: <DATADIR>/bloodmoon.esm
 Loading Master: oaab_data.esm
 Caldera.esp was not modified"""
     assert parse_cleaning(out, err, 'Caldera.esp') == (False, 'oaab_data.esm not found')
+
+
+def test_parse_cleaning_check_bin_no_config_inifiles():
+    err = """Can't locate Config/IniFiles.pm in @INC (you may need to install the Config::IniFiles module) (@INC contains: /usr/lib/perl5/5.36/site_perl /usr/share/perl5/site_perl /usr/lib/perl5/5.36/vendor_perl /usr/share/perl5/vendor_perl /usr/lib/perl5/5.36/core_perl /usr/share/perl5/core_perl) at /home/emc/git/Modding-OpenMW/modhelpertool/mht/tes3cmd-0.37w line 107.
+BEGIN failed--compilation aborted at /home/emc/git/Modding-OpenMW/modhelpertool/mht/tes3cmd-0.37w line 107."""
+    out = ""
+    assert parse_cleaning(out, err, 'Caldera.esp') == (False, 'Config::IniFiles module')
+
+
+def test_parse_cleaning_check_bin_ok():
+    err = """WARNING: Can't find "Data Files" directory, functionality reduced. You should first cd (change directory) to somewhere under where Morrowind is installed.
+Usage: tes3cmd COMMAND OPTIONS plugin...
+VERSION: 0.37w
+tes3cmd is a low-level command line tool that can examine, edit, and delete
+records from a TES3 plugin for Morrowind. It can also generate various patches
+and clean plugins too.
+COMMANDS
+  active
+    Add/Remove/List Plugins in your load order.
+  clean
+    Clean plugins of Evil GMSTs, junk cells, and more.
+  common
+    Find record IDs common between two plugins."""
+    out = ""
+    assert parse_cleaning(out, err, 'Caldera.esp') == (True, 'Usage')

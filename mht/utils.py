@@ -18,6 +18,10 @@ def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:  
             'result': False},
         3: {'args': (r'Output (saved) in: "1/{}"\nOriginal unaltered: "{}"'.format(mod_filename, mod_filename), out, MULTILINE),
             'result': True},
+        4: {'args': (r'Can\'t locate Config/IniFiles.pm in @INC \(you may need to install the (Config::IniFiles module)\)', err, MULTILINE),
+            'result': False},
+        5: {'args': (r'(Usage): tes3cmd COMMAND OPTIONS plugin...', err, MULTILINE),
+            'result': True},
     }
     for data in ceases.values():
         match = search(*data['args'])  # type: ignore
