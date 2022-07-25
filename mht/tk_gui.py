@@ -1,4 +1,3 @@
-import time
 import tkinter as tk
 from logging import getLogger
 from os import path, removedirs, chdir, walk, remove
@@ -6,6 +5,7 @@ from pprint import pformat
 from shlex import split
 from shutil import move, copy2
 from subprocess import Popen, PIPE
+from time import time
 from tkinter import filedialog, messagebox
 
 from mht import PLUGINS2CLEAN
@@ -89,7 +89,7 @@ class MhtTkGui(tk.Frame):
         LOG.debug('----------------------------------------------------')
         here = path.abspath(path.dirname(__file__))
         self.stats = {'all': len(plugins_to_clean), 'cleaned': 0, 'clean': 0, 'error': 0}
-        start = time.time()
+        start = time()
         for plug in plugins_to_clean:
             LOG.debug(f'Copy: {plug} -> {self.morrowind_dir.get()}')
             copy2(plug, self.morrowind_dir.get())
@@ -118,8 +118,7 @@ class MhtTkGui(tk.Frame):
                 remove(f'{self.morrowind_dir.get()}{mod_file}')
             LOG.debug('----------------------------------------------------')
         removedirs(f'{self.morrowind_dir.get()}1')
-        stop = time.time()
-        LOG.debug(f'Total time: {stop - start:.2f} s')
+        LOG.debug(f'Total time: {time() - start:.2f} s')
         self.statusbar.set('Done. See report!')
         self.report_btn.config(state=tk.NORMAL)
 
