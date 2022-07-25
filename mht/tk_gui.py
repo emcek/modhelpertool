@@ -136,11 +136,13 @@ class MhtTkGui(tk.Frame):
 
     def _check_clean_bin(self):
         here = path.abspath(path.dirname(__file__))
+        LOG.debug(f'Checking tes3cmd')
         cmd = f'{path.join(here, "tes3cmd-0.37w")} -h'
         LOG.debug(f'CMD: {cmd}')
         stdout, stderr = Popen(split(cmd), stdout=PIPE, stderr=PIPE).communicate()
         out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
         result, reason = parse_cleaning(out, err, '')
+        LOG.debug(f'Result: {result}, Reason: {reason}')
         if not result and 'Config::IniFiles' in reason:
             msg = 'Use your package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
             messagebox.showerror('Missing package', msg)
