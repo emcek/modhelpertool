@@ -1,16 +1,11 @@
 import tkinter as tk
-from logging import getLogger
 from os import path
 
 from moht.tk_gui import MohtTkGui
 
-LOG = getLogger(__name__)
-__version__ = '0.0.1'
-
 
 def run():
-    """Function to start MHT GUI."""
-    LOG.info(f'moht {__version__} https://gitlab.com/modding-openmw/modhelpertool')
+    """Function to start MOHT GUI."""
     root = tk.Tk()
     width, height = 500, 200
     root.geometry(f'{width}x{height}')

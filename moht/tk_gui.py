@@ -8,10 +8,9 @@ from subprocess import Popen, PIPE
 from time import time
 from tkinter import filedialog, messagebox
 
-from moht import PLUGINS2CLEAN
+from moht import PLUGINS2CLEAN, VERSION
 from moht.utils import parse_cleaning
 
-__version__ = '0.0.1'
 LOG = getLogger(__name__)
 
 
@@ -22,6 +21,7 @@ class MohtTkGui(tk.Frame):
 
         :param master: Top level widget
         """
+        LOG.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
         super().__init__(master)
         self.master = master
         self.master.title('MOHT')
@@ -32,7 +32,7 @@ class MohtTkGui(tk.Frame):
         self.chkbox_cache = tk.BooleanVar()
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0}
         self._init_widgets()
-        self.statusbar.set(f'ver. {__version__}')
+        self.statusbar.set(f'ver. {VERSION}')
         # self.mod_dir.set('/home/emc/.local/share/openmw/data')
         self.mods_dir.set('/home/emc/CitiesTowns/')
         self.morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')
@@ -132,7 +132,7 @@ class MohtTkGui(tk.Frame):
         LOG.debug(f'Report: {self.stats}')
         messagebox.showinfo('Report', pformat(self.stats, width=15))
         self.report_btn.config(state=tk.DISABLED)
-        self.statusbar.set(f'ver. {__version__}')
+        self.statusbar.set(f'ver. {VERSION}')
 
     def _check_clean_bin(self):
         here = path.abspath(path.dirname(__file__))
