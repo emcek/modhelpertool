@@ -67,7 +67,6 @@ class MhtTkGui(tk.Frame):
 
     def select_dir(self) -> None:
         """Select directory location."""
-        self.statusbar.set('You can close GUI')
         directory = filedialog.askdirectory(initialdir='/home/emc/', title='Select directory')
         LOG.debug(f'Directory: {directory}')
         self.mods_dir.set(f'{directory}')
