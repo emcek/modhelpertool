@@ -1,6 +1,7 @@
 import tkinter as tk
 from logging import getLogger
 from os import path
+
 from mht.tk_gui import MhtTkGui
 
 LOG = getLogger(__name__)
