@@ -83,13 +83,14 @@ class MhtTkGui(tk.Frame):
         LOG.debug(all_plugins)
         plugins_to_clean = [plugin_file for plugin_file in all_plugins if plugin_file.split('/')[-1] in PLUGINS2CLEAN]
         LOG.debug(f'{len(all_plugins)}: {all_plugins}')
-        LOG.debug(f'{len(plugins_to_clean)}: {plugins_to_clean}')
+        no_of_plugins = len(plugins_to_clean)
+        LOG.debug(f'{no_of_plugins}: {plugins_to_clean}')
         chdir(self.morrowind_dir.get())
-        LOG.debug('----------------------------------------------------')
         here = path.abspath(path.dirname(__file__))
-        self.stats = {'all': len(plugins_to_clean), 'cleaned': 0, 'clean': 0, 'error': 0}
+        self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
-        for plug in plugins_to_clean:
+        for idx, plug in enumerate(plugins_to_clean, 1):
+            LOG.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
             LOG.debug(f'Copy: {plug} -> {self.morrowind_dir.get()}')
             copy2(plug, self.morrowind_dir.get())
             mod_file = plug.split('/')[-1]
@@ -105,7 +106,7 @@ class MhtTkGui(tk.Frame):
             if self.chkbox_backup.get():
                 LOG.debug(f'Remove: {self.morrowind_dir.get()}{mod_file}')
                 remove(f'{self.morrowind_dir.get()}{mod_file}')
-            LOG.debug('----------------------------------------------------')
+        LOG.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.chkbox_cache.get():
             removedirs(f'{self.morrowind_dir.get()}1')
             rmtree(f'{self.morrowind_dir.get()}.tes3cmd-3')
