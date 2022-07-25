@@ -71,13 +71,12 @@ run:
 'check pydocstyle':
   extends: '.check'
 
-'check-manifest':
-  image: 'python:3.10'
+'check manifest':
   script:
     - python -V
     - pip install check-manifest
     - pip list
-    - check-manifest -q || echo $(($? -1))
+    - check-manifest || echo $(($? -1))
 
 #pages:
 #  script:
