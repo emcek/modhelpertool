@@ -91,10 +91,12 @@ class MhtTkGui(tk.Frame):
             LOG.debug(f'Copy: {plug} -> {self.morrowind_dir.get()}')
             copy2(plug, self.morrowind_dir.get())
             mod_file = plug.split('/')[-1]
-            stdout, stderr = Popen(split(f'{path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_file}"'), stdout=PIPE, stderr=PIPE).communicate()
+            cmd = f'{path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_file}"'
+            LOG.debug(f'CMD: {cmd}')
+            stdout, stderr = Popen(split(cmd), stdout=PIPE, stderr=PIPE).communicate()
             out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
-            LOG.debug(out)
-            LOG.debug(err)
+            LOG.debug(f'Out: {out}')
+            LOG.debug(f'Err: {err}')
             result, reason = parse_cleaning(out, err, mod_file)
             LOG.debug(f'Result: {result}, Reason: {reason}')
             if result:
