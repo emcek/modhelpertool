@@ -15,7 +15,6 @@ image: python:3.10
 #  - source venv/bin/activate
 
 stages:
-  - style
   - test
   - deploy
 
@@ -59,20 +58,20 @@ stages:
         path: coverage.xml
 
 'check mypy':
-  stage: style
+  stage: test
   extends: '.check'
 
 'check flake8':
-  stage: style
+  stage: test
   extends: '.check'
   image: 'python:3.10'
 
 'check pycodestyle':
-  stage: style
+  stage: test
   extends: '.check'
 
 'check pydocstyle':
-  stage: style
+  stage: test
   extends: '.check'
 
 pypi:
