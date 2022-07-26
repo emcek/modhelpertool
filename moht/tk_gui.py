@@ -1,6 +1,6 @@
 import tkinter as tk
 from logging import getLogger
-from os import path, removedirs, chdir, walk, remove
+from os import path, removedirs, chdir, walk, remove, name
 from pprint import pformat
 from shlex import split
 from shutil import move, copy2, rmtree
@@ -23,6 +23,11 @@ class MohtTkGui(tk.Frame):
         """
         LOG.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
         super().__init__(master)
+        if name == 'nt':
+            self.tes3cmd = 'tes3cmd-0.37v.exe'
+        else:
+            self.tes3cmd = 'tes3cmd-0.37w'
+        self.tes3cmd = "tes3cmd-0.37w"
         self.master = master
         self.master.title('MOHT')
         self.statusbar = tk.StringVar()
@@ -94,7 +99,7 @@ class MohtTkGui(tk.Frame):
             LOG.debug(f'Copy: {plug} -> {self.morrowind_dir.get()}')
             copy2(plug, self.morrowind_dir.get())
             mod_file = plug.split('/')[-1]
-            cmd = f'{path.join(here, "tes3cmd-0.37w")} clean --output-dir --overwrite "{mod_file}"'
+            cmd = f'{path.join(here, self.tes3cmd)} clean --output-dir --overwrite "{mod_file}"'
             LOG.debug(f'CMD: {cmd}')
             stdout, stderr = Popen(split(cmd), stdout=PIPE, stderr=PIPE).communicate()
             out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
