@@ -11,7 +11,7 @@ def run():
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
     here = path.abspath(path.dirname(__file__))
-    # root.iconbitmap(default=path.join(here, 'moht.ico'))
+    root.iconphoto(False, tk.PhotoImage(file=path.join(here, 'moht.png')))
     gui = MohtTkGui(master=root)
     gui.mainloop()
 
