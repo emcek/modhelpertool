@@ -1,10 +1,11 @@
 import tkinter as tk
 from logging import getLogger
-from os import path, removedirs, chdir, walk, remove, name
+from os import path, removedirs, chdir, walk, remove
 from pprint import pformat
 from shlex import split
 from shutil import move, copy2, rmtree
 from subprocess import Popen, PIPE
+from sys import platform
 from time import time
 from tkinter import filedialog, messagebox
 
@@ -23,7 +24,7 @@ class MohtTkGui(tk.Frame):
         """
         LOG.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
         super().__init__(master)
-        self.tes3cmd = 'tes3cmd-0.37v.exe' if name == 'nt' else 'tes3cmd-0.37w'
+        self.tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
         self.master = master
         self.master.title('MOHT')
         self.statusbar = tk.StringVar()
@@ -96,7 +97,7 @@ class MohtTkGui(tk.Frame):
             copy2(plug, self.morrowind_dir.get())
             mod_file = plug.split('/')[-1]
             cmd_str = f'{path.join(here, self.tes3cmd)} clean --output-dir --overwrite "{mod_file}"'
-            cmd = split(cmd_str) if name == 'posix' else cmd_str
+            cmd = split(cmd_str) if platform == 'linux' else cmd_str
             LOG.debug(f'CMD: {cmd}')
             stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
             out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
@@ -140,7 +141,7 @@ class MohtTkGui(tk.Frame):
         here = path.abspath(path.dirname(__file__))
         LOG.debug('Checking tes3cmd')
         cmd_str = f'{path.join(here, self.tes3cmd)} -h'
-        cmd = split(cmd_str) if name == 'posix' else cmd_str
+        cmd = split(cmd_str) if platform == 'linux' else cmd_str
         LOG.debug(f'CMD: {cmd}')
         stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
         out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
