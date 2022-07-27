@@ -98,9 +98,8 @@ class MohtTkGui(tk.Frame):
             LOG.debug(f'Copy: {plug} -> {self.morrowind_dir.get()}')
             copy2(plug, self.morrowind_dir.get())
             mod_file = plug.split('/')[-1]
-            cmd = f'{path.join(here, self.tes3cmd)} clean --output-dir --overwrite "{mod_file}"'
-            if name == 'posix':
-                cmd = split(cmd)
+            cmd_str = f'{path.join(here, self.tes3cmd)} clean --output-dir --overwrite "{mod_file}"'
+            cmd = split(cmd_str) if name == 'posix' else cmd_str
             LOG.debug(f'CMD: {cmd}')
             stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
             out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
@@ -143,9 +142,8 @@ class MohtTkGui(tk.Frame):
     def _check_clean_bin(self):
         here = path.abspath(path.dirname(__file__))
         LOG.debug(f'Checking tes3cmd')
-        cmd = f'{path.join(here, self.tes3cmd)} -h'
-        if name == 'posix':
-            cmd = split(cmd)
+        cmd_str = f'{path.join(here, self.tes3cmd)} -h'
+        cmd = split(cmd_str) if name == 'posix' else cmd_str
         LOG.debug(f'CMD: {cmd}')
         stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
         out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
