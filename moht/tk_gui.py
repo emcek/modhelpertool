@@ -27,7 +27,6 @@ class MohtTkGui(tk.Frame):
             self.tes3cmd = 'tes3cmd-0.37v.exe'
         else:
             self.tes3cmd = 'tes3cmd-0.37w'
-        self.tes3cmd = "tes3cmd-0.37w"
         self.master = master
         self.master.title('MOHT')
         self.statusbar = tk.StringVar()
