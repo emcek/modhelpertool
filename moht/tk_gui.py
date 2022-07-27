@@ -99,8 +99,10 @@ class MohtTkGui(tk.Frame):
             copy2(plug, self.morrowind_dir.get())
             mod_file = plug.split('/')[-1]
             cmd = f'{path.join(here, self.tes3cmd)} clean --output-dir --overwrite "{mod_file}"'
+            if name == 'posix':
+                cmd = split(cmd)
             LOG.debug(f'CMD: {cmd}')
-            stdout, stderr = Popen(split(cmd), stdout=PIPE, stderr=PIPE).communicate()
+            stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
             out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
             LOG.debug(f'Out: {out}')
             LOG.debug(f'Err: {err}')
@@ -141,9 +143,11 @@ class MohtTkGui(tk.Frame):
     def _check_clean_bin(self):
         here = path.abspath(path.dirname(__file__))
         LOG.debug(f'Checking tes3cmd')
-        cmd = f'{path.join(here, "tes3cmd-0.37w")} -h'
+        cmd = f'{path.join(here, self.tes3cmd)} -h'
+        if name == 'posix':
+            cmd = split(cmd)
         LOG.debug(f'CMD: {cmd}')
-        stdout, stderr = Popen(split(cmd), stdout=PIPE, stderr=PIPE).communicate()
+        stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
         out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
         result, reason = parse_cleaning(out, err, '')
         LOG.debug(f'Result: {result}, Reason: {reason}')
