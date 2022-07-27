@@ -138,7 +138,7 @@ class MohtTkGui(tk.Frame):
 
     def _check_clean_bin(self):
         here = path.abspath(path.dirname(__file__))
-        LOG.debug(f'Checking tes3cmd')
+        LOG.debug('Checking tes3cmd')
         cmd_str = f'{path.join(here, self.tes3cmd)} -h'
         cmd = split(cmd_str) if name == 'posix' else cmd_str
         LOG.debug(f'CMD: {cmd}')
