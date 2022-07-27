@@ -23,10 +23,7 @@ class MohtTkGui(tk.Frame):
         """
         LOG.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
         super().__init__(master)
-        if name == 'nt':
-            self.tes3cmd = 'tes3cmd-0.37v.exe'
-        else:
-            self.tes3cmd = 'tes3cmd-0.37w'
+        self.tes3cmd = 'tes3cmd-0.37v.exe' if name == 'nt' else 'tes3cmd-0.37w'
         self.master = master
         self.master.title('MOHT')
         self.statusbar = tk.StringVar()
