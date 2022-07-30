@@ -2,6 +2,7 @@ import tkinter as tk
 from functools import partial
 from logging import getLogger
 from os import path, removedirs, chdir, walk, remove
+from pathlib import Path
 from pprint import pformat
 from shlex import split
 from shutil import move, copy2, rmtree
@@ -78,6 +79,7 @@ class MohtTkGui(tk.Frame):
     def select_dir(text_var: tk.StringVar) -> None:
         """
         Select directory location.
+
         :param text_var: StringVar of Entry to update
         """
         directory = filedialog.askdirectory(initialdir=str(Path.home()), title='Select directory')
