@@ -5,7 +5,7 @@ from moht.tk_gui import MohtTkGui
 
 
 def run():
-    """Function to start MOHT GUI."""
+    """Function to start Mod Helper Tool GUI."""
     root = tk.Tk()
     width, height = 500, 200
     root.geometry(f'{width}x{height}')

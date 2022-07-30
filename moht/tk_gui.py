@@ -20,7 +20,7 @@ LOG = getLogger(__name__)
 class MohtTkGui(tk.Frame):
     def __init__(self, master: tk.Tk,) -> None:
         """
-        Create basic GUI for MOHT application.
+        Create basic GUI for Mod Helper Tool application.
 
         :param master: Top level widget
         """
@@ -28,7 +28,7 @@ class MohtTkGui(tk.Frame):
         super().__init__(master)
         self.tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
         self.master = master
-        self.master.title('MOHT')
+        self.master.title('Mod Helper Tool')
         self.statusbar = tk.StringVar()
         self._mods_dir = tk.StringVar()
         self._morrowind_dir = tk.StringVar()
