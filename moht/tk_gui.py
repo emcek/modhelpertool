@@ -1,4 +1,5 @@
 import tkinter as tk
+from functools import partial
 from logging import getLogger
 from os import path, removedirs, chdir, walk, remove
 from pprint import pformat
@@ -53,8 +54,8 @@ class MohtTkGui(tk.Frame):
 
         mods_dir = tk.Entry(master=self.master, textvariable=self.mods_dir)
         morrowind_dir = tk.Entry(master=self.master, textvariable=self.morrowind_dir)
-        mods_btn = tk.Button(master=self.master, text='Select Mods Dir', width=16, command=self.select_dir)
-        morrowind_btn = tk.Button(master=self.master, text='Select Morrowind Dir', width=16, command=self.select_dir)
+        mods_btn = tk.Button(master=self.master, text='Select Mods Dir', width=16, command=partial(self.select_dir, self.mods_dir))
+        morrowind_btn = tk.Button(master=self.master, text='Select Morrowind Dir', width=16, command=partial(self.select_dir, self.morrowind_dir))
         self.clean_btn = tk.Button(master=self.master, text='Clean Mods', width=16, command=self.start_clean)
         self.report_btn = tk.Button(master=self.master, text='Report', width=16, state=tk.DISABLED, command=self.report)
         close_btn = tk.Button(master=self.master, text='Close Tool', width=16, command=self.master.destroy)
@@ -73,11 +74,15 @@ class MohtTkGui(tk.Frame):
         close_btn.grid(row=4, column=1, padx=2, pady=2)
         statusbar.grid(row=5, column=0, columnspan=3, sticky=tk.W)
 
-    def select_dir(self) -> None:
-        """Select directory location."""
-        directory = filedialog.askdirectory(initialdir='/home/emc/', title='Select directory')
+    @staticmethod
+    def select_dir(text_var: tk.StringVar) -> None:
+        """
+        Select directory location.
+        :param text_var: StringVar of Entry to update
+        """
+        directory = filedialog.askdirectory(initialdir=str(Path.home()), title='Select directory')
         LOG.debug(f'Directory: {directory}')
-        self.mods_dir.set(f'{directory}')
+        text_var.set(f'{directory}')
 
     def start_clean(self) -> None:
         """Start cleaning process."""
