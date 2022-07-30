@@ -1,7 +1,7 @@
 import tkinter as tk
 from functools import partial
 from logging import getLogger
-from os import path, removedirs, chdir, walk, remove
+from os import path, removedirs, chdir, walk, remove, sep
 from pathlib import Path
 from pprint import pformat
 from shlex import split
@@ -92,9 +92,9 @@ class MohtTkGui(tk.Frame):
 
     def start_clean(self) -> None:
         """Start cleaning process."""
-        all_plugins = [path.join(root, filename) for root, _, files in walk(self.mods_dir.get()) for filename in files if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
+        all_plugins = [Path(path.join(root, filename)) for root, _, files in walk(self.mods_dir.get()) for filename in files if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
         LOG.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
-        plugins_to_clean = [plugin_file for plugin_file in all_plugins if plugin_file.split('/')[-1] in PLUGINS2CLEAN]
+        plugins_to_clean = [plugin_file for plugin_file in all_plugins if str(plugin_file).split(sep)[-1] in PLUGINS2CLEAN]
         no_of_plugins = len(plugins_to_clean)
         LOG.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
         chdir(self.morrowind_dir.get())
