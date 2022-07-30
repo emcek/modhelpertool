@@ -50,6 +50,11 @@ class MohtTkGui(tk.Frame):
 
     @property
     def mods_dir(self) -> str:
+        """
+        Get root of mods directory.
+
+        :return: mods dir as string
+        """
         return str(self._mods_dir.get())
 
     @mods_dir.setter
@@ -58,6 +63,11 @@ class MohtTkGui(tk.Frame):
 
     @property
     def morrowind_dir(self) -> str:
+        """
+        Get Morrowind Data Files directory.
+
+        :return: morrowind as sring
+        """
         return str(self._morrowind_dir.get())
 
     @morrowind_dir.setter
