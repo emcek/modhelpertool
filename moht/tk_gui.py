@@ -83,6 +83,7 @@ class MohtTkGui(tk.Frame):
     def select_dir(text_var: tk.StringVar) -> None:
         """
         Select directory location.
+
         :param text_var: StringVar of Entry to update
         """
         directory = filedialog.askdirectory(initialdir=str(Path.home()), title='Select directory')
