@@ -37,13 +37,13 @@ class MohtTkGui(tk.Frame):
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0}
         self._init_widgets()
         self.statusbar.set(f'ver. {VERSION}')
-        # self.mod_dir.set('/home/emc/.local/share/openmw/data')
-        # self.mods_dir.set('/home/emc/CitiesTowns/')  # test linux
-        self._mods_dir.set('D:/CitiesTowns')  # test win
-        # self.mods_dir.set(str(Path.home()))
-        # self.morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')  # test linux
-        self._morrowind_dir.set('S:/Program Files/Morrowind/Data Files')  # test win
-        # self.morrowind_dir.set(str(Path.home()))
+        # self._mods_dir.set('/home/emc/.local/share/openmw/data')
+        # self._mods_dir.set('/home/emc/CitiesTowns/')  # test linux
+        # self._mods_dir.set('D:/CitiesTowns')  # test win
+        self._mods_dir.set(str(Path.home()))
+        # self._morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')  # test linux
+        # self._morrowind_dir.set('S:/Program Files/Morrowind/Data Files')  # test win
+        self._morrowind_dir.set(str(Path.home()))
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
         self._check_clean_bin()
