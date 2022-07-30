@@ -48,31 +48,6 @@ class MohtTkGui(tk.Frame):
         self.chkbox_cache.set(True)
         self._check_clean_bin()
 
-    @property
-    def mods_dir(self) -> str:
-        """
-        Get root of mods directory.
-
-        :return: mods dir as string
-        """
-        return str(self._mods_dir.get())
-
-    @mods_dir.setter
-    def mods_dir(self, value: Path) -> None:
-        self._mods_dir.set(str(value))
-
-    @property
-    def morrowind_dir(self) -> str:
-        """
-        Get Morrowind Data Files directory.
-
-        :return: morrowind as sring
-        """
-        return str(self._morrowind_dir.get())
-
-    @morrowind_dir.setter
-    def morrowind_dir(self, value: Path) -> None:
-        self._morrowind_dir.set(str(value))
 
     def _init_widgets(self) -> None:
         self.master.columnconfigure(index=0, weight=10)
@@ -189,3 +164,29 @@ class MohtTkGui(tk.Frame):
             messagebox.showerror('Missing package', msg)
             self.statusbar.set(f'Error: {reason}')
             self.clean_btn.config(state=tk.DISABLED)
+
+    @property
+    def mods_dir(self) -> str:
+        """
+        Get root of mods directory.
+
+        :return: mods dir as string
+        """
+        return str(self._mods_dir.get())
+
+    @mods_dir.setter
+    def mods_dir(self, value: Path) -> None:
+        self._mods_dir.set(str(value))
+
+    @property
+    def morrowind_dir(self) -> str:
+        """
+        Get Morrowind Data Files directory.
+
+        :return: morrowind as sring
+        """
+        return str(self._morrowind_dir.get())
+
+    @morrowind_dir.setter
+    def morrowind_dir(self, value: Path) -> None:
+        self._morrowind_dir.set(str(value))
