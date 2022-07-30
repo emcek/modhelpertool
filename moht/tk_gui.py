@@ -149,7 +149,7 @@ class MohtTkGui(tk.Frame):
         if self.chkbox_cache.get():
             removedirs(f'{self.morrowind_dir}/1')
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
-            rmtree(f'{self.morrowind_dir}/{cachedir}', ignore_errors=True)  # onerror=log_data_onerror
+            rmtree(f'{self.morrowind_dir}/{cachedir}', ignore_errors=True)
         LOG.debug(f'Total time: {time() - start:.2f} s')
         self.statusbar.set('Done. See report!')
         self.report_btn.config(state=tk.NORMAL)
