@@ -1,3 +1,4 @@
+from os import linesep
 from re import search, MULTILINE
 from typing import Tuple
 
@@ -12,11 +13,11 @@ def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:  
     :return: Result and reason
     """
     ceases = {
-        1: {'args': (r'^\[ERROR \({}\): Master: (.* not found) in <DATADIR>]$'.format(mod_filename), err, MULTILINE),
+        1: {'args': (r'\[ERROR \({}\): Master: (.* not found) in <DATADIR>]'.format(mod_filename), err, MULTILINE),
             'result': False},
-        2: {'args': (r'^{} was (not modified)$'.format(mod_filename), out, MULTILINE),
+        2: {'args': (r'{} was (not modified)'.format(mod_filename), out, MULTILINE),
             'result': False},
-        3: {'args': (r'Output (saved) in: "1/{}"\nOriginal unaltered: "{}"'.format(mod_filename, mod_filename), out, MULTILINE),
+        3: {'args': (r'Output (saved) in: "1/{}"{}Original unaltered: "{}"'.format(mod_filename, linesep, mod_filename), out, MULTILINE),
             'result': True},
         4: {'args': (r'Can\'t locate Config/IniFiles.pm in @INC \(you may need to install the (Config::IniFiles module)\)', err, MULTILINE),
             'result': False},
