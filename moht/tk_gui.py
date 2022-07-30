@@ -48,7 +48,6 @@ class MohtTkGui(tk.Frame):
         self.chkbox_cache.set(True)
         self._check_clean_bin()
 
-
     def _init_widgets(self) -> None:
         self.master.columnconfigure(index=0, weight=10)
         self.master.columnconfigure(index=1, weight=1)
