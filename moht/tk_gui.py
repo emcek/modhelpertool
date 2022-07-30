@@ -118,20 +118,20 @@ class MohtTkGui(tk.Frame):
 
     def start_clean(self) -> None:
         """Start cleaning process."""
-        all_plugins = [Path(path.join(root, filename)) for root, _, files in walk(self._mods_dir.get()) for filename in files if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
+        all_plugins = [Path(path.join(root, filename)) for root, _, files in walk(self.mods_dir) for filename in files if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
         LOG.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
         plugins_to_clean = [plugin_file for plugin_file in all_plugins if str(plugin_file).split(sep)[-1] in PLUGINS2CLEAN]
         no_of_plugins = len(plugins_to_clean)
         LOG.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
-        chdir(self._morrowind_dir.get())
+        chdir(self.morrowind_dir)
         here = path.abspath(path.dirname(__file__))
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
         for idx, plug in enumerate(plugins_to_clean, 1):
             LOG.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
-            LOG.debug(f'Copy: {plug} -> {self._morrowind_dir.get()}')
-            copy2(plug, self._morrowind_dir.get())
-            mod_file = plug.split('/')[-1]
+            LOG.debug(f'Copy: {plug} -> {self.morrowind_dir}')
+            copy2(plug, self.morrowind_dir)
+            mod_file = str(plug).split(sep)[-1]
             cmd_str = f'{path.join(here, self.tes3cmd)} clean --output-dir --overwrite "{mod_file}"'
             cmd = split(cmd_str) if platform == 'linux' else cmd_str
             LOG.debug(f'CMD: {cmd}')
@@ -143,20 +143,21 @@ class MohtTkGui(tk.Frame):
             LOG.debug(f'Result: {result}, Reason: {reason}')
             self._update_stats(mod_file, plug, reason, result)
             if self.chkbox_backup.get():
-                LOG.debug(f'Remove: {self._morrowind_dir.get()}{mod_file}')
-                remove(f'{self._morrowind_dir.get()}{mod_file}')
+                LOG.debug(f'Remove: {self.morrowind_dir}/{mod_file}')
+                remove(f'{self.morrowind_dir}/{mod_file}')
         LOG.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.chkbox_cache.get():
-            removedirs(f'{self._morrowind_dir.get()}1')
-            rmtree(f'{self._morrowind_dir.get()}.tes3cmd-3')
+            removedirs(f'{self.morrowind_dir}/1')
+            cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
+            rmtree(f'{self.morrowind_dir}/{cachedir}', ignore_errors=True)  # onerror=log_data_onerror
         LOG.debug(f'Total time: {time() - start:.2f} s')
         self.statusbar.set('Done. See report!')
         self.report_btn.config(state=tk.NORMAL)
 
-    def _update_stats(self, mod_file: str, plug: str, reason: str, result: bool) -> None:
+    def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
         if result:
-            LOG.debug(f'Move: {self._morrowind_dir.get()}1/{mod_file} -> {plug}')
-            move(f'{self._morrowind_dir.get()}1/{mod_file}', plug)
+            LOG.debug(f'Move: {self.morrowind_dir}/1/{mod_file} -> {plug}')
+            move(f'{self.morrowind_dir}/1/{mod_file}', plug)
             self.stats['cleaned'] += 1
         if not result and reason == 'not modified':
             self.stats['clean'] += 1
