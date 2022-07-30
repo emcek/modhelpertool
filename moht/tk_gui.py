@@ -2,6 +2,7 @@ import tkinter as tk
 from functools import partial
 from logging import getLogger
 from os import path, removedirs, chdir, walk, remove
+from pathlib import Path
 from pprint import pformat
 from shlex import split
 from shutil import move, copy2, rmtree
@@ -37,8 +38,12 @@ class MohtTkGui(tk.Frame):
         self._init_widgets()
         self.statusbar.set(f'ver. {VERSION}')
         # self.mod_dir.set('/home/emc/.local/share/openmw/data')
-        self.mods_dir.set('/home/emc/CitiesTowns/')
-        self.morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')
+        # self.mods_dir.set('/home/emc/CitiesTowns/')  # test linux
+        self.mods_dir.set('D:/CitiesTowns')  # test win
+        # self.mods_dir.set(str(Path.home()))
+        # self.morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')  # test linux
+        self.morrowind_dir.set('S:/Program Files/Morrowind/Data Files')  # test win
+        # self.morrowind_dir.set(str(Path.home()))
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
         self._check_clean_bin()
@@ -87,11 +92,10 @@ class MohtTkGui(tk.Frame):
     def start_clean(self) -> None:
         """Start cleaning process."""
         all_plugins = [path.join(root, filename) for root, _, files in walk(self.mods_dir.get()) for filename in files if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
-        LOG.debug(all_plugins)
+        LOG.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
         plugins_to_clean = [plugin_file for plugin_file in all_plugins if plugin_file.split('/')[-1] in PLUGINS2CLEAN]
-        LOG.debug(f'{len(all_plugins)}: {all_plugins}')
         no_of_plugins = len(plugins_to_clean)
-        LOG.debug(f'{no_of_plugins}: {plugins_to_clean}')
+        LOG.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
         chdir(self.morrowind_dir.get())
         here = path.abspath(path.dirname(__file__))
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
