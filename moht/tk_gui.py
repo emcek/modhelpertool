@@ -141,6 +141,9 @@ class MohtTkGui(tk.Frame):
     def report(self) -> None:
         """Show report after clean-up."""
         LOG.debug(f'Report: {self.stats}')
+        report = f'Detected plugins: {self.stats["all"]}\n'
+        report += f'Already clean plugins: {self.stats["clean"]}\n'
+        report += f'Cleaned plugins: {self.stats["cleaned"]}\n'
         messagebox.showinfo('Report', pformat(self.stats, width=15))
         self.report_btn.config(state=tk.DISABLED)
         self.statusbar.set(f'ver. {VERSION}')
