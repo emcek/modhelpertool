@@ -42,8 +42,8 @@ def is_latest_ver(package: str, current_ver: str) -> Tuple[bool, str]:
     """
     Check if installed package is the latest.
 
-    :param package:
-    :param current_ver:
+    :param package: package name
+    :param current_ver: currently installed version
     """
     extra_data = current_ver
     cmd_str = f'pip install --dry-run --no-color --timeout 3 --retries 1 --progress-bar off --upgrade {package}'
