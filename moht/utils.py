@@ -53,16 +53,16 @@ def is_latest_ver(package: str, current_ver: str) -> Tuple[bool, str]:
     out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
     LOG.debug(f'Out: {out}')
     LOG.debug(f'Err: {err}')
-    match = search(r'Would install\s.*\s{}-([\d.-]+)'.format(package), out)
+    match = search(r'Would install\s.*{}-([\d.-]+)'.format(package), out)
     if match:
         extra_data = match.group(1)
         LOG.debug(f'New version: {extra_data}')
-    latest = _compare_versions(package, current_ver, extra_data)
     match = search(r'no such option:\s(.*)', err)
     if match:
         extra_data = match.group(1)
-        LOG.warning(f'Unknown option: {extra_data}')
+        LOG.warning(f'Version check failed, unknown option: {extra_data}')
         # todo: check version of pip and return as extra_data
+    latest = _compare_versions(package, current_ver, extra_data)
     return latest, extra_data
 
 
