@@ -81,7 +81,12 @@ def test_run_cmd():
     here = path.abspath(path.dirname(__file__))
     up = f'..{sep}moht{sep}'
     cmd = f'{path.join(here, up, tes3cmd)} clean somefile.esp'
+    out, err = utils.run_cmd('sort __init__.py')
+    assert out == err == ''
+
     out, err = utils.run_cmd(cmd)
+    assert utils.parse_cleaning(out, err, 'somefile.esp') is None
+
     assert out == '\nCLEANING: "somefile.esp" ...\n'
     assert 'FATAL ERROR (somefile.esp): Invalid input file (No such file or directory)' in err
 
