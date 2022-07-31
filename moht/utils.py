@@ -22,8 +22,8 @@ def run_cmd(cmd: str) -> Tuple[str, str]:
     LOG.debug(f'CMD: {cmd2exec}')
     stdout, stderr = Popen(cmd2exec, stdout=PIPE, stderr=PIPE).communicate()
     out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
-    LOG.debug(f'StdOut:\n{out}')
-    LOG.debug(f'StdErr:\n{err}')
+    LOG.debug(f'StdOut: {out}')
+    LOG.debug(f'StdErr: {err}')
     return out, err
 
 
