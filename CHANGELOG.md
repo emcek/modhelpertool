@@ -2,6 +2,7 @@
 * Checking for updates during start-up
 * Better cleaning report
 * Add Windows icon
+* Basic documentati**on in Readme file
 
 # v0.1.0
 * Simple support for Windows
