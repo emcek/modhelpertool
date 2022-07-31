@@ -11,6 +11,22 @@ from packaging import version
 LOG = getLogger(__name__)
 
 
+def run_cmd(cmd: str) -> Tuple[str, str]:
+    """
+    Run command and return stdout and stderr.
+
+    :param cmd: command to execute
+    :return: stdout, stderr
+    """
+    cmd2exec = split(cmd) if platform == 'linux' else cmd
+    LOG.debug(f'CMD: {cmd2exec}')
+    stdout, stderr = Popen(cmd2exec, stdout=PIPE, stderr=PIPE).communicate()
+    out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
+    LOG.debug(f'StdOut: {out}')
+    LOG.debug(f'StdErr: {err}')
+    return out, err
+
+
 def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:  # type: ignore
     """
     Parse output of cleaning command printout.
@@ -46,13 +62,7 @@ def is_latest_ver(package: str, current_ver: str) -> Tuple[bool, str]:
     :param current_ver: currently installed version
     """
     extra_data = current_ver
-    cmd_str = f'pip install --dry-run --no-color --timeout 3 --retries 1 --progress-bar off --upgrade {package}'
-    cmd = split(cmd_str) if platform == 'linux' else cmd_str
-    LOG.debug(f'CMD: {cmd}')
-    stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
-    out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
-    LOG.debug(f'Out: {out}')
-    LOG.debug(f'Err: {err}')
+    out, err = run_cmd(f'pip install --dry-run --no-color --timeout 3 --retries 1 --progress-bar off --upgrade {package}')
     match = search(r'Would install\s.*{}-([\d.-]+)'.format(package), out)
     if match:
         extra_data = match.group(1)

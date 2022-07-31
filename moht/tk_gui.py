@@ -4,15 +4,13 @@ from logging import getLogger
 from os import path, removedirs, chdir, walk, remove, sep
 from pathlib import Path
 from pprint import pformat
-from shlex import split
 from shutil import move, copy2, rmtree
-from subprocess import Popen, PIPE
 from sys import platform
 from time import time
 from tkinter import filedialog, messagebox
 
 from moht import PLUGINS2CLEAN, VERSION
-from moht.utils import is_latest_ver, parse_cleaning
+from moht.utils import is_latest_ver, parse_cleaning, run_cmd
 
 LOG = getLogger(__name__)
 
@@ -41,11 +39,11 @@ class MohtTkGui(tk.Frame):
         self.statusbar.set(f'ver. {VERSION} {current_ver}')
         # self._mods_dir.set('/home/emc/.local/share/openmw/data')
         # self._mods_dir.set('/home/emc/CitiesTowns/')  # test linux
-        # self._mods_dir.set('D:/CitiesTowns')  # test win
-        self._mods_dir.set(str(Path.home()))
+        self._mods_dir.set('D:/CitiesTowns')  # test win
+        # self._mods_dir.set(str(Path.home()))
         # self._morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')  # test linux
-        # self._morrowind_dir.set('S:/Program Files/Morrowind/Data Files')  # test win
-        self._morrowind_dir.set(str(Path.home()))
+        self._morrowind_dir.set('S:/Program Files/Morrowind/Data Files')  # test win
+        # self._morrowind_dir.set(str(Path.home()))
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
         self._check_clean_bin()
@@ -108,13 +106,7 @@ class MohtTkGui(tk.Frame):
             LOG.debug(f'Copy: {plug} -> {self.morrowind_dir}')
             copy2(plug, self.morrowind_dir)
             mod_file = str(plug).split(sep)[-1]
-            cmd_str = f'{path.join(here, self.tes3cmd)} clean --output-dir --overwrite "{mod_file}"'
-            cmd = split(cmd_str) if platform == 'linux' else cmd_str
-            LOG.debug(f'CMD: {cmd}')
-            stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
-            out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
-            LOG.debug(f'Out: {out}')
-            LOG.debug(f'Err: {err}')
+            out, err = run_cmd(f'{path.join(here, self.tes3cmd)} clean --output-dir --overwrite "{mod_file}"')
             result, reason = parse_cleaning(out, err, mod_file)
             LOG.debug(f'Result: {result}, Reason: {reason}')
             self._update_stats(mod_file, plug, reason, result)
@@ -153,11 +145,7 @@ class MohtTkGui(tk.Frame):
     def _check_clean_bin(self):
         here = path.abspath(path.dirname(__file__))
         LOG.debug('Checking tes3cmd')
-        cmd_str = f'{path.join(here, self.tes3cmd)} -h'
-        cmd = split(cmd_str) if platform == 'linux' else cmd_str
-        LOG.debug(f'CMD: {cmd}')
-        stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
-        out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
+        out, err = run_cmd(f'{path.join(here, self.tes3cmd)} -h')
         result, reason = parse_cleaning(out, err, '')
         LOG.debug(f'Result: {result}, Reason: {reason}')
         if not result and 'Config::IniFiles' in reason:

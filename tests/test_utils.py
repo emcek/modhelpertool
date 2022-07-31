@@ -74,15 +74,33 @@ COMMANDS
     assert utils.parse_cleaning(out, err, 'Caldera.esp') == (True, 'Usage')
 
 
-@mark.parametrize('local_ver, popen_values, result', [
-    ('0.37.0', (b"""Collecting tox==3.25.1
+def test_run_cmd():
+    from sys import platform
+    from os import path, sep
+    tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
+    here = path.abspath(path.dirname(__file__))
+    up = f'..{sep}moht{sep}'
+    plugin = 'some_plugin.esp'
+    cmd = f'{path.join(here, up, tes3cmd)} clean {plugin}'
+    out, err = utils.run_cmd(cmd)
+    cleaning = utils.parse_cleaning(out, err, plugin)
+    if not cleaning:
+        assert cleaning is None
+        assert out == f'\nCLEANING: "{plugin}" ...\n'
+        assert f'FATAL ERROR ({plugin}): Invalid input file (No such file or directory)' in err
+    else:
+        assert cleaning == (False, 'Config::IniFiles module')
+
+
+@mark.parametrize('local_ver, out_err, result', [
+    ('0.37.0', ("""Collecting tox==3.25.1
   Using cached tox-3.25.1-py2.py3-none-any.whl (85 kB)
 Collecting wheel==0.37.1
   Using cached wheel-0.37.1-py2.py3-none-any.whl (35 kB)
 Requirement already satisfied: pluggy>=0.12.0 in /home/emc/.pyenv/versions/3.10.5/envs/moth310/lib/python3.10/site-packages (from tox==3.25.1) (1.0.0)
-Would install tox-3.25.1 wheel-0.37.1""", b""), (False, '0.37.1')),
-    ('0.37.1', (b"Requirement already satisfied: wheel==0.37.1 in /home/emc/.pyenv/versions/3.10.5/envs/moth310/lib/python3.10/site-packages (0.37.1)", b""), (True, '0.37.1')),
-    ('0.37.1', (b"", b"""Usage:   
+Would install tox-3.25.1 wheel-0.37.1""", ""), (False, '0.37.1')),
+    ('0.37.1', ("Requirement already satisfied: wheel==0.37.1 in /home/emc/.pyenv/versions/3.10.5/envs/moth310/lib/python3.10/site-packages (0.37.1)", ""), (True, '0.37.1')),
+    ('0.37.1', ("", """Usage:   
   pip install [options] <requirement specifier> [package-index-options] ...
   pip install [options] -r <requirements file> [package-index-options] ...
   pip install [options] [-e] <vcs project url> ...
@@ -92,8 +110,7 @@ Would install tox-3.25.1 wheel-0.37.1""", b""), (False, '0.37.1')),
 no such option: --dry-run
 """), (True, '--dry-run')),
 ])
-def test_is_latest_ver(local_ver, popen_values, result):
-    from subprocess import Popen
-    with patch.object(Popen, 'communicate') as communicate_mock:
-        communicate_mock.return_value = popen_values
+def test_is_latest_ver(local_ver, out_err, result):
+    with patch.object(utils, 'run_cmd') as run_cmd_mock:
+        run_cmd_mock.return_value = out_err
         assert utils.is_latest_ver('wheel', current_ver=local_ver) == result
