@@ -38,15 +38,15 @@ def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:  
             return data['result'], match.group(1)  # type: ignore
 
 
-def check_new_ver(package: str, current_ver: str) -> Tuple[bool, str]:
+def is_latest_ver(package: str, current_ver: str) -> Tuple[bool, str]:
     """
-    Check if there is new version of package.
+    Check if installed package is the latest.
 
     :param package:
     :param current_ver:
     """
-    latest, extra_data = False, ''
-    cmd_str = f'pip install --dry-run --no-color --timeout 3 --retries 1 --progress-bar off --upgrade tox==3.25.1 {package}==0.37.1'
+    extra_data = current_ver
+    cmd_str = f'pip install --dry-run --no-color --timeout 3 --retries 1 --progress-bar off --upgrade {package}'
     cmd = split(cmd_str) if platform == 'linux' else cmd_str
     LOG.debug(f'CMD: {cmd}')
     stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
@@ -57,7 +57,7 @@ def check_new_ver(package: str, current_ver: str) -> Tuple[bool, str]:
     if match:
         extra_data = match.group(1)
         LOG.debug(f'New version: {extra_data}')
-        latest = _compare_versions(package, current_ver, extra_data)
+    latest = _compare_versions(package, current_ver, extra_data)
     match = search(r'no such option:\s(.*)', err)
     if match:
         extra_data = match.group(1)
