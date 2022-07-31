@@ -3,7 +3,6 @@ from functools import partial
 from logging import getLogger
 from os import path, removedirs, chdir, walk, remove, sep
 from pathlib import Path
-from pprint import pformat
 from shutil import move, copy2, rmtree
 from sys import platform
 from time import time
@@ -141,10 +140,11 @@ class MohtTkGui(tk.Frame):
     def report(self) -> None:
         """Show report after clean-up."""
         LOG.debug(f'Report: {self.stats}')
-        report = f'Detected plugins: {self.stats["all"]}\n'
+        report = f'Detected plugins to clean: {self.stats["all"]}\n'
         report += f'Already clean plugins: {self.stats["clean"]}\n'
         report += f'Cleaned plugins: {self.stats["cleaned"]}\n'
-        messagebox.showinfo('Report', pformat(self.stats, width=15))
+        report += '\n'.join([f'Error {k}: {self.stats[k]}' for k in self.stats if 'not found' in k])
+        messagebox.showinfo('Cleaning Report', report)
         self.report_btn.config(state=tk.DISABLED)
         self.statusbar.set(f'ver. {VERSION}')
 
