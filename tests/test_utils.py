@@ -1,4 +1,8 @@
-from moht.utils import parse_cleaning
+from unittest.mock import patch
+
+from pytest import mark
+
+from moht import utils
 
 
 def test_parse_cleaning_success():
@@ -16,7 +20,7 @@ Cleaning Stats for "FLG - Balmora's Underworld V1.1.esp":
                 duplicate record:     1
              redundant CELL.AMBI:     1
              redundant CELL.WHGT:     1"""
-    assert parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (True, 'saved')
+    assert utils.parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (True, 'saved')
 
 
 def test_parse_cleaning_not_modified():
@@ -26,7 +30,7 @@ Loaded cached Master: <DATADIR>/morrowind.esm
 Loaded cached Master: <DATADIR>/tribunal.esm
 Loaded cached Master: <DATADIR>/bloodmoon.esm
 FLG - Balmora's Underworld V1.1.esp was not modified"""
-    assert parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (False, 'not modified')
+    assert utils.parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (False, 'not modified')
 
 
 def test_parse_cleaning_no_master():
@@ -42,14 +46,14 @@ Loaded cached Master: <DATADIR>/tribunal.esm
 Loaded cached Master: <DATADIR>/bloodmoon.esm
 Loading Master: oaab_data.esm
 Caldera.esp was not modified"""
-    assert parse_cleaning(out, err, 'Caldera.esp') == (False, 'oaab_data.esm not found')
+    assert utils.parse_cleaning(out, err, 'Caldera.esp') == (False, 'oaab_data.esm not found')
 
 
 def test_parse_cleaning_check_bin_no_config_inifiles():
     err = """Can't locate Config/IniFiles.pm in @INC (you may need to install the Config::IniFiles module) (@INC contains: /usr/lib/perl5/5.36/site_perl /usr/share/perl5/site_perl /usr/lib/perl5/5.36/vendor_perl /usr/share/perl5/vendor_perl /usr/lib/perl5/5.36/core_perl /usr/share/perl5/core_perl) at /home/emc/git/Modding-OpenMW/modhelpertool/moht/tes3cmd-0.37w line 107.
 BEGIN failed--compilation aborted at /home/emc/git/Modding-OpenMW/modhelpertool/moht/tes3cmd-0.37w line 107."""
     out = ""
-    assert parse_cleaning(out, err, 'Caldera.esp') == (False, 'Config::IniFiles module')
+    assert utils.parse_cleaning(out, err, 'Caldera.esp') == (False, 'Config::IniFiles module')
 
 
 def test_parse_cleaning_check_bin_ok():
@@ -67,4 +71,29 @@ COMMANDS
   common
     Find record IDs common between two plugins."""
     out = ""
-    assert parse_cleaning(out, err, 'Caldera.esp') == (True, 'Usage')
+    assert utils.parse_cleaning(out, err, 'Caldera.esp') == (True, 'Usage')
+
+
+@mark.parametrize('local_ver, popen_values, result', [
+    ('0.37.0', (b"""Collecting tox==3.25.1
+  Using cached tox-3.25.1-py2.py3-none-any.whl (85 kB)
+Collecting wheel==0.37.1
+  Using cached wheel-0.37.1-py2.py3-none-any.whl (35 kB)
+Requirement already satisfied: pluggy>=0.12.0 in /home/emc/.pyenv/versions/3.10.5/envs/moth310/lib/python3.10/site-packages (from tox==3.25.1) (1.0.0)
+Would install tox-3.25.1 wheel-0.37.1""", b""), (False, '0.37.1')),
+    ('0.37.1', (b"Requirement already satisfied: wheel==0.37.1 in /home/emc/.pyenv/versions/3.10.5/envs/moth310/lib/python3.10/site-packages (0.37.1)", b""), (True, '0.37.1')),
+    ('0.37.1', (b"", b"""Usage:   
+  pip install [options] <requirement specifier> [package-index-options] ...
+  pip install [options] -r <requirements file> [package-index-options] ...
+  pip install [options] [-e] <vcs project url> ...
+  pip install [options] [-e] <local project path> ...
+  pip install [options] <archive url/path> ...
+
+no such option: --dry-run
+"""), (True, '--dry-run')),
+])
+def test_is_latest_ver(local_ver, popen_values, result):
+    from subprocess import Popen
+    with patch.object(Popen, 'communicate') as communicate_mock:
+        communicate_mock.return_value = popen_values
+        assert utils.is_latest_ver('wheel', current_ver=local_ver) == result
