@@ -74,6 +74,18 @@ COMMANDS
     assert utils.parse_cleaning(out, err, 'Caldera.esp') == (True, 'Usage')
 
 
+def test_run_cmd():
+    from sys import platform
+    from os import path, sep
+    tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
+    here = path.abspath(path.dirname(__file__))
+    up = f'..{sep}moht{sep}'
+    cmd = f'{path.join(here, up, tes3cmd)} clean somefile.esp'
+    out, err = utils.run_cmd(cmd)
+    assert out == '\nCLEANING: "somefile.esp" ...\n'
+    assert 'FATAL ERROR (somefile.esp): Invalid input file (No such file or directory)' in err
+
+
 @mark.parametrize('local_ver, popen_values, result', [
     ('0.37.0', (b"""Collecting tox==3.25.1
   Using cached tox-3.25.1-py2.py3-none-any.whl (85 kB)
