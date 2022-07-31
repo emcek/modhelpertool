@@ -80,15 +80,16 @@ def test_run_cmd():
     tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
     here = path.abspath(path.dirname(__file__))
     up = f'..{sep}moht{sep}'
-    cmd = f'{path.join(here, up, tes3cmd)} clean somefile.esp'
-    out, err = utils.run_cmd('sort __init__.py')
-    assert out == err == ''
-
+    plugin = 'some_plugin.esp'
+    cmd = f'{path.join(here, up, tes3cmd)} clean {plugin}'
     out, err = utils.run_cmd(cmd)
-    assert utils.parse_cleaning(out, err, 'somefile.esp') is None
-
-    assert out == '\nCLEANING: "somefile.esp" ...\n'
-    assert 'FATAL ERROR (somefile.esp): Invalid input file (No such file or directory)' in err
+    cleaning = utils.parse_cleaning(out, err, plugin)
+    if not cleaning:
+        assert cleaning is None
+        assert out == f'\nCLEANING: "{plugin}" ...\n'
+        assert f'FATAL ERROR ({plugin}): Invalid input file (No such file or directory)' in err
+    else:
+        assert cleaning  == (False, 'Config::IniFiles module')
 
 
 @mark.parametrize('local_ver, out_err, result', [
