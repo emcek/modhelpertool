@@ -70,8 +70,12 @@ def is_latest_ver(package: str, current_ver: str) -> Tuple[bool, str]:
     match = search(r'no such option:\s(.*)', err)
     if match:
         extra_data = match.group(1)
-        LOG.warning(f'Version check failed, unknown option: {extra_data}')
-        # todo: check version of pip and return as extra_data
+        LOG.warning(f'Version check failed, unknown switch: {extra_data}')
+        out, _ = run_cmd('pip list')
+        match = search(r'pip\s*([\d.]*)', out)
+        if match:
+            extra_data = f'unknown switch {extra_data} pip: {match.group(1)}'
+            LOG.debug(f'Pip version: {match.group(1)}')
     latest = _compare_versions(package, current_ver, extra_data)
     return latest, extra_data
 
