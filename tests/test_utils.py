@@ -1,4 +1,4 @@
-from moht.utils import parse_cleaning
+from moht import utils
 
 
 def test_parse_cleaning_success():
@@ -16,7 +16,7 @@ Cleaning Stats for "FLG - Balmora's Underworld V1.1.esp":
                 duplicate record:     1
              redundant CELL.AMBI:     1
              redundant CELL.WHGT:     1"""
-    assert parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (True, 'saved')
+    assert utils.parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (True, 'saved')
 
 
 def test_parse_cleaning_not_modified():
@@ -26,7 +26,7 @@ Loaded cached Master: <DATADIR>/morrowind.esm
 Loaded cached Master: <DATADIR>/tribunal.esm
 Loaded cached Master: <DATADIR>/bloodmoon.esm
 FLG - Balmora's Underworld V1.1.esp was not modified"""
-    assert parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (False, 'not modified')
+    assert utils.parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (False, 'not modified')
 
 
 def test_parse_cleaning_no_master():
@@ -42,14 +42,14 @@ Loaded cached Master: <DATADIR>/tribunal.esm
 Loaded cached Master: <DATADIR>/bloodmoon.esm
 Loading Master: oaab_data.esm
 Caldera.esp was not modified"""
-    assert parse_cleaning(out, err, 'Caldera.esp') == (False, 'oaab_data.esm not found')
+    assert utils.parse_cleaning(out, err, 'Caldera.esp') == (False, 'oaab_data.esm not found')
 
 
 def test_parse_cleaning_check_bin_no_config_inifiles():
     err = """Can't locate Config/IniFiles.pm in @INC (you may need to install the Config::IniFiles module) (@INC contains: /usr/lib/perl5/5.36/site_perl /usr/share/perl5/site_perl /usr/lib/perl5/5.36/vendor_perl /usr/share/perl5/vendor_perl /usr/lib/perl5/5.36/core_perl /usr/share/perl5/core_perl) at /home/emc/git/Modding-OpenMW/modhelpertool/moht/tes3cmd-0.37w line 107.
 BEGIN failed--compilation aborted at /home/emc/git/Modding-OpenMW/modhelpertool/moht/tes3cmd-0.37w line 107."""
     out = ""
-    assert parse_cleaning(out, err, 'Caldera.esp') == (False, 'Config::IniFiles module')
+    assert utils.parse_cleaning(out, err, 'Caldera.esp') == (False, 'Config::IniFiles module')
 
 
 def test_parse_cleaning_check_bin_ok():
@@ -67,4 +67,15 @@ COMMANDS
   common
     Find record IDs common between two plugins."""
     out = ""
-    assert parse_cleaning(out, err, 'Caldera.esp') == (True, 'Usage')
+    assert utils.parse_cleaning(out, err, 'Caldera.esp') == (True, 'Usage')
+
+
+# @mark.parametrize('online_tag, result', [('1.1.1', (True, version.parse('1.1.1'), 'github.com/fake.tgz', '09 August 2021', 'Pre-release', 'fake.tgz')),
+#                                          ('3.2.1', (False, version.parse('3.2.1'), 'github.com/fake.tgz', '09 August 2021', 'Pre-release', 'fake.tgz'))])
+# def test_check_ver_is_possible(online_tag, result):
+#     with patch.object(.utils, 'Popen') as response_get:
+#         type(response_get.return_value).ok = PropertyMock(return_value=True)
+#         type(response_get.return_value).json = MagicMock(return_value={'tag_name': online_tag, 'prerelease': True,
+#                                                                        'assets': [{'browser_download_url': 'github.com/fake.tgz'}],
+#                                                                        'published_at': '2021-08-09T16:41:51Z'})
+#         assert utils.check_ver_at_github(repo='fake1/package1', current_ver='1.1.1') == result
