@@ -86,15 +86,15 @@ def test_run_cmd():
     assert 'FATAL ERROR (somefile.esp): Invalid input file (No such file or directory)' in err
 
 
-@mark.parametrize('local_ver, popen_values, result', [
-    ('0.37.0', (b"""Collecting tox==3.25.1
+@mark.parametrize('local_ver, out_err, result', [
+    ('0.37.0', ("""Collecting tox==3.25.1
   Using cached tox-3.25.1-py2.py3-none-any.whl (85 kB)
 Collecting wheel==0.37.1
   Using cached wheel-0.37.1-py2.py3-none-any.whl (35 kB)
 Requirement already satisfied: pluggy>=0.12.0 in /home/emc/.pyenv/versions/3.10.5/envs/moth310/lib/python3.10/site-packages (from tox==3.25.1) (1.0.0)
-Would install tox-3.25.1 wheel-0.37.1""", b""), (False, '0.37.1')),
-    ('0.37.1', (b"Requirement already satisfied: wheel==0.37.1 in /home/emc/.pyenv/versions/3.10.5/envs/moth310/lib/python3.10/site-packages (0.37.1)", b""), (True, '0.37.1')),
-    ('0.37.1', (b"", b"""Usage:   
+Would install tox-3.25.1 wheel-0.37.1""", ""), (False, '0.37.1')),
+    ('0.37.1', ("Requirement already satisfied: wheel==0.37.1 in /home/emc/.pyenv/versions/3.10.5/envs/moth310/lib/python3.10/site-packages (0.37.1)", ""), (True, '0.37.1')),
+    ('0.37.1', ("", """Usage:   
   pip install [options] <requirement specifier> [package-index-options] ...
   pip install [options] -r <requirements file> [package-index-options] ...
   pip install [options] [-e] <vcs project url> ...
@@ -104,8 +104,7 @@ Would install tox-3.25.1 wheel-0.37.1""", b""), (False, '0.37.1')),
 no such option: --dry-run
 """), (True, '--dry-run')),
 ])
-def test_is_latest_ver(local_ver, popen_values, result):
-    from subprocess import Popen
-    with patch.object(Popen, 'communicate') as communicate_mock:
-        communicate_mock.return_value = popen_values
+def test_is_latest_ver(local_ver, out_err, result):
+    with patch.object(utils, 'run_cmd') as run_cmd_mock:
+        run_cmd_mock.return_value = out_err
         assert utils.is_latest_ver('wheel', current_ver=local_ver) == result
