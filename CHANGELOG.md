@@ -1,3 +1,8 @@
+# v0.2.0
+* Checking for updates during start-up
+* Better cleaning report
+* Add Windows icon
+
 # v0.1.0
 * Simple support for Windows
 * Add icon to GUI
