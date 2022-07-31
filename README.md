@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/Licence-MIT-blue.svg)](./LICENSE.md)
 [![image](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue.svg)](https://gitlab.com/modding-openmw/modhelpertool)
 [![moht](https://snyk.io/advisor/python/moht/badge.svg)](https://snyk.io/advisor/python/moht)  
-![mohtlogo](./moht/moht.png)  
+![mohtlogo](https://i.imgur.com/gJoB1Dv.png)  
 
 # Mod Helper Tool
 Simple yet powerful tool to help you manage your mods in several ways.
