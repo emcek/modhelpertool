@@ -1,6 +1,7 @@
 # v0.2.0
 * Checking for updates during start-up
 * Better cleaning report
+* Improve checkbox description
 * Add Windows icon
 * Basic documentation in Readme file
 
