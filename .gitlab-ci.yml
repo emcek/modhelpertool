@@ -21,6 +21,7 @@ stages:
 '.check':
   script:
     - export TOXENV="${CI_JOB_NAME##check}"
+    - sudo apt-get install -y libconfig-inifiles-perl
     - pip install tox
     - pip list
     - tox
