@@ -11,6 +11,20 @@ from packaging import version
 LOG = getLogger(__name__)
 
 
+def run_cmd(cmd: str) -> Tuple[str, str]:
+    """
+    Run command and return stdout and stderr.
+
+    :param cmd: command to execute
+    :return: stdout, stderr
+    """
+    cmd2exec = split(cmd) if platform == 'linux' else cmd
+    LOG.debug(f'CMD: {cmd2exec}')
+    stdout, stderr = Popen(cmd2exec, stdout=PIPE, stderr=PIPE).communicate()
+    out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
+    return out, err
+
+
 def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:  # type: ignore
     """
     Parse output of cleaning command printout.
