@@ -39,6 +39,8 @@ For now, application can only clean your mods, but in future more features will 
 ```shell
 pip install moht
 ```
+4. In Windows executable is at <python_installation>\Scripts\moht.exe ie. `C:\Python310\Scripts\moht.exe`. 
+You can create shortcut to it and use `moht.ico` file from ie. `C:\Python310\Lib\site-packages\moht`
 
 ## Upgrade
 To upgrade Moht to the latest version:
