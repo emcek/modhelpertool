@@ -38,11 +38,11 @@ class MohtTkGui(tk.Frame):
         current_ver = '' if latest else f'new version: {desc}'
         self.statusbar.set(f'ver. {VERSION} {current_ver}')
         # self._mods_dir.set('/home/emc/.local/share/openmw/data')
-        # self._mods_dir.set('/home/emc/CitiesTowns/')  # test linux
-        self._mods_dir.set('D:/CitiesTowns')  # test win
+        self._mods_dir.set('/home/emc/CitiesTowns/')  # test linux
+        # self._mods_dir.set('D:/CitiesTowns')  # test win
         # self._mods_dir.set(str(Path.home()))
-        # self._morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')  # test linux
-        self._morrowind_dir.set('S:/Program Files/Morrowind/Data Files')  # test win
+        self._morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')  # test linux
+        # self._morrowind_dir.set('S:/Program Files/Morrowind/Data Files')  # test win
         # self._morrowind_dir.set(str(Path.home()))
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
@@ -92,6 +92,9 @@ class MohtTkGui(tk.Frame):
 
     def start_clean(self) -> None:
         """Start cleaning process."""
+        if not all([path.isdir(folder) for folder in [self.mods_dir, self.morrowind_dir]]):
+            self.statusbar.set('Check directories and try again')
+            return
         all_plugins = [Path(path.join(root, filename)) for root, _, files in walk(self.mods_dir) for filename in files if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
         LOG.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
         plugins_to_clean = [plugin_file for plugin_file in all_plugins if str(plugin_file).split(sep)[-1] in PLUGINS2CLEAN]
