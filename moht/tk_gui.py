@@ -12,7 +12,7 @@ from time import time
 from tkinter import filedialog, messagebox
 
 from moht import PLUGINS2CLEAN, VERSION
-from moht.utils import parse_cleaning
+from moht.utils import check_new_ver, parse_cleaning
 
 LOG = getLogger(__name__)
 
@@ -26,6 +26,7 @@ class MohtTkGui(tk.Frame):
         """
         LOG.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
         super().__init__(master)
+        check_new_ver('wheel', '0.37.0')
         self.tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
         self.master = master
         self.master.title('Mod Helper Tool')
