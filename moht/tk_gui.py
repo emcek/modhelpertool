@@ -125,7 +125,9 @@ class MohtTkGui(tk.Frame):
             removedirs(f'{self.morrowind_dir}/1')
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
             rmtree(f'{self.morrowind_dir}/{cachedir}', ignore_errors=True)
-        LOG.debug(f'Total time: {time() - start:.2f} s')
+        cleaning_time = time() - start
+        self.stats['time'] = cleaning_time
+        LOG.debug(f'Total time: {cleaning_time} s')
         self.statusbar.set('Done. See report!')
         self.report_btn.config(state=tk.NORMAL)
 
@@ -149,6 +151,7 @@ class MohtTkGui(tk.Frame):
         report += f'Already clean plugins: {self.stats["clean"]}\n'
         report += f'Cleaned plugins: {self.stats["cleaned"]}\n'
         report += '\n'.join([f'Error {k}: {self.stats[k]}' for k in self.stats if 'not found' in k])
+        report += f'\nTotal time: {self.stats["time"]:.2f} s'
         messagebox.showinfo('Cleaning Report', report)
         self.report_btn.config(state=tk.DISABLED)
         self.statusbar.set(f'ver. {VERSION}')
