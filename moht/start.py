@@ -1,5 +1,5 @@
 import tkinter as tk
-from os import path
+from os.path import abspath, dirname, join
 
 from moht.tk_gui import MohtTkGui
 
@@ -10,8 +10,7 @@ def run():
     width, height = 500, 200
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
-    here = path.abspath(path.dirname(__file__))
-    root.iconphoto(False, tk.PhotoImage(file=path.join(here, 'moht.png')))
+    root.iconphoto(False, tk.PhotoImage(file=join(abspath(dirname(__file__)), 'moht.png')))
     gui = MohtTkGui(master=root)
     gui.mainloop()
 
