@@ -32,7 +32,7 @@ class MohtTkGui(tk.Frame):
         self._morrowind_dir = tk.StringVar()
         self.chkbox_backup = tk.BooleanVar()
         self.chkbox_cache = tk.BooleanVar()
-        self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0}
+        self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
         self._init_widgets()
         current_ver = '' if latest else f'new version: {desc}'
         self.statusbar.set(f'ver. {VERSION} {current_ver}')
