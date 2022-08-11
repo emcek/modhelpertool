@@ -66,7 +66,7 @@ class MohtTkGui(tk.Frame):
         tes3cmd_file = tk.Entry(master=self.master, textvariable=self._tes3cmd)
         mods_btn = tk.Button(master=self.master, text='Select Mods Dir', width=16, command=partial(self.select_dir, self._mods_dir))
         morrowind_btn = tk.Button(master=self.master, text='Select Morrowind Dir', width=16, command=partial(self.select_dir, self._morrowind_dir))
-        tes3cmd_btn = tk.Button(master=self.master, text='Select tes3cmd', width=16, command=partial(self.select_file, self._tes3cmd))
+        tes3cmd_btn = tk.Button(master=self.master, text='Select tes3cmd', width=16, command=partial(self.select_tes3cmd_file, self._tes3cmd))
         self.clean_btn = tk.Button(master=self.master, text='Clean Mods', width=16, command=self.start_clean)
         self.report_btn = tk.Button(master=self.master, text='Report', width=16, state=tk.DISABLED, command=self.report)
         close_btn = tk.Button(master=self.master, text='Close Tool', width=16, command=self.master.destroy)
@@ -100,7 +100,7 @@ class MohtTkGui(tk.Frame):
         LOG.debug(f'Directory: {directory}')
         text_var.set(f'{directory}')
 
-    def select_file(self, text_var: tk.StringVar) -> None:
+    def select_tes3cmd_file(self, text_var: tk.StringVar) -> None:
         """
         Select tes3cmd file location.
 
