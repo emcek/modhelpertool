@@ -89,7 +89,7 @@ def test_run_cmd():
         assert out == f'\nCLEANING: "{plugin}" ...\n'
         assert f'FATAL ERROR ({plugin}): Invalid input file (No such file or directory)' in err
     else:
-        assert cleaning == (False, 'Config::IniFiles module')
+        assert cleaning == (False, 'Not tes3cmd')
 
 
 @mark.parametrize('local_ver, out_err, result', [
