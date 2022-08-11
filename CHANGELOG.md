@@ -1,6 +1,8 @@
 # v0.2.0
 * Checking for updates during start-up
 * Better cleaning report
+  * use more user-friendly format, instead of Python dict
+  * note missing esm files
 * Improve checkbox description
 * Add Windows icon
 * Basic documentation in Readme file
