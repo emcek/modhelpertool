@@ -117,7 +117,10 @@ class MohtTkGui(tk.Frame):
         if not all([path.isdir(folder) for folder in [self.mods_dir, self.morrowind_dir]]):
             self.statusbar.set('Check directories and try again')
             return
-        all_plugins = [Path(path.join(root, filename)) for root, _, files in walk(self.mods_dir) for filename in files if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
+        all_plugins = [Path(path.join(root, filename))
+                       for root, _, files in walk(self.mods_dir)
+                       for filename in files
+                       if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
         LOG.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
         plugins_to_clean = [plugin_file for plugin_file in all_plugins if str(plugin_file).split(sep)[-1] in PLUGINS2CLEAN]
         no_of_plugins = len(plugins_to_clean)
