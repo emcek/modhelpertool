@@ -17,9 +17,11 @@ Anyway if you not pay attention to details or your english is not fluent (as min
 For now, application can only clean your mods, but in future more features will be added.
 
 * Run Linux, Windows and Mac
-* Built-in `tes3cmd` binary - no additional downloads
+* Built-in `tes3cmd` binary - no additional downloads needed
+* Allow to select custom `tes3cmd` executable file
 * Select location of directory with Mods
 * Select location of `Morrowind/Data Files` directory
+* Simple report after cleaning
 
 ## Requirements
 * Python 3.7+ (with tcl/tk support, see installation) should be fine
