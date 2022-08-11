@@ -94,6 +94,17 @@ class MohtTkGui(tk.Frame):
         LOG.debug(f'Directory: {directory}')
         text_var.set(f'{directory}')
 
+    @staticmethod
+    def select_file(text_var: tk.StringVar) -> None:
+        """
+        Select file location.
+
+        :param text_var: StringVar of Entry to update
+        """
+        filename = filedialog.askopenfilename(initialdir=str(Path.home()), title='Select file')
+        LOG.debug(f'File: {filename}')
+        text_var.set(f'{filename}')
+
     def start_clean(self) -> None:
         """Start cleaning process."""
         if not all([path.isdir(folder) for folder in [self.mods_dir, self.morrowind_dir]]):
