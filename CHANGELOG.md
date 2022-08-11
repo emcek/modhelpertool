@@ -1,3 +1,6 @@
+# v0.3.0
+* Optional PyQt5 GUI
+
 # v0.2.0
 * Checking for updates during start-up
 * Better cleaning report
