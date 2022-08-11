@@ -151,7 +151,8 @@ class MohtTkGui(tk.Frame):
         report += f'Already clean plugins: {self.stats["clean"]}\n'
         report += f'Cleaned plugins: {self.stats["cleaned"]}\n'
         report += '\n'.join([f'Error {k}: {self.stats[k]}' for k in self.stats if 'not found' in k])
-        report += f'\nTotal time: {self.stats["time"]:.2f} s'
+        report += '\n\nCopy missing esm file(s) to Data Files directory and clean again.\n\n' if 'Error' in report else '\n'
+        report += f'Total time: {self.stats["time"]:.2f} s'
         messagebox.showinfo('Cleaning Report', report)
         self.report_btn.config(state=tk.DISABLED)
         self.statusbar.set(f'ver. {VERSION}')
