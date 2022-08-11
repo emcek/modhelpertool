@@ -25,7 +25,6 @@ class MohtTkGui(tk.Frame):
         super().__init__(master)
         latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
         self.master = master
-        self.master.title('Mod Helper Tool')
         self.statusbar = tk.StringVar()
         self._mods_dir = tk.StringVar()
         self._morrowind_dir = tk.StringVar()
