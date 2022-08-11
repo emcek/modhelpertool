@@ -53,13 +53,9 @@ class MohtTkGui(tk.Frame):
 
     def _init_widgets(self) -> None:
         self.master.columnconfigure(index=0, weight=10)
-        self.master.columnconfigure(index=1, weight=1)
-        self.master.rowconfigure(index=0, weight=10)
+        self.master.rowconfigure(index=0, weight=1)
         self.master.rowconfigure(index=1, weight=1)
         self.master.rowconfigure(index=2, weight=1)
-        self.master.rowconfigure(index=3, weight=1)
-        self.master.rowconfigure(index=4, weight=1)
-        self.master.rowconfigure(index=5, weight=1)
 
         mods_dir = tk.Entry(master=self.master, textvariable=self._mods_dir)
         morrowind_dir = tk.Entry(master=self.master, textvariable=self._morrowind_dir)
