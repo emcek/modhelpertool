@@ -24,12 +24,11 @@ class MohtTkGui(tk.Frame):
         LOG.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
         super().__init__(master)
         latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
-        self.tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
         self.master = master
-        self.master.title('Mod Helper Tool')
         self.statusbar = tk.StringVar()
         self._mods_dir = tk.StringVar()
         self._morrowind_dir = tk.StringVar()
+        self._tes3cmd = tk.StringVar()
         self.chkbox_backup = tk.BooleanVar()
         self.chkbox_cache = tk.BooleanVar()
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
@@ -46,23 +45,24 @@ class MohtTkGui(tk.Frame):
         else:
             self._mods_dir.set(str(Path.home()))
             self._morrowind_dir.set(str(Path.home()))
+        here = path.abspath(path.dirname(__file__))
+        tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
+        self._tes3cmd.set(path.join(here, tes3cmd))
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
-        self._check_clean_bin()
 
     def _init_widgets(self) -> None:
         self.master.columnconfigure(index=0, weight=10)
-        self.master.columnconfigure(index=1, weight=1)
-        self.master.rowconfigure(index=0, weight=10)
+        self.master.rowconfigure(index=0, weight=1)
         self.master.rowconfigure(index=1, weight=1)
         self.master.rowconfigure(index=2, weight=1)
-        self.master.rowconfigure(index=3, weight=1)
-        self.master.rowconfigure(index=4, weight=1)
 
         mods_dir = tk.Entry(master=self.master, textvariable=self._mods_dir)
         morrowind_dir = tk.Entry(master=self.master, textvariable=self._morrowind_dir)
+        tes3cmd_file = tk.Entry(master=self.master, textvariable=self._tes3cmd)
         mods_btn = tk.Button(master=self.master, text='Select Mods Dir', width=16, command=partial(self.select_dir, self._mods_dir))
         morrowind_btn = tk.Button(master=self.master, text='Select Morrowind Dir', width=16, command=partial(self.select_dir, self._morrowind_dir))
+        tes3cmd_btn = tk.Button(master=self.master, text='Select tes3cmd', width=16, command=partial(self.select_tes3cmd_file, self._tes3cmd))
         self.clean_btn = tk.Button(master=self.master, text='Clean Mods', width=16, command=self.start_clean)
         self.report_btn = tk.Button(master=self.master, text='Report', width=16, state=tk.DISABLED, command=self.report)
         close_btn = tk.Button(master=self.master, text='Close Tool', width=16, command=self.master.destroy)
@@ -73,15 +73,17 @@ class MohtTkGui(tk.Frame):
 
         mods_dir.grid(row=0, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
         morrowind_dir.grid(row=1, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
-        chkbox_label.grid(row=2, column=0, padx=2, pady=2, sticky=tk.W)
-        chkbox_backup.grid(row=3, column=0, padx=2, pady=2, sticky=tk.W)
-        chkbox_cache.grid(row=4, column=0, padx=2, pady=2, sticky=tk.W)
+        tes3cmd_file.grid(row=2, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
+        chkbox_label.grid(row=3, column=0, padx=2, pady=2, sticky=tk.W)
+        chkbox_backup.grid(row=4, column=0, padx=2, pady=2, sticky=tk.W)
+        chkbox_cache.grid(row=5, column=0, padx=2, pady=2, sticky=tk.W)
         mods_btn.grid(row=0, column=1, padx=2, pady=2)
         morrowind_btn.grid(row=1, column=1, padx=2, pady=2)
-        self.clean_btn.grid(row=2, column=1, padx=2, pady=2)
-        self.report_btn.grid(row=3, column=1, padx=2, pady=2)
-        close_btn.grid(row=4, column=1, padx=2, pady=2)
-        statusbar.grid(row=5, column=0, columnspan=3, sticky=tk.W)
+        tes3cmd_btn.grid(row=2, column=1, padx=2, pady=2)
+        self.clean_btn.grid(row=3, column=1, padx=2, pady=2)
+        self.report_btn.grid(row=4, column=1, padx=2, pady=2)
+        close_btn.grid(row=5, column=1, padx=2, pady=2)
+        statusbar.grid(row=6, column=0, columnspan=3, sticky=tk.W)
 
     @staticmethod
     def select_dir(text_var: tk.StringVar) -> None:
@@ -94,18 +96,34 @@ class MohtTkGui(tk.Frame):
         LOG.debug(f'Directory: {directory}')
         text_var.set(f'{directory}')
 
+    def select_tes3cmd_file(self, text_var: tk.StringVar) -> None:
+        """
+        Select tes3cmd file location.
+
+        :param text_var: StringVar of Entry to update
+        """
+        filename = filedialog.askopenfilename(initialdir=str(Path.home()), title='Select file')
+        LOG.debug(f'File: {filename}')
+        text_var.set(f'{filename}')
+        if self._check_clean_bin():
+            self.clean_btn.config(state=tk.ACTIVE)
+        else:
+            self.clean_btn.config(state=tk.DISABLED)
+
     def start_clean(self) -> None:
         """Start cleaning process."""
         if not all([path.isdir(folder) for folder in [self.mods_dir, self.morrowind_dir]]):
             self.statusbar.set('Check directories and try again')
             return
-        all_plugins = [Path(path.join(root, filename)) for root, _, files in walk(self.mods_dir) for filename in files if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
+        all_plugins = [Path(path.join(root, filename))
+                       for root, _, files in walk(self.mods_dir)
+                       for filename in files
+                       if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
         LOG.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
         plugins_to_clean = [plugin_file for plugin_file in all_plugins if str(plugin_file).split(sep)[-1] in PLUGINS2CLEAN]
         no_of_plugins = len(plugins_to_clean)
         LOG.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
         chdir(self.morrowind_dir)
-        here = path.abspath(path.dirname(__file__))
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
         for idx, plug in enumerate(plugins_to_clean, 1):
@@ -113,7 +131,7 @@ class MohtTkGui(tk.Frame):
             LOG.debug(f'Copy: {plug} -> {self.morrowind_dir}')
             copy2(plug, self.morrowind_dir)
             mod_file = str(plug).split(sep)[-1]
-            out, err = run_cmd(f'{path.join(here, self.tes3cmd)} clean --output-dir --overwrite "{mod_file}"')
+            out, err = run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
             result, reason = parse_cleaning(out, err, mod_file)
             LOG.debug(f'Result: {result}, Reason: {reason}')
             self._update_stats(mod_file, plug, reason, result)
@@ -156,17 +174,19 @@ class MohtTkGui(tk.Frame):
         self.report_btn.config(state=tk.DISABLED)
         self.statusbar.set(f'ver. {VERSION}')
 
-    def _check_clean_bin(self):
-        here = path.abspath(path.dirname(__file__))
+    def _check_clean_bin(self) -> bool:
         LOG.debug('Checking tes3cmd')
-        out, err = run_cmd(f'{path.join(here, self.tes3cmd)} -h')
+        out, err = run_cmd(f'{self.tes3cmd} -h')
         result, reason = parse_cleaning(out, err, '')
         LOG.debug(f'Result: {result}, Reason: {reason}')
-        if not result and 'Config::IniFiles' in reason:
-            msg = 'Use your package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
-            messagebox.showerror('Missing package', msg)
+        if not result:
             self.statusbar.set(f'Error: {reason}')
-            self.clean_btn.config(state=tk.DISABLED)
+            if 'Config::IniFiles' in reason:
+                reason = 'Use package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
+            elif 'Not tes3cmd' in reason:
+                reason = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
+            messagebox.showerror('Not tes3cmd', reason)
+        return result
 
     @property
     def mods_dir(self) -> str:
@@ -186,10 +206,23 @@ class MohtTkGui(tk.Frame):
         """
         Get Morrowind Data Files directory.
 
-        :return: morrowind as sring
+        :return: morrowind dir as string
         """
         return str(self._morrowind_dir.get())
 
     @morrowind_dir.setter
     def morrowind_dir(self, value: Path) -> None:
         self._morrowind_dir.set(str(value))
+
+    @property
+    def tes3cmd(self) -> str:
+        """
+        Get tes3cmd binary file path.
+
+        :return: tes3cmd file as string
+        """
+        return str(self._tes3cmd.get())
+
+    @tes3cmd.setter
+    def tes3cmd(self, value: Path) -> None:
+        self._tes3cmd.set(str(value))

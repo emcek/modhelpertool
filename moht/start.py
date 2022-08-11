@@ -7,7 +7,8 @@ from moht.tk_gui import MohtTkGui
 def run():
     """Function to start Mod Helper Tool GUI."""
     root = tk.Tk()
-    width, height = 500, 200
+    width, height = 500, 230
+    root.title('Mod Helper Tool')
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
     root.iconphoto(False, tk.PhotoImage(file=join(abspath(dirname(__file__)), 'moht.png')))

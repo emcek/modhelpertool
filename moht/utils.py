@@ -52,6 +52,7 @@ def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:  
         match = search(*data['args'])  # type: ignore
         if match:
             return data['result'], match.group(1)  # type: ignore
+    return False, 'Not tes3cmd'
 
 
 def is_latest_ver(package: str, current_ver: str) -> Tuple[bool, str]:
