@@ -11,7 +11,7 @@ from tkinter import filedialog, messagebox
 from moht import PLUGINS2CLEAN, VERSION
 from moht.utils import is_latest_ver, parse_cleaning, run_cmd
 
-LOG = getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class MohtTkGui(tk.Frame):
@@ -21,7 +21,7 @@ class MohtTkGui(tk.Frame):
 
         :param master: Top level widget
         """
-        LOG.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
+        logger.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
         super().__init__(master)
         latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
         self.master = master
@@ -93,7 +93,7 @@ class MohtTkGui(tk.Frame):
         :param text_var: StringVar of Entry to update
         """
         directory = filedialog.askdirectory(initialdir=str(Path.home()), title='Select directory')
-        LOG.debug(f'Directory: {directory}')
+        logger.debug(f'Directory: {directory}')
         text_var.set(f'{directory}')
 
     def select_tes3cmd_file(self, text_var: tk.StringVar) -> None:
@@ -103,7 +103,7 @@ class MohtTkGui(tk.Frame):
         :param text_var: StringVar of Entry to update
         """
         filename = filedialog.askopenfilename(initialdir=str(Path.home()), title='Select file')
-        LOG.debug(f'File: {filename}')
+        logger.debug(f'File: {filename}')
         text_var.set(f'{filename}')
         if self._check_clean_bin():
             self.clean_btn.config(state=tk.ACTIVE)
@@ -119,39 +119,39 @@ class MohtTkGui(tk.Frame):
                        for root, _, files in walk(self.mods_dir)
                        for filename in files
                        if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
-        LOG.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
+        logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
         plugins_to_clean = [plugin_file for plugin_file in all_plugins if str(plugin_file).split(sep)[-1] in PLUGINS2CLEAN]
         no_of_plugins = len(plugins_to_clean)
-        LOG.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
+        logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
         chdir(self.morrowind_dir)
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
         for idx, plug in enumerate(plugins_to_clean, 1):
-            LOG.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
-            LOG.debug(f'Copy: {plug} -> {self.morrowind_dir}')
+            logger.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
+            logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
             copy2(plug, self.morrowind_dir)
             mod_file = str(plug).split(sep)[-1]
             out, err = run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
             result, reason = parse_cleaning(out, err, mod_file)
-            LOG.debug(f'Result: {result}, Reason: {reason}')
+            logger.debug(f'Result: {result}, Reason: {reason}')
             self._update_stats(mod_file, plug, reason, result)
             if self.chkbox_backup.get():
-                LOG.debug(f'Remove: {self.morrowind_dir}/{mod_file}')
+                logger.debug(f'Remove: {self.morrowind_dir}/{mod_file}')
                 remove(f'{self.morrowind_dir}/{mod_file}')
-        LOG.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
+        logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.chkbox_cache.get():
             removedirs(f'{self.morrowind_dir}/1')
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
             rmtree(f'{self.morrowind_dir}/{cachedir}', ignore_errors=True)
         cleaning_time = time() - start
         self.stats['time'] = cleaning_time
-        LOG.debug(f'Total time: {cleaning_time} s')
+        logger.debug(f'Total time: {cleaning_time} s')
         self.statusbar.set('Done. See report!')
         self.report_btn.config(state=tk.NORMAL)
 
     def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
         if result:
-            LOG.debug(f'Move: {self.morrowind_dir}/1/{mod_file} -> {plug}')
+            logger.debug(f'Move: {self.morrowind_dir}/1/{mod_file} -> {plug}')
             move(f'{self.morrowind_dir}/1/{mod_file}', plug)
             self.stats['cleaned'] += 1
         if not result and reason == 'not modified':
@@ -164,7 +164,7 @@ class MohtTkGui(tk.Frame):
 
     def report(self) -> None:
         """Show report after clean-up."""
-        LOG.debug(f'Report: {self.stats}')
+        logger.debug(f'Report: {self.stats}')
         report = f'Detected plugins to clean: {self.stats["all"]}\n'
         report += f'Already clean plugins: {self.stats["clean"]}\n'
         report += f'Cleaned plugins: {self.stats["cleaned"]}\n'
@@ -176,10 +176,10 @@ class MohtTkGui(tk.Frame):
         self.statusbar.set(f'ver. {VERSION}')
 
     def _check_clean_bin(self) -> bool:
-        LOG.debug('Checking tes3cmd')
+        logger.debug('Checking tes3cmd')
         out, err = run_cmd(f'{self.tes3cmd} -h')
         result, reason = parse_cleaning(out, err, '')
-        LOG.debug(f'Result: {result}, Reason: {reason}')
+        logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
             self.statusbar.set(f'Error: {reason}')
             if 'Config::IniFiles' in reason:

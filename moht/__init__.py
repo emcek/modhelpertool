@@ -5,11 +5,11 @@ from sys import platform
 
 from moht.log import config_logger
 
-LOG = getLogger(__name__)
-config_logger(logger=LOG, verbose=True)
-LOG.debug(f'Arch: {name} / {platform} / {" / ".join(architecture())}')
-LOG.debug(f'Python: {python_implementation()}-{python_version()}')
-LOG.debug(f'{uname()}')
+logger = getLogger(__name__)
+config_logger(logger=logger, verbose=True)
+logger.debug(f'Arch: {name} / {platform} / {" / ".join(architecture())}')
+logger.debug(f'Python: {python_implementation()}-{python_version()}')
+logger.debug(f'{uname()}')
 
 VERSION = '0.2.0'
 PLUGINS2CLEAN = [

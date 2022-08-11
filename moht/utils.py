@@ -8,7 +8,7 @@ from typing import Tuple
 
 from packaging import version
 
-LOG = getLogger(__name__)
+logger = getLogger(__name__)
 
 
 def run_cmd(cmd: str) -> Tuple[str, str]:
@@ -19,11 +19,11 @@ def run_cmd(cmd: str) -> Tuple[str, str]:
     :return: stdout, stderr
     """
     cmd2exec = split(cmd) if platform == 'linux' else cmd
-    LOG.debug(f'CMD: {cmd2exec}')
+    logger.debug(f'CMD: {cmd2exec}')
     stdout, stderr = Popen(cmd2exec, stdout=PIPE, stderr=PIPE).communicate()
     out, err = stdout.decode('utf-8'), stderr.decode('utf-8')
-    LOG.debug(f'StdOut: {out}')
-    LOG.debug(f'StdErr: {err}')
+    logger.debug(f'StdOut: {out}')
+    logger.debug(f'StdErr: {err}')
     return out, err
 
 
@@ -67,16 +67,16 @@ def is_latest_ver(package: str, current_ver: str) -> Tuple[bool, str]:
     match = search(r'Would install\s.*{}-([\d.-]+)'.format(package), out)
     if match:
         extra_data = match.group(1)
-        LOG.debug(f'New version: {extra_data}')
+        logger.debug(f'New version: {extra_data}')
     match = search(r'no such option:\s(.*)', err)
     if match:
         extra_data = match.group(1)
-        LOG.warning(f'Version check failed, unknown switch: {extra_data}')
+        logger.warning(f'Version check failed, unknown switch: {extra_data}')
         out, _ = run_cmd('pip list')
         match = search(r'pip\s*([\d.]*)', out)
         if match:
             extra_data = f'unknown switch {extra_data} pip: {match.group(1)}'
-            LOG.debug(f'Pip version: {match.group(1)}')
+            logger.debug(f'Pip version: {match.group(1)}')
     latest = _compare_versions(package, current_ver, extra_data)
     return latest, extra_data
 
@@ -92,8 +92,8 @@ def _compare_versions(package: str, current_ver: str, remote_ver: str) -> bool:
     """
     latest = False
     if version.parse(remote_ver) > version.parse(current_ver):
-        LOG.info(f'There is new version of {package}: {remote_ver}')
+        logger.info(f'There is new version of {package}: {remote_ver}')
     elif version.parse(remote_ver) <= version.parse(current_ver):
-        LOG.info(f'{package} is up-to-date version: {current_ver}')
+        logger.info(f'{package} is up-to-date version: {current_ver}')
         latest = True
     return latest
