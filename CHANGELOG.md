@@ -3,6 +3,7 @@
 * Better cleaning report
   * use more user-friendly format, instead of Python dict
   * note missing esm files
+* allow custom `tes3cmd` executable
 * Improve checkbox description
 * Add Windows icon
 * Basic documentation in Readme file
