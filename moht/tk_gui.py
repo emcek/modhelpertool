@@ -50,7 +50,6 @@ class MohtTkGui(tk.Frame):
         self._tes3cmd.set(path.join(here, tes3cmd))
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
-        self._check_clean_bin()
 
     def _init_widgets(self) -> None:
         self.master.columnconfigure(index=0, weight=10)
@@ -101,16 +100,19 @@ class MohtTkGui(tk.Frame):
         LOG.debug(f'Directory: {directory}')
         text_var.set(f'{directory}')
 
-    @staticmethod
-    def select_file(text_var: tk.StringVar) -> None:
+    def select_file(self, text_var: tk.StringVar) -> None:
         """
-        Select file location.
+        Select tes3cmd file location.
 
         :param text_var: StringVar of Entry to update
         """
         filename = filedialog.askopenfilename(initialdir=str(Path.home()), title='Select file')
         LOG.debug(f'File: {filename}')
         text_var.set(f'{filename}')
+        if self._check_clean_bin():
+            self.clean_btn.config(state=tk.ACTIVE)
+        else:
+            self.clean_btn.config(state=tk.DISABLED)
 
     def start_clean(self) -> None:
         """Start cleaning process."""
@@ -176,16 +178,19 @@ class MohtTkGui(tk.Frame):
         self.report_btn.config(state=tk.DISABLED)
         self.statusbar.set(f'ver. {VERSION}')
 
-    def _check_clean_bin(self):
+    def _check_clean_bin(self) -> bool:
         LOG.debug('Checking tes3cmd')
         out, err = run_cmd(f'{self.tes3cmd} -h')
         result, reason = parse_cleaning(out, err, '')
         LOG.debug(f'Result: {result}, Reason: {reason}')
-        if not result and 'Config::IniFiles' in reason:
-            msg = 'Use your package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
-            messagebox.showerror('Missing package', msg)
+        if not result:
             self.statusbar.set(f'Error: {reason}')
-            self.clean_btn.config(state=tk.DISABLED)
+            if 'Config::IniFiles' in reason:
+                reason = 'Use package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
+            elif 'Not tes3cmd' in reason:
+                reason = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
+            messagebox.showerror('Not tes3cmd', reason)
+        return result
 
     @property
     def mods_dir(self) -> str:
