@@ -83,13 +83,13 @@ def test_run_cmd():
     plugin = 'some_plugin.esp'
     cmd = f'{path.join(here, up, tes3cmd)} clean {plugin}'
     out, err = utils.run_cmd(cmd)
-    cleaning = utils.parse_cleaning(out, err, plugin)
-    if not cleaning:
-        assert cleaning is None
+    cleaning, reason = utils.parse_cleaning(out, err, plugin)
+    assert cleaning is False
+    if reason == 'Not tes3cmd':
         assert out == f'\nCLEANING: "{plugin}" ...\n'
         assert f'FATAL ERROR ({plugin}): Invalid input file (No such file or directory)' in err
     else:
-        assert cleaning == (False, 'Not tes3cmd')
+        assert reason == 'Config::IniFiles module'
 
 
 @mark.parametrize('local_ver, out_err, result', [
