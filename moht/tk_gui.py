@@ -202,7 +202,7 @@ class MohtTkGui(tk.Frame):
         """
         Get Morrowind Data Files directory.
 
-        :return: morrowind as sring
+        :return: morrowind dir as string
         """
         return str(self._morrowind_dir.get())
 
@@ -215,7 +215,7 @@ class MohtTkGui(tk.Frame):
         """
         Get tes3cmd binary file path.
 
-        :return: tes3cmd as sring
+        :return: tes3cmd file as string
         """
         return str(self._tes3cmd.get())
 
