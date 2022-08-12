@@ -4,7 +4,7 @@ from os.path import abspath, dirname, join
 from moht.tkgui import MohtTkGui
 
 
-def run():
+def run_tk():
     """Function to start Mod Helper Tool Tk GUI."""
     root = tk.Tk()
     width, height = 500, 230
@@ -17,4 +17,4 @@ def run():
 
 
 if __name__ == '__main__':
-    run()
+    run_tk()
