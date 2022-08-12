@@ -50,9 +50,8 @@ if __name__ == '__main__':
     gui_qt.add_argument('-style', dest='style', help='Style for QtGUI: "fusion" (default) or "windows".', default='fusion')
     gui_tk = gui.add_parser(name='tk', help='Starting Tk GUI interface for Moht', formatter_class=RawTextHelpFormatter)
     args = parser.parse_args()
-    if args.gui == 'qt':
-        run_qt()
-    elif args.gui == 'tk':
-        run_tk()
+
+    if args.gui:
+        globals()[f'run_{args.gui}']()
     else:
         parser.print_help()
