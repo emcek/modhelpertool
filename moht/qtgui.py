@@ -25,10 +25,10 @@ def tr(text2translate: str):
     return QtCore.QCoreApplication.translate('@default', text2translate)
 
 
-class QtGui(QMainWindow):
+class MohtQtGui(QMainWindow):
     def __init__(self) -> None:
         """Simple initialization."""
-        super(QtGui, self).__init__(flags=QtCore.Qt.Window)
+        super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
         ui__format = f'{here}/ui/qtgui.ui'
         logger.debug(f'Loading UI from {ui__format}')
         uic.loadUi(ui__format, self)

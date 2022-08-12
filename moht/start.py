@@ -7,7 +7,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import QLibraryInfo, QTranslator, QLocale
 from PyQt5.QtWidgets import QApplication
 
-from moht.qtgui import QtGui
+from moht.qtgui import MohtQtGui
 from moht.tk_gui import MohtTkGui
 
 
@@ -37,7 +37,7 @@ def run_qtgui():
     if translator.load(QLocale.system(), 'qtgui', '-', path.abspath(path.dirname(__file__))):  # change to _
         app.installTranslator(translator)
 
-    window = QtGui()
+    window = MohtQtGui()
     window.show()
     sys.exit(app.exec())
 
