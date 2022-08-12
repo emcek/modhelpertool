@@ -47,7 +47,7 @@ class MohtTkGui(tk.Frame):
             self._morrowind_dir.set(str(Path.home()))
         here = path.abspath(path.dirname(__file__))
         tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
-        self._tes3cmd.set(path.join(here, tes3cmd))
+        self._tes3cmd.set(path.join(here, 'resources', tes3cmd))
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
 
@@ -60,8 +60,8 @@ class MohtTkGui(tk.Frame):
         mods_dir = tk.Entry(master=self.master, textvariable=self._mods_dir)
         morrowind_dir = tk.Entry(master=self.master, textvariable=self._morrowind_dir)
         tes3cmd_file = tk.Entry(master=self.master, textvariable=self._tes3cmd)
-        mods_btn = tk.Button(master=self.master, text='Select Mods Dir', width=16, command=partial(self.select_dir, self._mods_dir))
-        morrowind_btn = tk.Button(master=self.master, text='Select Morrowind Dir', width=16, command=partial(self.select_dir, self._morrowind_dir))
+        mods_btn = tk.Button(master=self.master, text='Select Mods', width=16, command=partial(self.select_dir, self._mods_dir))
+        morrowind_btn = tk.Button(master=self.master, text='Select Data Files', width=16, command=partial(self.select_dir, self._morrowind_dir))
         tes3cmd_btn = tk.Button(master=self.master, text='Select tes3cmd', width=16, command=partial(self.select_tes3cmd_file, self._tes3cmd))
         self.clean_btn = tk.Button(master=self.master, text='Clean Mods', width=16, command=self.start_clean)
         self.report_btn = tk.Button(master=self.master, text='Report', width=16, state=tk.DISABLED, command=self.report)

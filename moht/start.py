@@ -11,7 +11,7 @@ def run():
     root.title('Mod Helper Tool')
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
-    root.iconphoto(False, tk.PhotoImage(file=join(abspath(dirname(__file__)), 'moht.png')))
+    root.iconphoto(False, tk.PhotoImage(file=join(abspath(dirname(__file__)), 'img', 'moht.png')))
     gui = MohtTkGui(master=root)
     gui.mainloop()
 

@@ -1,6 +1,12 @@
 # v0.3.0
 * Optional PyQt5 GUI
 
+# v0.2.1
+* change button's text
+* change default location for `Mods` and `Data Files`
+* move images to img directory
+* move `tex3cmd` executable files to resources directory
+
 # v0.2.0
 * Checking for updates during start-up
 * Better cleaning report

@@ -1,6 +1,6 @@
 [![pipeline status](https://gitlab.com/modding-openmw/modhelpertool/badges/main/pipeline.svg)](https://gitlab.com/modding-openmw/modhelpertool/-/commits/main)
 [![coverage report](https://gitlab.com/modding-openmw/modhelpertool/badges/main/coverage.svg)](https://gitlab.com/modding-openmw/modhelpertool/-/commits/main)
-[![image](https://img.shields.io/badge/pypi-v0.2.0-blue.svg)](https://pypi.org/project/moht/)
+[![image](https://img.shields.io/badge/pypi-v0.2.1-blue.svg)](https://pypi.org/project/moht/)
 [![License](https://img.shields.io/badge/Licence-MIT-blue.svg)](./LICENSE.md)
 [![image](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue.svg)](https://gitlab.com/modding-openmw/modhelpertool)
 [![moht](https://snyk.io/advisor/python/moht/badge.svg)](https://snyk.io/advisor/python/moht)  
@@ -41,6 +41,8 @@ For now, application can only clean your mods, but in future more features will 
 ```shell
 pip install moht
 ```
+4. You can drag and drop moht.exe to desktop and make shortcut (with custom icon, you can find icon in installation 
+   directory i.e. C:\Python310\lib\site-packages\moht\img\moht.ico).
 
 ## Upgrade
 To upgrade Moht to the latest version:
