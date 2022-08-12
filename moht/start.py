@@ -24,6 +24,7 @@ def run():
 
 
 def run_qtgui():
+    """Function to start Mod Helper Tool QtGUI."""
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
     signal.signal(signal.SIGTERM, signal.SIG_DFL)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
