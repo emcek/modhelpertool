@@ -41,6 +41,8 @@ For now, application can only clean your mods, but in future more features will 
 ```shell
 pip install moht
 ```
+4. You can drag and drop moht.exe to desktop and make shortcut (with custom icon, you can find icon in installation 
+   directory i.e. C:\Python310\lib\site-packages\moht\img\moht.ico).
 
 ## Upgrade
 To upgrade Moht to the latest version:
