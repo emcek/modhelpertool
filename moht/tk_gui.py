@@ -39,7 +39,7 @@ class MohtTkGui(tk.Frame):
         self._morrowind_dir.set(str(Path.home()))
         here = path.abspath(path.dirname(__file__))
         tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
-        self._tes3cmd.set(path.join(here, tes3cmd))
+        self._tes3cmd.set(path.join(here, 'resources', tes3cmd))
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
 
