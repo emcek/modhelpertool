@@ -1,7 +1,7 @@
 import tkinter as tk
 from os.path import abspath, dirname, join
 
-from moht.tkgui import MohtTkGui
+from moht import tkgui
 
 
 def run_tk():
@@ -12,7 +12,7 @@ def run_tk():
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
     root.iconphoto(False, tk.PhotoImage(file=join(abspath(dirname(__file__)), 'img', 'moht.png')))
-    gui = MohtTkGui(master=root)
+    gui = tkgui.MohtTkGui(master=root)
     gui.mainloop()
 
 
