@@ -1,5 +1,5 @@
 import tkinter as tk
-from os.path import abspath, dirname, join
+from os import path
 
 from moht import tkgui
 
@@ -11,7 +11,7 @@ def run_tk():
     root.title('Mod Helper Tool')
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
-    root.iconphoto(False, tk.PhotoImage(file=join(abspath(dirname(__file__)), 'img', 'moht.png')))
+    root.iconphoto(False, tk.PhotoImage(file=path.join(path.abspath(path.dirname(__file__)), 'img', 'moht.png')))
     window = tkgui.MohtTkGui(master=root)
     window.mainloop()
 
