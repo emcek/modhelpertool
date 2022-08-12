@@ -1,11 +1,11 @@
 import tkinter as tk
 from os.path import abspath, dirname, join
 
-from moht.tk_gui import MohtTkGui
+from moht.tkgui import MohtTkGui
 
 
 def run():
-    """Function to start Mod Helper Tool GUI."""
+    """Function to start Mod Helper Tool Tk GUI."""
     root = tk.Tk()
     width, height = 500, 230
     root.title('Mod Helper Tool')
