@@ -35,8 +35,16 @@ class MohtTkGui(tk.Frame):
         self._init_widgets()
         current_ver = '' if latest else f'new version: {desc}'
         self.statusbar.set(f'ver. {VERSION} {current_ver}')
-        self._mods_dir.set(str(Path.home()))
-        self._morrowind_dir.set(str(Path.home()))
+        # self._mods_dir.set('/home/emc/.local/share/openmw/data')
+        if platform == 'linux':
+            self._mods_dir.set('/home/emc/CitiesTowns/')
+            self._morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')
+        elif platform == 'win32':
+            self._mods_dir.set('D:/CitiesTowns')
+            self._morrowind_dir.set('S:/Program Files/Morrowind/Data Files')
+        else:
+            self._mods_dir.set(str(Path.home()))
+            self._morrowind_dir.set(str(Path.home()))
         here = path.abspath(path.dirname(__file__))
         tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
         self._tes3cmd.set(path.join(here, 'resources', tes3cmd))
