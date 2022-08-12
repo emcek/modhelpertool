@@ -7,12 +7,12 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import QLibraryInfo, QTranslator, QLocale
 from PyQt5.QtWidgets import QApplication
 
+from moht.tkgui import MohtTkGui
 from moht.qtgui import MohtQtGui
-from moht.tk_gui import MohtTkGui
 
 
 def run():
-    """Function to start Mod Helper Tool GUI."""
+    """Function to start Mod Helper Tool Tk GUI."""
     root = tk.Tk()
     width, height = 500, 230
     root.title('Mod Helper Tool')
