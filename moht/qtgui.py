@@ -2,6 +2,7 @@ from functools import partial
 from logging import getLogger
 from os import path
 from sys import version_info
+from tempfile import gettempdir
 
 from PyQt5 import QtCore, uic
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog
@@ -71,8 +72,10 @@ class AboutDialog(QDialog):
     def setup_text(self) -> None:
         """Prepare text information about Moht application."""
         qt_version = f'{QtCore.PYQT_VERSION_STR} / <b>Qt</b>: {QtCore.QT_VERSION_STR}'
+        log_path = path.join(gettempdir(), 'moht.log')
         text = self.label.text().rstrip('</body></html>')
-        text += f'<p><b>moht:</b> {VERSION}'
+        text += f'<p>Attach log file: {log_path}<br/><br/>'
+        text += f'<b>moht:</b> {VERSION}'
         text += '<br><b>python:</b> {0}.{1}.{2}-{3}.{4}'.format(*version_info)
         text += f'<br><b>PyQt:</b> {qt_version}</p></body></html>'
         self.label.setText(text)
