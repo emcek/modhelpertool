@@ -27,7 +27,7 @@ def tr(text2translate: str):
 
 class MohtQtGui(QMainWindow):
     def __init__(self) -> None:
-        """Simple initialization."""
+        """Mod Helper Tool Qt5 GUI."""
         super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
         ui__format = f'{here}/ui/qtgui.ui'
         logger.debug(f'Loading UI from {ui__format}')
@@ -62,9 +62,8 @@ class MohtQtGui(QMainWindow):
 
 
 class AboutDialog(QDialog):
-    """Moht about dialog window."""
     def __init__(self, parent) -> None:
-        """Simple initialization."""
+        """Moht about dialog window."""
         super(AboutDialog, self).__init__(parent)
         uic.loadUi(f'{here}/ui/about.ui', self)
         self.setup_text()
