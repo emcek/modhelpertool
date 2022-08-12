@@ -10,14 +10,20 @@ res = qtgui_rc  # prevent to remove import statement accidentally
 logger = getLogger(__name__)
 
 
-def tr(text2translate):
+def tr(text2translate: str):
+    """
+    Translate wrapper function.
+
+    :param text2translate: string to translate
+    :return:
+    """
     # return QtCore.QCoreApplication.translate('mw_gui', text2translate)
     return QtCore.QCoreApplication.translate('@default', text2translate)
 
 
 class QtGui(QMainWindow):
     def __init__(self):
-        """Simple initialization"""
+        """Simple initialization."""
         super(QtGui, self).__init__(flags=QtCore.Qt.Window)
         ui__format = '{}/ui/qtgui.ui'.format(path.dirname(path.abspath(__file__)))
         logger.debug(f'Loading UI from {ui__format}')
