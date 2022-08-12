@@ -19,8 +19,8 @@ def run_tk():
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
     root.iconphoto(False, tk.PhotoImage(file=path.join(path.abspath(path.dirname(__file__)), 'img', 'moht.png')))
-    gui = tkgui.MohtTkGui(master=root)
-    gui.mainloop()
+    window = tkgui.MohtTkGui(master=root)
+    window.mainloop()
 
 
 def run_qt():
