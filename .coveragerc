@@ -3,7 +3,7 @@ source = moht
 
 [report]
 omit = tests/*
-       moht/tk_gui.py
+       moht/tkgui.py
        moht/qtgui.py
        moht/qtgui_rc.py
 
