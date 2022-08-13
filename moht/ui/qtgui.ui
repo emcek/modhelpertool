@@ -63,7 +63,7 @@
          </widget>
         </item>
         <item row="2" column="2">
-         <widget class="QPushButton" name="pb_test3cmd">
+         <widget class="QPushButton" name="pb_tes3cmd">
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
@@ -138,7 +138,7 @@
          </spacer>
         </item>
         <item row="2" column="0" colspan="2">
-         <widget class="QLineEdit" name="le_test3cmd"/>
+         <widget class="QLineEdit" name="le_tes3cmd"/>
         </item>
         <item row="1" column="0" colspan="2">
          <widget class="QLineEdit" name="le_morrowind_dir"/>
@@ -210,8 +210,8 @@
   <tabstop>pb_mods_dir</tabstop>
   <tabstop>le_morrowind_dir</tabstop>
   <tabstop>pb_morrowind_dir</tabstop>
-  <tabstop>le_test3cmd</tabstop>
-  <tabstop>pb_test3cmd</tabstop>
+  <tabstop>le_tes3cmd</tabstop>
+  <tabstop>pb_tes3cmd</tabstop>
   <tabstop>cb_rm_bakup</tabstop>
   <tabstop>cb_rm_cache</tabstop>
   <tabstop>pb_clean</tabstop>
