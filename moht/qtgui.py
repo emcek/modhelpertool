@@ -72,15 +72,8 @@ class MohtQtGui(QMainWindow):
         tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
         self.le_tes3cmd.setText(path.join(here(__file__), 'resources', tes3cmd))
 
-        if platform == 'linux':
-            self.le_mods_dir.setText('/home/emc/CitiesTowns/')
-            self.le_morrowind_dir.setText('/home/emc/.wine/drive_c/Morrowind/Data Files/')
-        elif platform == 'win32':
-            self.le_mods_dir.setText('D:/CitiesTowns')
-            self.le_morrowind_dir.setText('S:/Program Files/Morrowind/Data Files')
-        else:
-            self.le_mods_dir.setText(str(Path.home()))
-            self.le_morrowind_dir.setText(str(Path.home()))
+        self.le_mods_dir.setText(str(Path.home()))
+        self.le_morrowind_dir.setText(str(Path.home()))
 
     def _pb_clean_clicked(self) -> None:
         all_plugins = [Path(path.join(root, filename))

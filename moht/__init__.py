@@ -6,7 +6,7 @@ from sys import platform
 from moht.log import config_logger
 
 logger = getLogger(__name__)
-config_logger(logger=logger, verbose=True)
+config_logger(logger=logger, verbose=False)
 logger.debug(f'Arch: {name} / {platform} / {" / ".join(architecture())}')
 logger.debug(f'Python: {python_implementation()}-{python_version()}')
 logger.debug(f'{uname()}')
