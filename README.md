@@ -28,25 +28,26 @@ For now, application can only clean your mods, but in future more features will 
 
 ## Installation
 1. Any Python version grater the 3.7 with tcl/tk support
-2. For Windows, during Python installation please select:
-  * Optional Features:
-    * pip
-    * tcl/tk and IDLE
-    * py launcher
-  * Advanced Options:
-    * Associate files with Python (requires the py launcher)
-    * Add Python to environment variables
-    * Customize install location: C:\Python310 or C:\Python
-3. Package is available on [PyPI](https://pypi.org/project/moht/), open Windows Command Prompt (cmd.exe) or any terminal and type:
-```shell
-pip install moht
-```
-4. You can drag and drop `moht_tk.exe` to desktop and make shortcut (with custom icon, you can find icon in installation 
-   directory i.e. C:\Python310\lib\site-packages\moht\img\moht.ico).
+2. For Windows, during Python installation please select:  
+   * Optional Features:
+     * pip
+     * tcl/tk and IDLE
+     * py launcher
+   * Advanced Options:
+     * Associate files with Python (requires the py launcher)
+     * Add Python to environment variables
+     * Customize install location: C:\Python310 or C:\Python
+3. For Linux check your package manage for `python3-tk` package or similar
+4. Package is available on [PyPI](https://pypi.org/project/moht/), open Windows Command Prompt (cmd.exe) or any terminal and type:
+    ```shell
+    pip install moht
+    ```
+5. You can drag and drop `moht_tk.exe` to desktop and make shortcut (with custom icon, you can find icon in installation 
+directory i.e. C:\Python310\lib\site-packages\moht\img\moht.ico).
 
 ## GUI Style
-By default, application uses `tkinter` (`tk` for short) library for GUI. You can choose to install `PyQt5` version of 
-GUI as well. Please note it will require ~200 MB on Linux and ~50 MB on Windows of additional space.
+By default, application use `tkinter` (`tk` for short) Python's built-in library for GUI. You can choose to install `PyQt5` version of 
+GUI as well. Please note this will require ~200 MB on Linux and ~50 MB on Windows of additional space.
 ```shell
 pip install moht[qt5]
 ```
