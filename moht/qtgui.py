@@ -178,6 +178,7 @@ class MohtQtGui(QMainWindow):
     def _set_icons(self, button: Optional[str] = None, icon_name: Optional[str] = None, color: str = 'black', spin: bool = False):
         """
         Universal method to set icon for QPushButtons.
+
         When button is provided without icon_name, current button icon will be removed.
         When none of button nor icon_name are provided, default starting icons are set for all buttons.
 
@@ -194,7 +195,7 @@ class MohtQtGui(QMainWindow):
             self.pb_report.setIcon(qtawesome.icon('fa5s.file-contract', color='brown'))
             self.pb_close.setIcon(qtawesome.icon('fa5s.sign-out-alt', color='brown'))
             return
-        btn = getattr(self, button)
+        btn = getattr(self, button)  # type: ignore
         if spin and icon_name:
             icon = qtawesome.icon('{}'.format(icon_name), color=color, animation=qtawesome.Spin(btn, 2, 1))
         elif not spin and icon_name:
