@@ -15,11 +15,10 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
 from moht import PLUGINS2CLEAN, VERSION, qtgui_rc
-from moht.utils import parse_cleaning, run_cmd, is_latest_ver
+from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here
 
 res = qtgui_rc  # prevent to remove import statement accidentally
 logger = getLogger(__name__)
-here = path.dirname(path.abspath(__file__))
 
 
 def tr(text2translate: str):
@@ -38,7 +37,7 @@ class MohtQtGui(QMainWindow):
         """Mod Helper Tool Qt5 GUI."""
         super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
         latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
-        ui__format = f'{here}/ui/qtgui.ui'
+        ui__format = f'{here(__file__)}/ui/qtgui.ui'
         logger.debug(f'Loading UI from {ui__format}')
         uic.loadUi(ui__format, self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
@@ -71,7 +70,7 @@ class MohtQtGui(QMainWindow):
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
 
         tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
-        self.le_tes3cmd.setText(path.join(here, 'resources', tes3cmd))
+        self.le_tes3cmd.setText(path.join(here(__file__), 'resources', tes3cmd))
 
         if platform == 'linux':
             self.le_mods_dir.setText('/home/emc/CitiesTowns/')
@@ -269,7 +268,7 @@ class AboutDialog(QDialog):
     def __init__(self, parent) -> None:
         """Moht about dialog window."""
         super(AboutDialog, self).__init__(parent)
-        uic.loadUi(f'{here}/ui/about.ui', self)
+        uic.loadUi(f'{here(__file__)}/ui/about.ui', self)
         self.setup_text()
 
     def setup_text(self) -> None:

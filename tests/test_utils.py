@@ -78,10 +78,9 @@ def test_run_cmd():
     from sys import platform
     from os import path, sep
     tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
-    here = path.abspath(path.dirname(__file__))
     up_res = f'..{sep}moht{sep}resources{sep}'
     plugin = 'some_plugin.esp'
-    cmd = f'{path.join(here, up_res, tes3cmd)} clean {plugin}'
+    cmd = f'{path.join(utils.here(__file__), up_res, tes3cmd)} clean {plugin}'
     out, err = utils.run_cmd(cmd)
     cleaning, reason = utils.parse_cleaning(out, err, plugin)
     assert cleaning is False

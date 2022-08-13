@@ -9,7 +9,7 @@ from time import time
 from tkinter import filedialog, messagebox
 
 from moht import PLUGINS2CLEAN, VERSION
-from moht.utils import is_latest_ver, parse_cleaning, run_cmd
+from moht.utils import is_latest_ver, parse_cleaning, run_cmd, here
 
 logger = getLogger(__name__)
 
@@ -45,9 +45,8 @@ class MohtTkGui(tk.Frame):
         else:
             self._mods_dir.set(str(Path.home()))
             self._morrowind_dir.set(str(Path.home()))
-        here = path.abspath(path.dirname(__file__))
         tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
-        self._tes3cmd.set(path.join(here, 'resources', tes3cmd))
+        self._tes3cmd.set(path.join(here(__file__), 'resources', tes3cmd))
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
 
