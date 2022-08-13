@@ -1,15 +1,19 @@
 from functools import partial
 from logging import getLogger
-from os import path
+from os import path, removedirs, chdir, walk, remove, sep
 from pathlib import Path
+from shutil import move, copy2, rmtree
 from sys import version_info, platform
 from tempfile import gettempdir
+from time import time
 from typing import Optional
 
 from PyQt5 import QtCore, uic
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
-from moht import VERSION, qtgui_rc
+from moht import PLUGINS2CLEAN, VERSION
+from moht import qtgui_rc
+from moht.utils import parse_cleaning, run_cmd
 
 res = qtgui_rc  # prevent to remove import statement accidentally
 logger = getLogger(__name__)
@@ -40,10 +44,12 @@ class MohtQtGui(QMainWindow):
         # self.pb_push.setText(self.tr('Push'))
         # self.l_field.setText(tr('Field'))
         # self.pb_push.setText(tr('Push'))
-        self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_test3cmd': False}
+        self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
+        self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
         self._init_menu_bar()
         self._init_buttons()
         self._init_line_edits()
+        self.statusbar.showMessage(f'ver. {VERSION}')
 
     def _init_menu_bar(self) -> None:
         self.actionQuit.triggered.connect(self.close)
@@ -53,17 +59,17 @@ class MohtQtGui(QMainWindow):
     def _init_buttons(self) -> None:
         self.pb_mods_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True, widget_name='le_mods_dir'))
         self.pb_morrowind_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True, widget_name='le_morrowind_dir'))
-        self.pb_test3cmd.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False, widget_name='le_test3cmd'))
+        self.pb_tes3cmd.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False, widget_name='le_tes3cmd'))
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
         self.pb_report.clicked.connect(self._pb_pb_report_clicked)
 
     def _init_line_edits(self):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
-        self.le_test3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_test3cmd'))
+        self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
 
         tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
-        self.le_test3cmd.setText(path.join(here, 'resources', tes3cmd))
+        self.le_tes3cmd.setText(path.join(here, 'resources', tes3cmd))
 
         if platform == 'linux':
             self.le_mods_dir.setText('/home/emc/CitiesTowns/')
@@ -76,10 +82,65 @@ class MohtQtGui(QMainWindow):
             self.le_morrowind_dir.setText(str(Path.home()))
 
     def _pb_clean_clicked(self) -> None:
-        pass
+        all_plugins = [Path(path.join(root, filename))
+                       for root, _, files in walk(self.le_mods_dir.text())
+                       for filename in files
+                       if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
+        logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
+        plugins_to_clean = [plugin_file for plugin_file in all_plugins if str(plugin_file).split(sep)[-1] in PLUGINS2CLEAN]
+        no_of_plugins = len(plugins_to_clean)
+        logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
+        chdir(self.le_morrowind_dir.text())
+        self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
+        start = time()
+        for idx, plug in enumerate(plugins_to_clean, 1):
+            logger.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
+            logger.debug(f'Copy: {plug} -> {self.le_morrowind_dir.text()}')
+            copy2(plug, self.le_morrowind_dir.text())
+            mod_file = str(plug).split(sep)[-1]
+            out, err = run_cmd(f'{self.le_tes3cmd.text()} clean --output-dir --overwrite "{mod_file}"')
+            result, reason = parse_cleaning(out, err, mod_file)
+            logger.debug(f'Result: {result}, Reason: {reason}')
+            self._update_stats(mod_file, plug, reason, result)
+            if self.cb_rm_bakup.isChecked():
+                logger.debug(f'Remove: {self.le_morrowind_dir.text()}/{mod_file}')
+                remove(f'{self.le_morrowind_dir.text()}/{mod_file}')
+        logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
+        if self.cb_rm_cache.isChecked():
+            removedirs(f'{self.le_morrowind_dir.text()}/1')
+            cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
+            rmtree(f'{self.le_morrowind_dir.text()}/{cachedir}', ignore_errors=True)
+        cleaning_time = time() - start
+        self.stats['time'] = cleaning_time
+        logger.debug(f'Total time: {cleaning_time} s')
+        self.statusbar.showMessage('Done. See report!')
+        self.pb_report.setEnabled(True)
+
+    def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
+        if result:
+            logger.debug(f'Move: {self.le_morrowind_dir.text()}/1/{mod_file} -> {plug}')
+            move(f'{self.le_morrowind_dir.text()}/1/{mod_file}', plug)
+            self.stats['cleaned'] += 1
+        if not result and reason == 'not modified':
+            self.stats['clean'] += 1
+        if not result and 'not found' in reason:
+            self.stats['error'] += 1
+            esm = self.stats.get(reason, 0)
+            esm += 1
+            self.stats.update({reason: esm})
 
     def _pb_pb_report_clicked(self) -> None:
-        pass
+        """"Show report after clean-up."""
+        logger.debug(f'Report: {self.stats}')
+        report = f'Detected plugins to clean: {self.stats["all"]}\n'
+        report += f'Already clean plugins: {self.stats["clean"]}\n'
+        report += f'Cleaned plugins: {self.stats["cleaned"]}\n'
+        report += '\n'.join([f'Error {k}: {self.stats[k]}' for k in self.stats if 'not found' in k])
+        report += '\n\nCopy missing esm file(s) to Data Files directory and clean again.\n\n' if 'Error' in report else '\n'
+        report += f'Total time: {self.stats["time"]:.2f} s'
+        self._show_message_box(kind_of='information', title='Cleaning Report', message=report)
+        self.pb_report.setEnabled(False)
+        self.statusbar.showMessage(f'ver. {VERSION}')
 
     def _is_dir_exists(self, text: str, widget_name: str) -> None:
         dir_exists = path.isdir(text)
