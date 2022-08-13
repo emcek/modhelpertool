@@ -15,7 +15,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
 from moht import PLUGINS2CLEAN, VERSION, qtgui_rc
-from moht.utils import parse_cleaning, run_cmd
+from moht.utils import parse_cleaning, run_cmd, is_latest_ver
 
 res = qtgui_rc  # prevent to remove import statement accidentally
 logger = getLogger(__name__)
@@ -37,6 +37,7 @@ class MohtQtGui(QMainWindow):
     def __init__(self) -> None:
         """Mod Helper Tool Qt5 GUI."""
         super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
+        latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
         ui__format = f'{here}/ui/qtgui.ui'
         logger.debug(f'Loading UI from {ui__format}')
         uic.loadUi(ui__format, self)
@@ -47,7 +48,8 @@ class MohtQtGui(QMainWindow):
         self._init_menu_bar()
         self._init_buttons()
         self._init_line_edits()
-        self.statusbar.showMessage(f'ver. {VERSION}')
+        current_ver = '' if latest else f' - Update available: {desc}'
+        self.statusbar.showMessage(f'ver. {VERSION} {current_ver}')
         self._set_icons()
 
     def _init_menu_bar(self) -> None:
