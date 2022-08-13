@@ -139,3 +139,9 @@ def test_is_latest_ver_check_failed(local_ver, effect, result):
         assert utils.is_latest_ver('wheel', current_ver=local_ver) == result
         run_cmd_mock.assert_has_calls([call('pip install --dry-run --no-color --timeout 3 --retries 1 --progress-bar off --upgrade wheel'),
                                        call('pip list')])
+
+
+def test_here():
+    from os import path
+    assert utils.here(__file__) == path.abspath(path.dirname(__file__))
+    assert utils.here('../log.py') == path.abspath(path.dirname('../log.py'))
