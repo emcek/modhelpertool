@@ -1,3 +1,6 @@
+# v0.3.1
+* Hotfix - add missing UI for PyQt5 GUI
+
 # v0.3.0
 * Optional PyQt5 GUI
 
