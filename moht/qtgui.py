@@ -165,15 +165,32 @@ class MohtQtGui(QMainWindow):
         :param widget_name: widget name
         :param path_exists: bool for path existence
         """
-        if not path_exists:
-            getattr(self, widget_name).setStyleSheet('color: red;')
-        else:
-            getattr(self, widget_name).setStyleSheet('')
         self._le_status[widget_name] = path_exists
+        if path_exists and widget_name == 'le_tes3cmd':
+            getattr(self, widget_name).setStyleSheet('')
+            self._le_status[widget_name] = self._check_clean_bin()
+        elif path_exists and widget_name != 'le_tes3cmd':
+            getattr(self, widget_name).setStyleSheet('')
+        else:
+            getattr(self, widget_name).setStyleSheet('color: red;')
         if all(self._le_status.values()):
             self.pb_clean.setEnabled(True)
         else:
             self.pb_clean.setEnabled(False)
+
+    def _check_clean_bin(self) -> bool:
+        logger.debug('Checking tes3cmd')
+        out, err = run_cmd(f'{self.le_tes3cmd.text()} -h')
+        result, reason = parse_cleaning(out, err, '')
+        logger.debug(f'Result: {result}, Reason: {reason}')
+        if not result:
+            self.statusbar.showMessage(f'Error: {reason}')
+            if 'Config::IniFiles' in reason:
+                reason = 'Use package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
+            elif 'Not tes3cmd' in reason:
+                reason = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
+            self._show_message_box(kind_of='warning', title='Not tes3cmd', message=reason)
+        return result
 
     def _set_icons(self, button: Optional[str] = None, icon_name: Optional[str] = None, color: str = 'black', spin: bool = False):
         """
