@@ -4,8 +4,7 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from os import path
 
 from moht import VERSION, tkgui, qtgui
-
-here = path.abspath(path.dirname(__file__))
+from moht.utils import here
 
 
 def run_tk():
@@ -17,7 +16,7 @@ def run_tk():
     root.title('Mod Helper Tool')
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
-    root.iconphoto(False, tkinter.PhotoImage(file=path.join(here, 'img', 'moht.png')))
+    root.iconphoto(False, tkinter.PhotoImage(file=path.join(here(__file__), 'img', 'moht.png')))
     window = tkgui.MohtTkGui(master=root)
     window.mainloop()
 
@@ -37,7 +36,7 @@ def run_qt():
     if translator.load(QLocale.system(), 'qtbase', '_', QLibraryInfo.location(QLibraryInfo.TranslationsPath)):
         app.installTranslator(translator)
     translator = QTranslator(app)
-    if translator.load(QLocale.system(), 'qtgui', '-', here):  # change to _
+    if translator.load(QLocale.system(), 'qtgui', '-', here(__file__)):  # change to _
         app.installTranslator(translator)
 
     window = qtgui.MohtQtGui()

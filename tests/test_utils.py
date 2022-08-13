@@ -78,10 +78,9 @@ def test_run_cmd():
     from sys import platform
     from os import path, sep
     tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
-    here = path.abspath(path.dirname(__file__))
     up_res = f'..{sep}moht{sep}resources{sep}'
     plugin = 'some_plugin.esp'
-    cmd = f'{path.join(here, up_res, tes3cmd)} clean {plugin}'
+    cmd = f'{path.join(utils.here(__file__), up_res, tes3cmd)} clean {plugin}'
     out, err = utils.run_cmd(cmd)
     cleaning, reason = utils.parse_cleaning(out, err, plugin)
     assert cleaning is False
@@ -140,3 +139,9 @@ def test_is_latest_ver_check_failed(local_ver, effect, result):
         assert utils.is_latest_ver('wheel', current_ver=local_ver) == result
         run_cmd_mock.assert_has_calls([call('pip install --dry-run --no-color --timeout 3 --retries 1 --progress-bar off --upgrade wheel'),
                                        call('pip list')])
+
+
+def test_here():
+    from os import path
+    assert utils.here(__file__) == path.abspath(path.dirname(__file__))
+    assert utils.here('../log.py') == path.abspath(path.dirname('../log.py'))

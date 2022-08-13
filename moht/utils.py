@@ -1,5 +1,5 @@
 from logging import getLogger
-from os import linesep
+from os import linesep, path
 from re import search, MULTILINE
 from shlex import split
 from subprocess import Popen, PIPE
@@ -97,3 +97,13 @@ def _compare_versions(package: str, current_ver: str, remote_ver: str) -> bool:
         logger.info(f'{package} is up-to-date version: {current_ver}')
         latest = True
     return latest
+
+
+def here(filename: str) -> str:
+    """
+    Absolute path to directory contains filename.
+
+    :param filename:
+    :return: path to directory as string
+    """
+    return path.abspath(path.dirname(filename))
