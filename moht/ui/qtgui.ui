@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QtGui</class>
+ <widget class="QMainWindow" name="QtGui">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>650</width>
+    <height>341</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>420</width>
+    <height>341</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Mod Helper Tool</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../qtgui.qrc">
+    <normaloff>:/images/img/moht.png</normaloff>:/images/img/moht.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab_clean">
+       <attribute name="title">
+        <string>Cleaner</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="1" column="2">
+         <widget class="QPushButton" name="pb_morrowind_dir">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;Data Files &lt;/span&gt;folder of Morrowind installation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Select Data Files</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="2">
+         <widget class="QPushButton" name="pb_close">
+          <property name="text">
+           <string>Close</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="pb_mods_dir">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select root folder with Mods to clean.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Select Mods</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QPushButton" name="pb_tes3cmd">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Select tes3cmd</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QPushButton" name="pb_report">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Report</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" rowspan="3">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>After successful clean-up:</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QCheckBox" name="cb_rm_bakup">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;During clean-up plugin file is copied to Data Files folder.&lt;/p&gt;&lt;p&gt;Cleaning proces create new plugin file.&lt;/p&gt;&lt;p&gt;When checkbox is checked dirty pkugin file is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Remove backups of plugins</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cb_rm_cache">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clean-up proccess create cache of master files in Data FIles folder.&lt;/p&gt;&lt;p&gt;It speed up cleaning a bit, but it takes some disk space as well.&lt;/p&gt;&lt;p&gt;When checkbox is checked, this cache is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Remove cache of master files</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QPushButton" name="pb_clean">
+          <property name="text">
+           <string>Clean</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QLineEdit" name="le_tes3cmd"/>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QLineEdit" name="le_morrowind_dir"/>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QLineEdit" name="le_mods_dir"/>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>650</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionReportIssue"/>
+    <addaction name="separator"/>
+    <addaction name="actionAboutMoht"/>
+    <addaction name="actionAboutQt"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionReportIssue">
+   <property name="text">
+    <string>Report issue</string>
+   </property>
+  </action>
+  <action name="actionAboutMoht">
+   <property name="text">
+    <string>About Moht</string>
+   </property>
+  </action>
+  <action name="actionAboutQt">
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+  </action>
+ </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>le_mods_dir</tabstop>
+  <tabstop>pb_mods_dir</tabstop>
+  <tabstop>le_morrowind_dir</tabstop>
+  <tabstop>pb_morrowind_dir</tabstop>
+  <tabstop>le_tes3cmd</tabstop>
+  <tabstop>pb_tes3cmd</tabstop>
+  <tabstop>cb_rm_bakup</tabstop>
+  <tabstop>cb_rm_cache</tabstop>
+  <tabstop>pb_clean</tabstop>
+  <tabstop>pb_report</tabstop>
+  <tabstop>pb_close</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../qtgui.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>pb_close</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>QtGui</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>596</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>576</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

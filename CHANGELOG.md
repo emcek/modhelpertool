@@ -1,3 +1,6 @@
+# v0.3.0
+* Optional PyQt5 GUI
+
 # v0.2.1
 * change button's text
 * change default location for `Mods` and `Data Files`

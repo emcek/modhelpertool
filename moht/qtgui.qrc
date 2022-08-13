@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="images">
+    <file>img/moht.ico</file>
+    <file>img/moht.png</file>
+  </qresource>
+</RCC>
