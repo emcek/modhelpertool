@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import signal
 import sys
 from argparse import ArgumentParser, RawTextHelpFormatter
