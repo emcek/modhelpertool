@@ -42,10 +42,6 @@ class MohtQtGui(QMainWindow):
         uic.loadUi(ui__format, self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
         logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
-        # self.l_field.setText(self.tr('Field'))
-        # self.pb_push.setText(self.tr('Push'))
-        # self.l_field.setText(tr('Field'))
-        # self.pb_push.setText(tr('Push'))
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
         self._init_menu_bar()
