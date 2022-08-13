@@ -54,8 +54,8 @@ class MohtQtGui(QMainWindow):
         self.pb_mods_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True, widget_name='le_mods_dir'))
         self.pb_morrowind_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True, widget_name='le_morrowind_dir'))
         self.pb_test3cmd.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False, widget_name='le_test3cmd'))
-        self.pb_clean.clicked.connect(self.pb_clean_clicked)
-        self.pb_report.clicked.connect(self.pb_pb_report_clicked)
+        self.pb_clean.clicked.connect(self._pb_clean_clicked)
+        self.pb_report.clicked.connect(self._pb_pb_report_clicked)
 
     def _init_line_edits(self):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
@@ -75,10 +75,10 @@ class MohtQtGui(QMainWindow):
             self.le_mods_dir.setText(str(Path.home()))
             self.le_morrowind_dir.setText(str(Path.home()))
 
-    def pb_clean_clicked(self) -> None:
+    def _pb_clean_clicked(self) -> None:
         pass
 
-    def pb_pb_report_clicked(self) -> None:
+    def _pb_pb_report_clicked(self) -> None:
         pass
 
     def _is_dir_exists(self, text: str, widget_name: str) -> None:
