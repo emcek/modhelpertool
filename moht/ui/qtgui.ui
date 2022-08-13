@@ -74,6 +74,9 @@
         </item>
         <item row="4" column="2">
          <widget class="QPushButton" name="pb_report">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Report</string>
           </property>
@@ -93,6 +96,9 @@
              <property name="text">
               <string>Remove backups of plugins</string>
              </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -102,6 +108,9 @@
              </property>
              <property name="text">
               <string>Remove cache of master files</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
