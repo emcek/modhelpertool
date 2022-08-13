@@ -1,30 +1,31 @@
 import signal
 import sys
-import tkinter as tk
 from argparse import ArgumentParser, RawTextHelpFormatter
 from os import path
-
-from PyQt5 import QtCore
-from PyQt5.QtCore import QLibraryInfo, QTranslator, QLocale
-from PyQt5.QtWidgets import QApplication
 
 from moht import VERSION, tkgui, qtgui
 
 
 def run_tk():
     """Function to start Mod Helper Tool Tk GUI."""
-    root = tk.Tk()
+    import tkinter
+
+    root = tkinter.Tk()
     width, height = 500, 230
     root.title('Mod Helper Tool')
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
-    root.iconphoto(False, tk.PhotoImage(file=path.join(path.abspath(path.dirname(__file__)), 'img', 'moht.png')))
+    root.iconphoto(False, tkinter.PhotoImage(file=path.join(path.abspath(path.dirname(__file__)), 'img', 'moht.png')))
     window = tkgui.MohtTkGui(master=root)
     window.mainloop()
 
 
 def run_qt():
     """Function to start Mod Helper Tool QtGUI."""
+    from PyQt5 import QtCore
+    from PyQt5.QtCore import QLibraryInfo, QTranslator, QLocale
+    from PyQt5.QtWidgets import QApplication
+
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
     signal.signal(signal.SIGTERM, signal.SIG_DFL)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
