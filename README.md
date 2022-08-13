@@ -46,7 +46,7 @@ pip install moht
 
 ## GUI Style
 By default, application uses `tkinter` (`tk` for short) library for GUI. You can choose to install `PyQt5` version of 
-GUI as well. Please note it will require ~200 MB of additional space.
+GUI as well. Please note it will require ~200 MB on Linux and ~50 MB on Windows of additional space.
 ```shell
 pip install moht[qt5]
 ```
