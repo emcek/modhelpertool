@@ -1,3 +1,4 @@
+import webbrowser
 from functools import partial
 from logging import getLogger
 from os import path, removedirs, chdir, walk, remove, sep
@@ -54,6 +55,7 @@ class MohtQtGui(QMainWindow):
         self.actionQuit.triggered.connect(self.close)
         self.actionAboutMoht.triggered.connect(AboutDialog(self).open)
         self.actionAboutQt.triggered.connect(partial(self._show_message_box, kind_of='aboutQt', title='About Qt'))
+        self.actionReportIssue.triggered.connect(self._report_issue)
 
     def _init_buttons(self) -> None:
         self.pb_mods_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True, widget_name='le_mods_dir'))
@@ -210,6 +212,10 @@ class MohtQtGui(QMainWindow):
             message_box(self, title)
         else:
             message_box(self, title, message)
+
+    @staticmethod
+    def _report_issue():
+        webbrowser.open('https://gitlab.com/modding-openmw/modhelpertool/issues', new=2)
 
 
 class AboutDialog(QDialog):
