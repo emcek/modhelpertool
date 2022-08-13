@@ -130,7 +130,7 @@ class MohtQtGui(QMainWindow):
             self.stats.update({reason: esm})
 
     def _pb_pb_report_clicked(self) -> None:
-        """"Show report after clean-up."""
+        """Show report after clean-up."""
         logger.debug(f'Report: {self.stats}')
         report = f'Detected plugins to clean: {self.stats["all"]}\n'
         report += f'Already clean plugins: {self.stats["clean"]}\n'
