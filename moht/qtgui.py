@@ -9,7 +9,9 @@ from tempfile import gettempdir
 from time import time
 from typing import Optional
 
+import qtawesome
 from PyQt5 import QtCore, uic
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
 from moht import PLUGINS2CLEAN, VERSION, qtgui_rc
@@ -50,6 +52,7 @@ class MohtQtGui(QMainWindow):
         self._init_buttons()
         self._init_line_edits()
         self.statusbar.showMessage(f'ver. {VERSION}')
+        self._set_icons()
 
     def _init_menu_bar(self) -> None:
         self.actionQuit.triggered.connect(self.close)
@@ -171,6 +174,34 @@ class MohtQtGui(QMainWindow):
             self.pb_clean.setEnabled(True)
         else:
             self.pb_clean.setEnabled(False)
+
+    def _set_icons(self, button: Optional[str] = None, icon_name: Optional[str] = None, color: str = 'black', spin: bool = False):
+        """
+        Universal method to set icon for QPushButtons.
+        When button is provided without icon_name, current button icon will be removed.
+        When none of button nor icon_name are provided, default starting icons are set for all buttons.
+
+        :param button: button name
+        :param icon_name: ex: spinner, check, times, pause
+        :param color: ex: red, green, black
+        :param spin: spinning icon: True or False
+        """
+        if not (button or icon_name):
+            self.pb_mods_dir.setIcon(qtawesome.icon('fa5s.folder', color='brown'))
+            self.pb_morrowind_dir.setIcon(qtawesome.icon('fa5s.folder', color='brown'))
+            self.pb_tes3cmd.setIcon(qtawesome.icon('fa5s.file', color='brown'))
+            self.pb_clean.setIcon(qtawesome.icon('fa5s.snowplow', color='brown'))
+            self.pb_report.setIcon(qtawesome.icon('fa5s.file-contract', color='brown'))
+            self.pb_close.setIcon(qtawesome.icon('fa5s.sign-out-alt', color='brown'))
+            return
+        btn = getattr(self, button)
+        if spin and icon_name:
+            icon = qtawesome.icon('{}'.format(icon_name), color=color, animation=qtawesome.Spin(btn, 2, 1))
+        elif not spin and icon_name:
+            icon = qtawesome.icon('{}'.format(icon_name), color=color)
+        else:
+            icon = QIcon()
+        btn.setIcon(icon)
 
     def _run_file_dialog(self, for_load: bool, for_dir: bool, widget_name: Optional[str] = None, file_filter: str = 'All Files [*.*](*.*)') -> str:
         """
