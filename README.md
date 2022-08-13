@@ -41,7 +41,7 @@ For now, application can only clean your mods, but in future more features will 
 ```shell
 pip install moht
 ```
-4. You can drag and drop `tkmoht.exe` to desktop and make shortcut (with custom icon, you can find icon in installation 
+4. You can drag and drop `moht_tk.exe` to desktop and make shortcut (with custom icon, you can find icon in installation 
    directory i.e. C:\Python310\lib\site-packages\moht\img\moht.ico).
 
 ## GUI Style
@@ -50,7 +50,7 @@ GUI as well. Please note it will require ~200 MB of additional space.
 ```shell
 pip install moht[qt5]
 ```
-You can find second executable called `qtmoht.exe`.
+You can find second executable called `moht_qt.exe`.
 
 ## Upgrade
 To upgrade Moht to the latest version:
