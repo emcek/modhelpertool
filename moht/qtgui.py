@@ -65,7 +65,7 @@ class MohtQtGui(QMainWindow):
         self.pb_morrowind_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True, widget_name='le_morrowind_dir'))
         self.pb_tes3cmd.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False, widget_name='le_tes3cmd'))
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
-        self.pb_report.clicked.connect(self._pb_pb_report_clicked)
+        self.pb_report.clicked.connect(self._pb_report_clicked)
 
     def _init_line_edits(self):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
@@ -133,7 +133,7 @@ class MohtQtGui(QMainWindow):
             esm += 1
             self.stats.update({reason: esm})
 
-    def _pb_pb_report_clicked(self) -> None:
+    def _pb_report_clicked(self) -> None:
         """Show report after clean-up."""
         logger.debug(f'Report: {self.stats}')
         report = f'Detected plugins to clean: {self.stats["all"]}\n'
