@@ -11,8 +11,7 @@ from typing import Optional
 from PyQt5 import QtCore, uic
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
-from moht import PLUGINS2CLEAN, VERSION
-from moht import qtgui_rc
+from moht import PLUGINS2CLEAN, VERSION, qtgui_rc
 from moht.utils import parse_cleaning, run_cmd
 
 res = qtgui_rc  # prevent to remove import statement accidentally
