@@ -2,9 +2,15 @@
 import signal
 import sys
 from argparse import ArgumentParser, RawTextHelpFormatter
+from logging import getLogger
+from os import name
 from os import path
+from platform import architecture, uname, python_implementation, python_version
+from sys import platform
+from tempfile import gettempdir
 
 from moht import VERSION, tkgui, qtgui
+from moht.log import config_logger
 from moht.utils import here
 
 
@@ -57,6 +63,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.gui:
+        config_logger(verbose=args.verbose, quiet=args.quiet)
+        logger = getLogger(f'moht.{__name__}')
+        logger.info(f'Log file stored at: {path.join(gettempdir(), "moht.log")}')
+        logger.debug(f'Arch: {name} / {platform} / {" / ".join(architecture())}')
+        logger.debug(f'Python: {python_implementation()}-{python_version()}')
+        logger.debug(f'{uname()}')
         globals()[f'run_{args.gui}']()
     else:
         parser.print_help()
