@@ -10,14 +10,14 @@
 Simple yet powerful tool to help you manage your mods in several ways.
 
 ## Name
-MHT or MOTH was already occupied by another projects, so **MO**d **H**elper **T**ool, `MOHT` in short was born. 
+MHT and MOTH was already occupied by another projects, so **MO**d **H**elper **T**ool, `MOHT` in short was born. 
 Anyway if you not pay attention to details or your english is not fluent (as mine) logo fits like a glove. 
 
 ## General
 For now, application can only clean your mods, but in future more features will be added.
 
 * Run Linux, Windows and Mac
-* Built-in `tes3cmd` binary - no additional downloads needed
+* Two built-in version `tes3cmd` binary (0.37 and 0.40) - no additional downloads needed
 * Allow to select custom `tes3cmd` executable file
 * Select location of directory with Mods
 * Select location of `Morrowind/Data Files` directory
