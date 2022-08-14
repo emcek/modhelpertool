@@ -42,7 +42,7 @@ class MohtQtGui(QMainWindow):
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
-        self.tes3cmd = TES3CMD[platform]['0.37']
+        self.tes3cmd = TES3CMD[platform]['0_37']
         self._init_menu_bar()
         self._init_buttons()
         self._init_radio_buttons()
