@@ -36,7 +36,6 @@ class MohtQtGui(QMainWindow):
         """Mod Helper Tool Qt5 GUI."""
         super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
         self.logger = getLogger(__name__)
-        latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
         uic.loadUi(f'{here(__file__)}/ui/qtgui.ui', self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
@@ -47,8 +46,7 @@ class MohtQtGui(QMainWindow):
         self._init_buttons()
         self._init_radio_buttons()
         self._init_line_edits()
-        current_ver = '' if latest else f' - Update available: {desc}'
-        self.statusbar.showMessage(f'ver. {VERSION} {current_ver}')
+        self.statusbar.showMessage(f'ver. {VERSION}')
         self._set_icons()
 
     def _init_menu_bar(self) -> None:
@@ -56,6 +54,7 @@ class MohtQtGui(QMainWindow):
         self.actionAboutMoht.triggered.connect(AboutDialog(self).open)
         self.actionAboutQt.triggered.connect(partial(self._show_message_box, kind_of='aboutQt', title='About Qt'))
         self.actionReportIssue.triggered.connect(self._report_issue)
+        self.actionCheckUpdates.triggered.connect(self._check_updates)
 
     def _init_buttons(self) -> None:
         self.pb_mods_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True, widget_name='le_mods_dir'))
@@ -63,6 +62,7 @@ class MohtQtGui(QMainWindow):
         self.pb_tes3cmd.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False, widget_name='le_tes3cmd'))
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
         self.pb_report.clicked.connect(self._pb_report_clicked)
+        self.pb_chk_updates.clicked.connect(self._check_updates)
 
     def _init_line_edits(self):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
@@ -127,6 +127,11 @@ class MohtQtGui(QMainWindow):
         self._show_message_box(kind_of='information', title='Cleaning Report', message=report)
         self.pb_report.setEnabled(False)
         self.statusbar.showMessage(f'ver. {VERSION}')
+
+    def _check_updates(self):
+        latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
+        current_ver = 'No updates' if latest else f'Update available: {desc}'
+        self.statusbar.showMessage(f'ver. {VERSION} - {current_ver}')
 
     def _set_le_tes3cmd(self) -> None:
         self.le_tes3cmd.setText(path.join(here(__file__), 'resources', self.tes3cmd))

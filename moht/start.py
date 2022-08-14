@@ -19,7 +19,7 @@ def run_tk():
     import tkinter
 
     root = tkinter.Tk()
-    width, height = 500, 230
+    width, height = 500, 280
     root.title('Mod Helper Tool')
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)

@@ -21,7 +21,6 @@ class MohtTkGui(tk.Frame):
         """
         super().__init__(master)
         self.logger = getLogger(__name__)
-        latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
         self.master = master
         self.statusbar = tk.StringVar()
         self._mods_dir = tk.StringVar()
@@ -32,8 +31,7 @@ class MohtTkGui(tk.Frame):
         self.rb_tes3cmd = tk.StringVar()
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
         self._init_widgets()
-        current_ver = '' if latest else f' - Update available: {desc}'
-        self.statusbar.set(f'ver. {VERSION} {current_ver}')
+        self.statusbar.set(f'ver. {VERSION}')
         self._mods_dir.set(str(Path.home()))
         self._morrowind_dir.set(str(Path.home()))
         self._tes3cmd.set(path.join(here(__file__), 'resources', TES3CMD[platform]['0_37']))
@@ -56,6 +54,7 @@ class MohtTkGui(tk.Frame):
         self.tes3cmd_btn = tk.Button(master=self.master, text='Select tes3cmd', width=16, command=partial(self.select_tes3cmd_file, self._tes3cmd))
         self.clean_btn = tk.Button(master=self.master, text='Clean Mods', width=16, command=self.start_clean)
         self.report_btn = tk.Button(master=self.master, text='Report', width=16, state=tk.DISABLED, command=self.report)
+        chkupd_btn = tk.Button(master=self.master, text='Check Updates', width=16, command=self.check_updates)
         close_btn = tk.Button(master=self.master, text='Close Tool', width=16, command=self.master.destroy)
         statusbar = tk.Label(master=self.master, textvariable=self.statusbar)
         chkbox_frame = tk.LabelFrame(master=self.master, text='After successful clean-up:', relief=tk.GROOVE, borderwidth=2)
@@ -74,7 +73,7 @@ class MohtTkGui(tk.Frame):
         chkbox_frame.grid(row=3, column=0, padx=2, pady=2, rowspan=2, sticky=tk.W)
         chkbox_backup.grid(row=3, column=0, padx=2, pady=2, sticky=tk.W)
         chkbox_cache.grid(row=4, column=0, padx=2, pady=2, sticky=tk.W)
-        statusbar.grid(row=6, column=0, columnspan=3, sticky=tk.W)
+        statusbar.grid(row=7, column=0, columnspan=3, sticky=tk.W)
 
         rb_frame.grid(row=3, column=1, padx=2, pady=2, rowspan=3)
         rb_037.grid(row=3, column=1, padx=2, pady=2, sticky=tk.W)
@@ -86,7 +85,8 @@ class MohtTkGui(tk.Frame):
         self.tes3cmd_btn.grid(row=2, column=2, padx=2, pady=2)
         self.clean_btn.grid(row=3, column=2, padx=2, pady=2)
         self.report_btn.grid(row=4, column=2, padx=2, pady=2)
-        close_btn.grid(row=5, column=2, padx=2, pady=2)
+        chkupd_btn.grid(row=5, column=2, padx=2, pady=2)
+        close_btn.grid(row=6, column=2, padx=2, pady=2)
 
     def select_dir(self, text_var: tk.StringVar) -> None:
         """
@@ -186,6 +186,12 @@ class MohtTkGui(tk.Frame):
         messagebox.showinfo('Cleaning Report', report)
         self.report_btn.config(state=tk.DISABLED)
         self.statusbar.set(f'ver. {VERSION}')
+
+    def check_updates(self):
+        """Check for updates."""
+        latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
+        current_ver = 'No updates' if latest else f'Update available: {desc}'
+        self.statusbar.set(f'ver. {VERSION} - {current_ver}')
 
     def _check_clean_bin(self) -> bool:
         self.logger.debug('Checking tes3cmd')

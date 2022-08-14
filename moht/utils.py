@@ -67,7 +67,7 @@ def is_latest_ver(package: str, current_ver: str) -> Tuple[bool, str]:
     match = search(r'Would install\s.*{}-([\d.-]+)'.format(package), out)
     if match:
         extra_data = match.group(1)
-        logger.debug(f'New version: {extra_data}')
+        logger.debug(f'Latest available version: {extra_data}')
     match = search(r'no such option:\s(.*)', err)
     if match:
         extra_data = match.group(1)
