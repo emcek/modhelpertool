@@ -21,7 +21,6 @@ class MohtTkGui(tk.Frame):
         """
         super().__init__(master)
         self.logger = getLogger(__name__)
-        latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
         self.master = master
         self.statusbar = tk.StringVar()
         self._mods_dir = tk.StringVar()
@@ -32,8 +31,7 @@ class MohtTkGui(tk.Frame):
         self.rb_tes3cmd = tk.StringVar()
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
         self._init_widgets()
-        current_ver = '' if latest else f' - Update available: {desc}'
-        self.statusbar.set(f'ver. {VERSION} {current_ver}')
+        self.statusbar.set(f'ver. {VERSION}')
         self._mods_dir.set(str(Path.home()))
         self._morrowind_dir.set(str(Path.home()))
         self._tes3cmd.set(path.join(here(__file__), 'resources', TES3CMD[platform]['0_37']))
