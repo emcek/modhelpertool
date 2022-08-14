@@ -36,7 +36,6 @@ class MohtQtGui(QMainWindow):
         """Mod Helper Tool Qt5 GUI."""
         super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
         self.logger = getLogger(__name__)
-        latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
         uic.loadUi(f'{here(__file__)}/ui/qtgui.ui', self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
@@ -47,8 +46,6 @@ class MohtQtGui(QMainWindow):
         self._init_buttons()
         self._init_radio_buttons()
         self._init_line_edits()
-        current_ver = '' if latest else f' - Update available: {desc}'
-        self.statusbar.showMessage(f'ver. {VERSION} {current_ver}')
         self._set_icons()
 
     def _init_menu_bar(self) -> None:
