@@ -35,11 +35,9 @@ class MohtQtGui(QMainWindow):
     def __init__(self) -> None:
         """Mod Helper Tool Qt5 GUI."""
         super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
-        latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
-        ui__format = f'{here(__file__)}/ui/qtgui.ui'
         self.logger = getLogger(__name__)
-        self.logger.debug(f'Loading UI from {ui__format}')
-        uic.loadUi(ui__format, self)
+        latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
+        uic.loadUi(f'{here(__file__)}/ui/qtgui.ui', self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
