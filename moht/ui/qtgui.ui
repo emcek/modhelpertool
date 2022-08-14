@@ -149,7 +149,7 @@
            <item>
             <widget class="QRadioButton" name="rb_0_37">
              <property name="text">
-              <string>0.37</string>
+              <string>built-in v0.37</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -159,7 +159,7 @@
            <item>
             <widget class="QRadioButton" name="rb_0_40">
              <property name="text">
-              <string>0.40</string>
+              <string>built-in v0.40</string>
              </property>
             </widget>
            </item>
