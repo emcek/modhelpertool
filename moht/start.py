@@ -2,9 +2,15 @@
 import signal
 import sys
 from argparse import ArgumentParser, RawTextHelpFormatter
+from logging import getLogger
+from os import name
 from os import path
+from platform import architecture, uname, python_implementation, python_version
+from sys import platform
+from tempfile import gettempdir
 
 from moht import VERSION, tkgui, qtgui
+from moht.log import config_logger
 from moht.utils import here
 
 
@@ -48,13 +54,22 @@ def run_qt():
 if __name__ == '__main__':
     parser = ArgumentParser(description='Simple yet powerful tool to help you manage your mods in several ways.', formatter_class=RawTextHelpFormatter)
     parser.add_argument('-V', '--version', action='version', version='%(prog)s Version: ' + VERSION)
-    gui = parser.add_subparsers(title='gui', dest='gui', description='Available subcommands', help='Choose one of GUI')
-    gui_qt = gui.add_parser(name='qt', help='Starting Qt5 GUI interface for Moht', formatter_class=RawTextHelpFormatter)
-    gui_qt.add_argument('-style', dest='style', help='Style for QtGUI: "fusion" (default) or "windows".', default='fusion')
-    gui_tk = gui.add_parser(name='tk', help='Starting Tk GUI interface for Moht', formatter_class=RawTextHelpFormatter)
+    parser.add_argument('-q', '--quiet', action='store_true', dest='quiet', default=False, help='be quiet')
+    parser.add_argument('-v', '--verbose', action='count', dest='verbose', default=0, help='increase output verbosity')
+    gui = parser.add_subparsers(title='gui', dest='gui', description='Available subcommands', help='choose one of GUI')
+    gui_qt = gui.add_parser(name='qt', help='starting Qt5 GUI interface for Moht', formatter_class=RawTextHelpFormatter)
+    gui_qt.add_argument('-style', dest='style', help='style for QtGUI: "fusion" (default) or "windows".', default='fusion')
+    gui_tk = gui.add_parser(name='tk', help='starting Tk GUI interface for Moht', formatter_class=RawTextHelpFormatter)
     args = parser.parse_args()
 
     if args.gui:
+        config_logger(verbose=args.verbose, quiet=args.quiet)
+        logger = getLogger(f'moht.{__name__}')
+        logger.info(f'Log file stored at: {path.join(gettempdir(), "moht.log")}')
+        logger.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
+        logger.debug(f'Arch: {name} / {platform} / {" / ".join(architecture())}')
+        logger.debug(f'Python: {python_implementation()}-{python_version()}')
+        logger.debug(f'{uname()}')
         globals()[f'run_{args.gui}']()
     else:
         parser.print_help()

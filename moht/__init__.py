@@ -1,16 +1,3 @@
-from logging import getLogger
-from os import name
-from platform import architecture, uname, python_implementation, python_version
-from sys import platform
-
-from moht.log import config_logger
-
-logger = getLogger(__name__)
-config_logger(logger=logger, verbose=False)
-logger.debug(f'Arch: {name} / {platform} / {" / ".join(architecture())}')
-logger.debug(f'Python: {python_implementation()}-{python_version()}')
-logger.debug(f'{uname()}')
-
 VERSION = '0.3.1'
 PLUGINS2CLEAN = [
     "Abandoned_Flatv2_0.esp", "Almalexia_Voicev1.esp", "FLG - Balmora's Underworld V1.1.esp", "BitterAndBlighted.ESP", "Building Up Uvirith's Legacy1.1.ESP",

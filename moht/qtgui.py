@@ -18,7 +18,6 @@ from moht import PLUGINS2CLEAN, VERSION, qtgui_rc
 from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here
 
 res = qtgui_rc  # prevent to remove import statement accidentally
-logger = getLogger(__name__)
 
 
 def tr(text2translate: str):
@@ -36,12 +35,11 @@ class MohtQtGui(QMainWindow):
     def __init__(self) -> None:
         """Mod Helper Tool Qt5 GUI."""
         super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
+        self.logger = getLogger(__name__)
         latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
-        ui__format = f'{here(__file__)}/ui/qtgui.ui'
-        logger.debug(f'Loading UI from {ui__format}')
-        uic.loadUi(ui__format, self)
+        uic.loadUi(f'{here(__file__)}/ui/qtgui.ui', self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
-        logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
+        self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
         self._init_menu_bar()
@@ -80,39 +78,39 @@ class MohtQtGui(QMainWindow):
                        for root, _, files in walk(self.le_mods_dir.text())
                        for filename in files
                        if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
-        logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
+        self.logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
         plugins_to_clean = [plugin_file for plugin_file in all_plugins if str(plugin_file).split(sep)[-1] in PLUGINS2CLEAN]
         no_of_plugins = len(plugins_to_clean)
-        logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
+        self.logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
         chdir(self.le_morrowind_dir.text())
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
         for idx, plug in enumerate(plugins_to_clean, 1):
-            logger.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
-            logger.debug(f'Copy: {plug} -> {self.le_morrowind_dir.text()}')
+            self.logger.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
+            self.logger.debug(f'Copy: {plug} -> {self.le_morrowind_dir.text()}')
             copy2(plug, self.le_morrowind_dir.text())
             mod_file = str(plug).split(sep)[-1]
             out, err = run_cmd(f'{self.le_tes3cmd.text()} clean --output-dir --overwrite "{mod_file}"')
             result, reason = parse_cleaning(out, err, mod_file)
-            logger.debug(f'Result: {result}, Reason: {reason}')
+            self.logger.debug(f'Result: {result}, Reason: {reason}')
             self._update_stats(mod_file, plug, reason, result)
             if self.cb_rm_bakup.isChecked():
-                logger.debug(f'Remove: {self.le_morrowind_dir.text()}/{mod_file}')
+                self.logger.debug(f'Remove: {self.le_morrowind_dir.text()}/{mod_file}')
                 remove(f'{self.le_morrowind_dir.text()}/{mod_file}')
-        logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
+        self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.cb_rm_cache.isChecked():
             removedirs(f'{self.le_morrowind_dir.text()}/1')
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
             rmtree(f'{self.le_morrowind_dir.text()}/{cachedir}', ignore_errors=True)
         cleaning_time = time() - start
         self.stats['time'] = cleaning_time
-        logger.debug(f'Total time: {cleaning_time} s')
+        self.logger.debug(f'Total time: {cleaning_time} s')
         self.statusbar.showMessage('Done. See report!')
         self.pb_report.setEnabled(True)
 
     def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
         if result:
-            logger.debug(f'Move: {self.le_morrowind_dir.text()}/1/{mod_file} -> {plug}')
+            self.logger.debug(f'Move: {self.le_morrowind_dir.text()}/1/{mod_file} -> {plug}')
             move(f'{self.le_morrowind_dir.text()}/1/{mod_file}', plug)
             self.stats['cleaned'] += 1
         if not result and reason == 'not modified':
@@ -125,7 +123,7 @@ class MohtQtGui(QMainWindow):
 
     def _pb_report_clicked(self) -> None:
         """Show report after clean-up."""
-        logger.debug(f'Report: {self.stats}')
+        self.logger.debug(f'Report: {self.stats}')
         report = f'Detected plugins to clean: {self.stats["all"]}\n'
         report += f'Already clean plugins: {self.stats["clean"]}\n'
         report += f'Cleaned plugins: {self.stats["cleaned"]}\n'
@@ -138,12 +136,12 @@ class MohtQtGui(QMainWindow):
 
     def _is_dir_exists(self, text: str, widget_name: str) -> None:
         dir_exists = path.isdir(text)
-        logger.debug(f'Path: {text} for {widget_name} exists: {dir_exists}')
+        self.logger.debug(f'Path: {text} for {widget_name} exists: {dir_exists}')
         self._line_edit_handling(widget_name, dir_exists)
 
     def _is_file_exists(self, text: str, widget_name) -> None:
         file_exists = path.isfile(text)
-        logger.debug(f'Path: {text} for {widget_name} exists: {file_exists}')
+        self.logger.debug(f'Path: {text} for {widget_name} exists: {file_exists}')
         self._line_edit_handling(widget_name, file_exists)
 
     def _line_edit_handling(self, widget_name: str, path_exists: bool) -> None:
@@ -169,10 +167,10 @@ class MohtQtGui(QMainWindow):
             self.pb_clean.setEnabled(False)
 
     def _check_clean_bin(self) -> bool:
-        logger.debug('Checking tes3cmd')
+        self.logger.debug('Checking tes3cmd')
         out, err = run_cmd(f'{self.le_tes3cmd.text()} -h')
         result, reason = parse_cleaning(out, err, '')
-        logger.debug(f'Result: {result}, Reason: {reason}')
+        self.logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
             self.statusbar.showMessage(f'Error: {reason}')
             if 'Config::IniFiles' in reason:
