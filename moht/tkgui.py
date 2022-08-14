@@ -8,7 +8,7 @@ from sys import platform
 from time import time
 from tkinter import filedialog, messagebox
 
-from moht import PLUGINS2CLEAN, VERSION
+from moht import PLUGINS2CLEAN, VERSION, TES3CMD
 from moht.utils import is_latest_ver, parse_cleaning, run_cmd, here
 
 
@@ -29,16 +29,18 @@ class MohtTkGui(tk.Frame):
         self._tes3cmd = tk.StringVar()
         self.chkbox_backup = tk.BooleanVar()
         self.chkbox_cache = tk.BooleanVar()
+        self.rb_tes3cmd = tk.StringVar()
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
         self._init_widgets()
         current_ver = '' if latest else f' - Update available: {desc}'
         self.statusbar.set(f'ver. {VERSION} {current_ver}')
         self._mods_dir.set(str(Path.home()))
         self._morrowind_dir.set(str(Path.home()))
-        tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
-        self._tes3cmd.set(path.join(here(__file__), 'resources', tes3cmd))
+        self._tes3cmd.set(path.join(here(__file__), 'resources', TES3CMD[platform]['0_37']))
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
+        self.tes3cmd_file.config(state=tk.DISABLED)
+        self.tes3cmd_btn.config(state=tk.DISABLED)
 
     def _init_widgets(self) -> None:
         self.master.columnconfigure(index=0, weight=10)
@@ -48,31 +50,43 @@ class MohtTkGui(tk.Frame):
 
         mods_dir = tk.Entry(master=self.master, textvariable=self._mods_dir)
         morrowind_dir = tk.Entry(master=self.master, textvariable=self._morrowind_dir)
-        tes3cmd_file = tk.Entry(master=self.master, textvariable=self._tes3cmd)
+        self.tes3cmd_file = tk.Entry(master=self.master, textvariable=self._tes3cmd)
         mods_btn = tk.Button(master=self.master, text='Select Mods', width=16, command=partial(self.select_dir, self._mods_dir))
         morrowind_btn = tk.Button(master=self.master, text='Select Data Files', width=16, command=partial(self.select_dir, self._morrowind_dir))
-        tes3cmd_btn = tk.Button(master=self.master, text='Select tes3cmd', width=16, command=partial(self.select_tes3cmd_file, self._tes3cmd))
+        self.tes3cmd_btn = tk.Button(master=self.master, text='Select tes3cmd', width=16, command=partial(self.select_tes3cmd_file, self._tes3cmd))
         self.clean_btn = tk.Button(master=self.master, text='Clean Mods', width=16, command=self.start_clean)
         self.report_btn = tk.Button(master=self.master, text='Report', width=16, state=tk.DISABLED, command=self.report)
         close_btn = tk.Button(master=self.master, text='Close Tool', width=16, command=self.master.destroy)
         statusbar = tk.Label(master=self.master, textvariable=self.statusbar)
-        chkbox_label = tk.Label(master=self.master, text='After successful clean-up:')
-        chkbox_backup = tk.Checkbutton(master=self.master, text='Remove backups of plugins', variable=self.chkbox_backup)
-        chkbox_cache = tk.Checkbutton(master=self.master, text='Remove cache of master files', variable=self.chkbox_cache)
+        chkbox_frame = tk.LabelFrame(master=self.master, text='After successful clean-up:', relief=tk.GROOVE, borderwidth=2)
+        chkbox_backup = tk.Checkbutton(master=chkbox_frame, text='Remove backups of plugins', variable=self.chkbox_backup)
+        chkbox_cache = tk.Checkbutton(master=chkbox_frame, text='Remove cache of master files', variable=self.chkbox_cache)
 
-        mods_dir.grid(row=0, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
-        morrowind_dir.grid(row=1, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
-        tes3cmd_file.grid(row=2, column=0, padx=2, pady=2, sticky=f'{tk.W}{tk.E}')
-        chkbox_label.grid(row=3, column=0, padx=2, pady=2, sticky=tk.W)
-        chkbox_backup.grid(row=4, column=0, padx=2, pady=2, sticky=tk.W)
-        chkbox_cache.grid(row=5, column=0, padx=2, pady=2, sticky=tk.W)
-        mods_btn.grid(row=0, column=1, padx=2, pady=2)
-        morrowind_btn.grid(row=1, column=1, padx=2, pady=2)
-        tes3cmd_btn.grid(row=2, column=1, padx=2, pady=2)
-        self.clean_btn.grid(row=3, column=1, padx=2, pady=2)
-        self.report_btn.grid(row=4, column=1, padx=2, pady=2)
-        close_btn.grid(row=5, column=1, padx=2, pady=2)
+        rb_frame = tk.LabelFrame(master=self.master, text='Version of tes3cmd:', relief=tk.GROOVE, borderwidth=2)
+        rb_037 = tk.Radiobutton(master=rb_frame, text='built-in v0.37', value='0_37', variable=self.rb_tes3cmd, command=self._rb_tes3cmd_toggled)
+        rb_040 = tk.Radiobutton(master=rb_frame, text='built-in v0.40', value='0_40', variable=self.rb_tes3cmd, command=self._rb_tes3cmd_toggled)
+        rb_custom = tk.Radiobutton(master=rb_frame, text='custom', value='custom', variable=self.rb_tes3cmd, command=self._rb_tes3cmd_toggled)
+        rb_037.select()
+
+        mods_dir.grid(row=0, column=0, padx=2, pady=2, columnspan=2, sticky=f'{tk.W}{tk.E}')
+        morrowind_dir.grid(row=1, column=0, padx=2, pady=2, columnspan=2, sticky=f'{tk.W}{tk.E}')
+        self.tes3cmd_file.grid(row=2, column=0, padx=2, pady=2, columnspan=2, sticky=f'{tk.W}{tk.E}')
+        chkbox_frame.grid(row=3, column=0, padx=2, pady=2, rowspan=2, sticky=tk.W)
+        chkbox_backup.grid(row=3, column=0, padx=2, pady=2, sticky=tk.W)
+        chkbox_cache.grid(row=4, column=0, padx=2, pady=2, sticky=tk.W)
         statusbar.grid(row=6, column=0, columnspan=3, sticky=tk.W)
+
+        rb_frame.grid(row=3, column=1, padx=2, pady=2, rowspan=3)
+        rb_037.grid(row=3, column=1, padx=2, pady=2, sticky=tk.W)
+        rb_040.grid(row=4, column=1, padx=2, pady=2, sticky=tk.W)
+        rb_custom.grid(row=5, column=1, padx=2, pady=2, sticky=tk.W)
+
+        mods_btn.grid(row=0, column=2, padx=2, pady=2)
+        morrowind_btn.grid(row=1, column=2, padx=2, pady=2)
+        self.tes3cmd_btn.grid(row=2, column=2, padx=2, pady=2)
+        self.clean_btn.grid(row=3, column=2, padx=2, pady=2)
+        self.report_btn.grid(row=4, column=2, padx=2, pady=2)
+        close_btn.grid(row=5, column=2, padx=2, pady=2)
 
     def select_dir(self, text_var: tk.StringVar) -> None:
         """
@@ -97,6 +111,16 @@ class MohtTkGui(tk.Frame):
             self.clean_btn.config(state=tk.ACTIVE)
         else:
             self.clean_btn.config(state=tk.DISABLED)
+
+    def _rb_tes3cmd_toggled(self) -> None:
+        if self.rb_tes3cmd.get() == 'custom':
+            self.tes3cmd_file.config(state=tk.NORMAL)
+            self.tes3cmd_btn.config(state=tk.NORMAL)
+        else:
+            self.logger.debug(f'tes3cmd version: {self.rb_tes3cmd.get()}')
+            self._tes3cmd.set(path.join(here(__file__), 'resources', TES3CMD[platform][self.rb_tes3cmd.get()]))
+            self.tes3cmd_file.config(state=tk.DISABLED)
+            self.tes3cmd_btn.config(state=tk.DISABLED)
 
     def start_clean(self) -> None:
         """Start cleaning process."""

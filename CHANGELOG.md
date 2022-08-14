@@ -1,3 +1,6 @@
+# v0.3.2
+* Add option to select built-in or custom `tes3cmd` executable file
+
 # v0.3.1
 * Hotfix - add missing UI for PyQt5 GUI
 
