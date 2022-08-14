@@ -66,6 +66,7 @@ if __name__ == '__main__':
         config_logger(verbose=args.verbose, quiet=args.quiet)
         logger = getLogger(f'moht.{__name__}')
         logger.info(f'Log file stored at: {path.join(gettempdir(), "moht.log")}')
+        logger.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
         logger.debug(f'Arch: {name} / {platform} / {" / ".join(architecture())}')
         logger.debug(f'Python: {python_implementation()}-{python_version()}')
         logger.debug(f'{uname()}')
