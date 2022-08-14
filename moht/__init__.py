@@ -1,4 +1,4 @@
-VERSION = '0.3.1'
+VERSION = '0.4.0'
 PLUGINS2CLEAN = [
     "Abandoned_Flatv2_0.esp", "Almalexia_Voicev1.esp", "FLG - Balmora's Underworld V1.1.esp", "BitterAndBlighted.ESP", "Building Up Uvirith's Legacy1.1.ESP",
     "Caldera.esp", "DD_Caldera_Expansion.esp", "NX9_Guards_Complete.ESP", "Radiant Gem.esp", "Dwemer and Ebony Service Refusal.ESP",
