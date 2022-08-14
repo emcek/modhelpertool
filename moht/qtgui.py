@@ -14,7 +14,7 @@ from PyQt5 import QtCore, uic
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
-from moht import PLUGINS2CLEAN, VERSION, qtgui_rc
+from moht import PLUGINS2CLEAN, VERSION, TES3CMD, qtgui_rc
 from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here
 
 res = qtgui_rc  # prevent to remove import statement accidentally
@@ -42,8 +42,10 @@ class MohtQtGui(QMainWindow):
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
+        self.tes3cmd = TES3CMD[platform]['0_37']
         self._init_menu_bar()
         self._init_buttons()
+        self._init_radio_buttons()
         self._init_line_edits()
         current_ver = '' if latest else f' - Update available: {desc}'
         self.statusbar.showMessage(f'ver. {VERSION} {current_ver}')
@@ -66,12 +68,17 @@ class MohtQtGui(QMainWindow):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
-
-        tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
-        self.le_tes3cmd.setText(path.join(here(__file__), 'resources', tes3cmd))
-
+        self._set_le_tes3cmd()
         self.le_mods_dir.setText(str(Path.home()))
         self.le_morrowind_dir.setText(str(Path.home()))
+
+    def _init_radio_buttons(self):
+        for ver in ['0_37', '0_40']:
+            getattr(self, f'rb_{ver}').toggled.connect(partial(self._rb_tes3cmd_toggled, ver))
+
+    def _rb_tes3cmd_toggled(self, version: str) -> None:
+        self.tes3cmd = TES3CMD[platform][version]
+        self._set_le_tes3cmd()
 
     def _pb_clean_clicked(self) -> None:
         all_plugins = [Path(path.join(root, filename))
@@ -108,19 +115,6 @@ class MohtQtGui(QMainWindow):
         self.statusbar.showMessage('Done. See report!')
         self.pb_report.setEnabled(True)
 
-    def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
-        if result:
-            self.logger.debug(f'Move: {self.le_morrowind_dir.text()}/1/{mod_file} -> {plug}')
-            move(f'{self.le_morrowind_dir.text()}/1/{mod_file}', plug)
-            self.stats['cleaned'] += 1
-        if not result and reason == 'not modified':
-            self.stats['clean'] += 1
-        if not result and 'not found' in reason:
-            self.stats['error'] += 1
-            esm = self.stats.get(reason, 0)
-            esm += 1
-            self.stats.update({reason: esm})
-
     def _pb_report_clicked(self) -> None:
         """Show report after clean-up."""
         self.logger.debug(f'Report: {self.stats}')
@@ -133,6 +127,22 @@ class MohtQtGui(QMainWindow):
         self._show_message_box(kind_of='information', title='Cleaning Report', message=report)
         self.pb_report.setEnabled(False)
         self.statusbar.showMessage(f'ver. {VERSION}')
+
+    def _set_le_tes3cmd(self) -> None:
+        self.le_tes3cmd.setText(path.join(here(__file__), 'resources', self.tes3cmd))
+
+    def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
+        if result:
+            self.logger.debug(f'Move: {self.le_morrowind_dir.text()}/1/{mod_file} -> {plug}')
+            move(f'{self.le_morrowind_dir.text()}/1/{mod_file}', plug)
+            self.stats['cleaned'] += 1
+        if not result and reason == 'not modified':
+            self.stats['clean'] += 1
+        if not result and 'not found' in reason:
+            self.stats['error'] += 1
+            esm = self.stats.get(reason, 0)
+            esm += 1
+            self.stats.update({reason: esm})
 
     def _is_dir_exists(self, text: str, widget_name: str) -> None:
         dir_exists = path.isdir(text)

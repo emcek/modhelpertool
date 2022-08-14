@@ -35,6 +35,23 @@
         <string>Cleaner</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0" colspan="2">
+         <widget class="QLineEdit" name="le_mods_dir"/>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QLineEdit" name="le_tes3cmd">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QPushButton" name="pb_clean">
+          <property name="text">
+           <string>Clean</string>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="2">
          <widget class="QPushButton" name="pb_morrowind_dir">
           <property name="toolTip">
@@ -49,26 +66,6 @@
          <widget class="QPushButton" name="pb_close">
           <property name="text">
            <string>Close</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="pb_mods_dir">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select root folder with Mods to clean.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="text">
-           <string>Select Mods</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QPushButton" name="pb_tes3cmd">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="text">
-           <string>Select tes3cmd</string>
           </property>
          </widget>
         </item>
@@ -117,34 +114,64 @@
           </layout>
          </widget>
         </item>
-        <item row="3" column="2">
-         <widget class="QPushButton" name="pb_clean">
+        <item row="2" column="2">
+         <widget class="QPushButton" name="pb_tes3cmd">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
-           <string>Clean</string>
+           <string>Select tes3cmd</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="pb_mods_dir">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select root folder with Mods to clean.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
+          <property name="text">
+           <string>Select Mods</string>
           </property>
-         </spacer>
-        </item>
-        <item row="2" column="0" colspan="2">
-         <widget class="QLineEdit" name="le_tes3cmd"/>
+         </widget>
         </item>
         <item row="1" column="0" colspan="2">
          <widget class="QLineEdit" name="le_morrowind_dir"/>
         </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLineEdit" name="le_mods_dir"/>
+        <item row="3" column="1" rowspan="3">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Version of tes3cmd</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QRadioButton" name="rb_0_37">
+             <property name="text">
+              <string>0.37</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="rb_0_40">
+             <property name="text">
+              <string>0.40</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="rb_custom">
+             <property name="text">
+              <string>custom</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -235,6 +262,38 @@
     <hint type="destinationlabel">
      <x>576</x>
      <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb_custom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>le_tes3cmd</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>298</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>169</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb_custom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pb_tes3cmd</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>379</x>
+     <y>278</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>478</x>
+     <y>178</y>
     </hint>
    </hints>
   </connection>
