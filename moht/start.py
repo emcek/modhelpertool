@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import signal
 import sys
-from argparse import ArgumentParser, RawTextHelpFormatter
+from argparse import ArgumentParser, RawTextHelpFormatter, Namespace
 from logging import getLogger
 from os import name
 from os import path
@@ -51,6 +51,22 @@ def run_qt():
     sys.exit(app.exec())
 
 
+def run(cli_opts: Namespace) -> None:
+    """
+    Function to start selected GUI of Mod Helper Tool.
+
+    :param cli_opts: arguments from CLI
+    """
+    config_logger(verbose=cli_opts.verbose, quiet=cli_opts.quiet)
+    logger = getLogger(f'moht.{__name__}')
+    logger.info(f'Log file stored at: {path.join(gettempdir(), "moht.log")}')
+    logger.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
+    logger.debug(f'Arch: {name} / {platform} / {" / ".join(architecture())}')
+    logger.debug(f'Python: {python_implementation()}-{python_version()}')
+    logger.debug(f'{uname()}')
+    globals()[f'run_{cli_opts.gui}']()
+
+
 if __name__ == '__main__':
     parser = ArgumentParser(description='Simple yet powerful tool to help you manage your mods in several ways.', formatter_class=RawTextHelpFormatter)
     parser.add_argument('-V', '--version', action='version', version='%(prog)s Version: ' + VERSION)
@@ -61,15 +77,7 @@ if __name__ == '__main__':
     gui_qt.add_argument('-style', dest='style', help='style for QtGUI: "fusion" (default) or "windows".', default='fusion')
     gui_tk = gui.add_parser(name='tk', help='starting Tk GUI interface for Moht', formatter_class=RawTextHelpFormatter)
     args = parser.parse_args()
-
     if args.gui:
-        config_logger(verbose=args.verbose, quiet=args.quiet)
-        logger = getLogger(f'moht.{__name__}')
-        logger.info(f'Log file stored at: {path.join(gettempdir(), "moht.log")}')
-        logger.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
-        logger.debug(f'Arch: {name} / {platform} / {" / ".join(architecture())}')
-        logger.debug(f'Python: {python_implementation()}-{python_version()}')
-        logger.debug(f'{uname()}')
-        globals()[f'run_{args.gui}']()
+        run(args)
     else:
         parser.print_help()
