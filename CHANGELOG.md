@@ -1,5 +1,6 @@
 # v0.4.0
 * Add option to select built-in or custom `tes3cmd` executable file (Tk and Qt versions)
+* Check update menu item (Qt) and button (Tk)
 
 # v0.3.1
 * Hotfix - add missing UI for PyQt5 GUI
