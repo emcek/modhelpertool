@@ -190,8 +190,8 @@ class MohtTkGui(tk.Frame):
     def check_updates(self):
         """Check for updates."""
         latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
-        current_ver = ' - No updates' if latest else f' - Update available: {desc}'
-        self.statusbar.set(f'ver. {VERSION} {current_ver}')
+        current_ver = 'No updates' if latest else f'Update available: {desc}'
+        self.statusbar.set(f'ver. {VERSION} - {current_ver}')
 
     def _check_clean_bin(self) -> bool:
         self.logger.debug('Checking tes3cmd')
