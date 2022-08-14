@@ -211,8 +211,9 @@ class MohtQtGui(QMainWindow):
             self.pb_mods_dir.setIcon(qtawesome.icon('fa5s.folder', color='brown'))
             self.pb_morrowind_dir.setIcon(qtawesome.icon('fa5s.folder', color='brown'))
             self.pb_tes3cmd.setIcon(qtawesome.icon('fa5s.file', color='brown'))
-            self.pb_clean.setIcon(qtawesome.icon('fa5s.snowplow', color='brown'))
+            self.pb_clean.setIcon(qtawesome.icon('fa5s.hand-sparkles', color='brown'))
             self.pb_report.setIcon(qtawesome.icon('fa5s.file-contract', color='brown'))
+            self.pb_chk_updates.setIcon(qtawesome.icon('fa5s.arrow-down', color='brown'))
             self.pb_close.setIcon(qtawesome.icon('fa5s.sign-out-alt', color='brown'))
             return
         btn = getattr(self, button)  # type: ignore
