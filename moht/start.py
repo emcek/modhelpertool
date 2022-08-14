@@ -48,10 +48,12 @@ def run_qt():
 if __name__ == '__main__':
     parser = ArgumentParser(description='desc', formatter_class=RawTextHelpFormatter)
     parser.add_argument('-V', '--version', action='version', version='%(prog)s Version: ' + VERSION)
-    gui = parser.add_subparsers(title='gui', dest='gui', description='Available subcommands', help='Choose one of GUI')
-    gui_qt = gui.add_parser(name='qt', help='Starting Qt5 GUI interface for Moht', formatter_class=RawTextHelpFormatter)
-    gui_qt.add_argument('-style', dest='style', help='Style for QtGUI: "fusion" (default) or "windows".', default='fusion')
-    gui_tk = gui.add_parser(name='tk', help='Starting Tk GUI interface for Moht', formatter_class=RawTextHelpFormatter)
+    parser.add_argument('-q', '--quiet', action='store_true', dest='quiet', default=False, help='be quiet')
+    parser.add_argument('-v', '--verbose', action='count', dest='verbose', default=0, help='increase output verbosity')
+    gui = parser.add_subparsers(title='gui', dest='gui', description='Available subcommands', help='choose one of GUI')
+    gui_qt = gui.add_parser(name='qt', help='starting Qt5 GUI interface for Moht', formatter_class=RawTextHelpFormatter)
+    gui_qt.add_argument('-style', dest='style', help='style for QtGUI: "fusion" (default) or "windows".', default='fusion')
+    gui_tk = gui.add_parser(name='tk', help='starting Tk GUI interface for Moht', formatter_class=RawTextHelpFormatter)
     args = parser.parse_args()
 
     if args.gui:
