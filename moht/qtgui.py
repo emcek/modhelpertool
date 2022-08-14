@@ -46,6 +46,7 @@ class MohtQtGui(QMainWindow):
         self._init_buttons()
         self._init_radio_buttons()
         self._init_line_edits()
+        self.statusbar.showMessage(f'ver. {VERSION}')
         self._set_icons()
 
     def _init_menu_bar(self) -> None:
