@@ -12,7 +12,6 @@ PLUGINS2CLEAN = [
     "Ttooth's Missing NPCs - No Nolus.ESP", "True_Lights_And_Darkness_1.1.esp", "UCNature.esm", "UFR_v3dot2_noRobe.esp", "Vurt's BC Tree Replacer II.ESP",
     "Windows Glow - Bloodmoon Eng.esp", "Windows Glow - Raven Rock Eng.esp", "Windows Glow - Tribunal Eng.esp", "Windows Glow.esp",
 ]
-
 TES3CMD = {
     'win32': {'0_37': 'tes3cmd-0.37v.exe',
               '0_40': 'tes3cmd-0.40-pre_rel2.exe'},
