@@ -63,8 +63,8 @@ class MohtTkGui(tk.Frame):
         chkbox_cache = tk.Checkbutton(master=chkbox_frame, text='Remove cache of master files', variable=self.chkbox_cache)
 
         rb_frame = tk.LabelFrame(master=self.master, text='Version of tes3cmd:', relief=tk.GROOVE, borderwidth=2)
-        rb_037 = tk.Radiobutton(master=rb_frame, text='0.37', value='0_37', variable=self.rb_tes3cmd, command=self._rb_tes3cmd_toggled)
-        rb_040 = tk.Radiobutton(master=rb_frame, text='0.40', value='0_40', variable=self.rb_tes3cmd, command=self._rb_tes3cmd_toggled)
+        rb_037 = tk.Radiobutton(master=rb_frame, text='built-in v0.37', value='0_37', variable=self.rb_tes3cmd, command=self._rb_tes3cmd_toggled)
+        rb_040 = tk.Radiobutton(master=rb_frame, text='built-in v0.40', value='0_40', variable=self.rb_tes3cmd, command=self._rb_tes3cmd_toggled)
         rb_custom = tk.Radiobutton(master=rb_frame, text='custom', value='custom', variable=self.rb_tes3cmd, command=self._rb_tes3cmd_toggled)
         rb_037.select()
 
