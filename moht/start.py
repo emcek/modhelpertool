@@ -46,7 +46,7 @@ def run_qt():
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser(description='desc', formatter_class=RawTextHelpFormatter)
+    parser = ArgumentParser(description='Simple yet powerful tool to help you manage your mods in several ways.', formatter_class=RawTextHelpFormatter)
     parser.add_argument('-V', '--version', action='version', version='%(prog)s Version: ' + VERSION)
     gui = parser.add_subparsers(title='gui', dest='gui', description='Available subcommands', help='Choose one of GUI')
     gui_qt = gui.add_parser(name='qt', help='Starting Qt5 GUI interface for Moht', formatter_class=RawTextHelpFormatter)
