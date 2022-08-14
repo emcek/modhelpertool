@@ -61,6 +61,7 @@ class MohtQtGui(QMainWindow):
         self.pb_tes3cmd.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False, widget_name='le_tes3cmd'))
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
         self.pb_report.clicked.connect(self._pb_report_clicked)
+        self.pb_chk_updates.clicked.connect(self._check_updates)
 
     def _init_line_edits(self):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
