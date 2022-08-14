@@ -56,6 +56,7 @@ class MohtQtGui(QMainWindow):
         self.actionAboutMoht.triggered.connect(AboutDialog(self).open)
         self.actionAboutQt.triggered.connect(partial(self._show_message_box, kind_of='aboutQt', title='About Qt'))
         self.actionReportIssue.triggered.connect(self._report_issue)
+        self.actionCheckUpdates.triggered.connect(self._check_updates)
 
     def _init_buttons(self) -> None:
         self.pb_mods_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True, widget_name='le_mods_dir'))
@@ -127,6 +128,11 @@ class MohtQtGui(QMainWindow):
         self._show_message_box(kind_of='information', title='Cleaning Report', message=report)
         self.pb_report.setEnabled(False)
         self.statusbar.showMessage(f'ver. {VERSION}')
+
+    def _check_updates(self):
+        latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
+        current_ver = 'No updates' if latest else f'Update available: {desc}'
+        self.statusbar.showMessage(f'ver. {VERSION} - {current_ver}')
 
     def _set_le_tes3cmd(self) -> None:
         self.le_tes3cmd.setText(path.join(here(__file__), 'resources', self.tes3cmd))
