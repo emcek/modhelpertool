@@ -1,3 +1,6 @@
+# v0.4.1
+* Hotfix - fix dependencies for Tk and Qt5 GUI versions
+
 # v0.4.0
 * Add option to select built-in or custom `tes3cmd` executable file (Tk and Qt versions)
 * Check updates menu item/push button (QtGui) and button (TkGui)
