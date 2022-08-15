@@ -9,7 +9,7 @@ from platform import architecture, uname, python_implementation, python_version
 from sys import platform
 from tempfile import gettempdir
 
-from moht import VERSION, tkgui, qtgui
+from moht import VERSION
 from moht.log import config_logger
 from moht.utils import here
 
@@ -17,6 +17,7 @@ from moht.utils import here
 def run_tk():
     """Function to start Mod Helper Tool Tk GUI."""
     import tkinter
+    from moht.tkgui import MohtTkGui
 
     root = tkinter.Tk()
     width, height = 500, 280
@@ -24,7 +25,7 @@ def run_tk():
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
     root.iconphoto(False, tkinter.PhotoImage(file=path.join(here(__file__), 'img', 'moht.png')))
-    window = tkgui.MohtTkGui(master=root)
+    window = MohtTkGui(master=root)
     window.mainloop()
 
 
@@ -33,6 +34,7 @@ def run_qt():
     from PyQt5 import QtCore
     from PyQt5.QtCore import QLibraryInfo, QTranslator, QLocale
     from PyQt5.QtWidgets import QApplication
+    from moht.qtgui import MohtQtGui
 
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
     signal.signal(signal.SIGTERM, signal.SIG_DFL)
@@ -46,7 +48,7 @@ def run_qt():
     if translator.load(QLocale.system(), 'qtgui', '-', here(__file__)):  # change to _
         app.installTranslator(translator)
 
-    window = qtgui.MohtQtGui()
+    window = MohtQtGui()
     window.show()
     sys.exit(app.exec())
 
