@@ -24,7 +24,10 @@ For now, application can only clean your mods, but in future more features will 
 * Simple report after cleaning
 
 ## Requirements
-* Python 3.7+ (with tcl/tk support, see installation) should be fine
+* Python 3.7+ (with tcl/tk support, see [installation](#installation)) should be fine
+* Optional:
+  * `PyQt5` for Qt GUI version, see [GUI Style](#gui-style)
+  * `pip` >= 22.2.1 - use to check new version of Moht
 
 ## Installation
 1. Any Python version grater the 3.7 with tcl/tk support
