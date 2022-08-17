@@ -148,8 +148,9 @@ class MohtTkGui(tk.Frame):
             self.logger.debug(f'Result: {result}, Reason: {reason}')
             self._update_stats(mod_file, plug, reason, result)
             if self.chkbox_backup.get():
-                self.logger.debug(f'Remove: {self.morrowind_dir}/{mod_file}')
-                remove(f'{self.morrowind_dir}/{mod_file}')
+                mod_path = path.join(self.morrowind_dir, mod_file)
+                self.logger.debug(f'Remove: {mod_path}')
+                remove(mod_path)
         self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.chkbox_cache.get():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
@@ -162,8 +163,9 @@ class MohtTkGui(tk.Frame):
 
     def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
         if result:
-            self.logger.debug(f'Move: {self.morrowind_dir}/1/{mod_file} -> {plug}')
-            move(f'{self.morrowind_dir}/1/{mod_file}', plug)
+            clean_plugin = path.join(self.morrowind_dir, '1', mod_file)
+            self.logger.debug(f'Move: {clean_plugin} -> {plug}')
+            move(clean_plugin, plug)
             self.stats['cleaned'] += 1
         if not result and reason == 'not modified':
             self.stats['clean'] += 1
