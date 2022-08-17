@@ -100,7 +100,7 @@ class MohtQtGui(QMainWindow):
             self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
             copy2(plug, self.morrowind_dir)
             mod_file = extract_filename(plug)
-            out, err = run_cmd(f'{self.le_tes3cmd.text()} clean --output-dir --overwrite "{mod_file}"')
+            out, err = run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
             result, reason = parse_cleaning(out, err, mod_file)
             self.logger.debug(f'Result: {result}, Reason: {reason}')
             self._update_stats(mod_file, plug, reason, result)
@@ -186,7 +186,7 @@ class MohtQtGui(QMainWindow):
 
     def _check_clean_bin(self) -> bool:
         self.logger.debug('Checking tes3cmd')
-        out, err = run_cmd(f'{self.le_tes3cmd.text()} -h')
+        out, err = run_cmd(f'{self.tes3cmd} -h')
         result, reason = parse_cleaning(out, err, '')
         self.logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
