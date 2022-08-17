@@ -155,6 +155,14 @@ def test_extract_filename():
     assert extract_filename(Path('/home/user/file.txt')) == 'file.txt'
 
 
+def test_get_all_plugins():
+    from pathlib import Path
+    from moht.utils import get_all_plugins
+    return_val = ('/home', ('user',), ('user2',)), ('/home/user', (), ('plugin1.esp', 'plugin2.esm')),
+    with patch.object(utils, 'walk', return_value=return_val):
+        assert get_all_plugins(mods_dir='/home') == [Path('/home/user/plugin1.esp'), Path('/home/user/plugin2.esm')]
+
+
 def test_get_plugins_to_clean():
     from pathlib import Path
     from moht.utils import get_plugins_to_clean
