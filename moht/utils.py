@@ -4,7 +4,7 @@ from os import linesep, path, sep, walk
 from pathlib import Path
 from re import search, MULTILINE
 from shlex import split
-from shutil import rmtree
+from shutil import rmtree, copy2
 from subprocess import Popen, PIPE
 from sys import platform
 from typing import Tuple, Union, List, Set
@@ -188,3 +188,15 @@ def find_missing_esm(dir_path: str, data_files: str, esm_files: Set[str]) -> Lis
                  for filename in files
                  if filename in missing_files]
     return file_list
+
+
+def copy_filelist(file_list: List[Path], dest_dir: str) -> None:
+    """
+    Copy files from file_list to dest_dir.
+
+    :param file_list: list of files to copy
+    :param dest_dir: destination directory
+    """
+    for file_path in file_list:
+        logger.debug(f'Copy: {file_path} -> {dest_dir}')
+        copy2(file_path, dest_dir)
