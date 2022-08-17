@@ -205,6 +205,6 @@ def test_find_missing_esm():
     with patch.object(utils, 'walk', side_effect=side_effect):
         result = find_missing_esm(dir_path='/home/user1/mods',
                                   data_files='/home/user1/datafiles',
-                                  file_names={'plugin1.esm', 'plugin2.esm', 'plugin3.esm', 'plugin4.esm'})
+                                  esm_files={'plugin1.esm', 'plugin2.esm', 'plugin3.esm', 'plugin4.esm'})
         assert result == [Path('/home/user1/mods/plugin1.esm'),
                           Path('/home/user1/mods/plugin2.esm')]
