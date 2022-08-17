@@ -145,3 +145,11 @@ def test_here():
     from os import path
     assert utils.here(__file__) == path.abspath(path.dirname(__file__))
     assert utils.here('../log.py') == path.abspath(path.dirname('../log.py'))
+
+
+def test_extract_filename():
+    from pathlib import Path
+    from utils import extract_filename
+
+    assert extract_filename('/home/user/file.txt') == 'file.txt'
+    assert extract_filename(Path('/home/user/file.txt')) == 'file.txt'
