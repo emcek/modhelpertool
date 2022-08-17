@@ -2,7 +2,7 @@ import webbrowser
 from functools import partial
 from itertools import chain
 from logging import getLogger
-from os import path, removedirs, chdir, walk, remove
+from os import path, chdir, walk, remove
 from pathlib import Path
 from shutil import move, copy2, rmtree
 from sys import version_info, platform
@@ -70,8 +70,8 @@ class MohtQtGui(QMainWindow):
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
         self._set_le_tes3cmd()
-        self.le_mods_dir.setText(str(Path.home()))
-        self.le_morrowind_dir.setText(str(Path.home()))
+        self.mods_dir = str(Path.home())
+        self.morrowind_dir = str(Path.home())
 
     def _init_radio_buttons(self):
         for ver in ['0_37', '0_40']:
@@ -83,7 +83,7 @@ class MohtQtGui(QMainWindow):
 
     def _pb_clean_clicked(self) -> None:
         all_plugins = [Path(path.join(root, filename))
-                       for root, _, files in walk(self.le_mods_dir.text())
+                       for root, _, files in walk(self.mods_dir)
                        for filename in files
                        if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
         self.logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
@@ -92,26 +92,27 @@ class MohtQtGui(QMainWindow):
         self.logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
         req_esm = set(chain.from_iterable([PLUGINS2CLEAN[extract_filename(plugin)] for plugin in plugins_to_clean]))
         self.logger.debug(f'Required esm: {req_esm}')
-        chdir(self.le_morrowind_dir.text())
+        chdir(self.morrowind_dir)
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
         for idx, plug in enumerate(plugins_to_clean, 1):
             self.logger.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
-            self.logger.debug(f'Copy: {plug} -> {self.le_morrowind_dir.text()}')
-            copy2(plug, self.le_morrowind_dir.text())
+            self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
+            copy2(plug, self.morrowind_dir)
             mod_file = extract_filename(plug)
-            out, err = run_cmd(f'{self.le_tes3cmd.text()} clean --output-dir --overwrite "{mod_file}"')
+            out, err = run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
             result, reason = parse_cleaning(out, err, mod_file)
             self.logger.debug(f'Result: {result}, Reason: {reason}')
             self._update_stats(mod_file, plug, reason, result)
             if self.cb_rm_bakup.isChecked():
-                self.logger.debug(f'Remove: {self.le_morrowind_dir.text()}/{mod_file}')
-                remove(f'{self.le_morrowind_dir.text()}/{mod_file}')
+                self.logger.debug(f'Remove: {self.morrowind_dir}/{mod_file}')
+                remove(f'{self.morrowind_dir}/{mod_file}')
         self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.cb_rm_cache.isChecked():
-            removedirs(f'{self.le_morrowind_dir.text()}/1')  # add path.join
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
-            rmtree(f'{self.le_morrowind_dir.text()}/{cachedir}', ignore_errors=True)
+            for directory in [path.join(self.morrowind_dir, subdir) for subdir in ['1', cachedir]]:
+                self.logger.debug(f'Remove: {directory}')
+                rmtree(directory, ignore_errors=True)
         cleaning_time = time() - start
         self.stats['time'] = cleaning_time
         self.logger.debug(f'Total time: {cleaning_time} s')
@@ -137,12 +138,12 @@ class MohtQtGui(QMainWindow):
         self.statusbar.showMessage(f'ver. {VERSION} - {current_ver}')
 
     def _set_le_tes3cmd(self) -> None:
-        self.le_tes3cmd.setText(path.join(here(__file__), 'resources', self.tes3cmd))
+        self.tes3cmd = path.join(here(__file__), 'resources', self.tes3cmd)
 
     def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
         if result:
-            self.logger.debug(f'Move: {self.le_morrowind_dir.text()}/1/{mod_file} -> {plug}')
-            move(f'{self.le_morrowind_dir.text()}/1/{mod_file}', plug)
+            self.logger.debug(f'Move: {self.morrowind_dir}/1/{mod_file} -> {plug}')
+            move(f'{self.morrowind_dir}/1/{mod_file}', plug)
             self.stats['cleaned'] += 1
         if not result and reason == 'not modified':
             self.stats['clean'] += 1
@@ -186,7 +187,7 @@ class MohtQtGui(QMainWindow):
 
     def _check_clean_bin(self) -> bool:
         self.logger.debug('Checking tes3cmd')
-        out, err = run_cmd(f'{self.le_tes3cmd.text()} -h')
+        out, err = run_cmd(f'{self.tes3cmd} -h')
         result, reason = parse_cleaning(out, err, '')
         self.logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
@@ -272,6 +273,45 @@ class MohtQtGui(QMainWindow):
     @staticmethod
     def _report_issue():
         webbrowser.open('https://gitlab.com/modding-openmw/modhelpertool/issues', new=2)
+
+    @property
+    def mods_dir(self) -> str:
+        """
+        Get root of mods directory.
+
+        :return: mods dir as string
+        """
+        return self.le_mods_dir.text()
+
+    @mods_dir.setter
+    def mods_dir(self, value: str) -> None:
+        self.le_mods_dir.setText(value)
+
+    @property
+    def morrowind_dir(self) -> str:
+        """
+        Get Morrowind Data Files directory.
+
+        :return: morrowind dir as string
+        """
+        return self.le_morrowind_dir.text()
+
+    @morrowind_dir.setter
+    def morrowind_dir(self, value: str) -> None:
+        self.le_morrowind_dir.setText(value)
+
+    @property
+    def tes3cmd(self) -> str:
+        """
+        Get tes3cmd binary file path.
+
+        :return: tes3cmd file as string
+        """
+        return self.le_tes3cmd.text()
+
+    @tes3cmd.setter
+    def tes3cmd(self, value: str) -> None:
+        self.le_tes3cmd.setText(value)
 
 
 class AboutDialog(QDialog):
