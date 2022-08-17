@@ -115,7 +115,6 @@ class MohtQtGui(QMainWindow):
         self.statusbar.showMessage('Done. See report!')
         self.pb_report.setEnabled(True)
 
-
     def _pb_report_clicked(self) -> None:
         """Show report after clean-up."""
         self.logger.debug(f'Report: {self.stats}')
