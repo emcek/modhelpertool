@@ -8,9 +8,7 @@ from sys import platform
 from time import time
 from tkinter import filedialog, messagebox
 
-from moht import VERSION, TES3CMD
-from moht.utils import is_latest_ver, parse_cleaning, run_cmd, here, extract_filename, get_all_plugins, get_plugins_to_clean, get_required_esm, \
-    rm_dirs_with_subdirs, find_missing_esm, copy_filelist, rm_copied_extra_esm
+from moht import VERSION, TES3CMD, utils
 
 
 class MohtTkGui(tk.Frame):
@@ -35,7 +33,7 @@ class MohtTkGui(tk.Frame):
         self.statusbar.set(f'ver. {VERSION}')
         self._mods_dir.set(str(Path.home()))
         self._morrowind_dir.set(str(Path.home()))
-        self._tes3cmd.set(path.join(here(__file__), 'resources', TES3CMD[platform]['0_37']))
+        self._tes3cmd.set(path.join(utils.here(__file__), 'resources', TES3CMD[platform]['0_37']))
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
         self.tes3cmd_file.config(state=tk.DISABLED)
@@ -119,7 +117,7 @@ class MohtTkGui(tk.Frame):
             self.tes3cmd_btn.config(state=tk.NORMAL)
         else:
             self.logger.debug(f'tes3cmd version: {self.rb_tes3cmd.get()}')
-            self._tes3cmd.set(path.join(here(__file__), 'resources', TES3CMD[platform][self.rb_tes3cmd.get()]))
+            self._tes3cmd.set(path.join(utils.here(__file__), 'resources', TES3CMD[platform][self.rb_tes3cmd.get()]))
             self.tes3cmd_file.config(state=tk.DISABLED)
             self.tes3cmd_btn.config(state=tk.DISABLED)
 
@@ -128,16 +126,16 @@ class MohtTkGui(tk.Frame):
         if not all([path.isdir(folder) for folder in [self.mods_dir, self.morrowind_dir]]):
             self.statusbar.set('Check directories and try again')
             return
-        all_plugins = get_all_plugins(mods_dir=self.mods_dir)
+        all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
         self.logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
-        plugins_to_clean = get_plugins_to_clean(plugins=all_plugins)
+        plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
         no_of_plugins = len(plugins_to_clean)
         self.logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
-        req_esm = get_required_esm(plugins=plugins_to_clean)
+        req_esm = utils.get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
-        missing_esm = find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
+        missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
         self.logger.debug(f'Missing esm: {missing_esm}')
-        copy_filelist(missing_esm, self.morrowind_dir)
+        utils.copy_filelist(missing_esm, self.morrowind_dir)
         chdir(self.morrowind_dir)
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
@@ -145,9 +143,9 @@ class MohtTkGui(tk.Frame):
             self.logger.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
             self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
             copy2(plug, self.morrowind_dir)
-            mod_file = extract_filename(plug)
-            out, err = run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
-            result, reason = parse_cleaning(out, err, mod_file)
+            mod_file = utils.extract_filename(plug)
+            out, err = utils.run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
+            result, reason = utils.parse_cleaning(out, err, mod_file)
             self.logger.debug(f'Result: {result}, Reason: {reason}')
             self._update_stats(mod_file, plug, reason, result)
             if self.chkbox_backup.get():
@@ -157,8 +155,8 @@ class MohtTkGui(tk.Frame):
         self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.chkbox_cache.get():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
-            rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
-        rm_copied_extra_esm(esm=missing_esm, data_files=self.morrowind_dir)
+            utils.rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
+        utils.rm_copied_extra_esm(esm=missing_esm, data_files=self.morrowind_dir)
         cleaning_time = time() - start
         self.stats['time'] = cleaning_time
         self.logger.debug(f'Total time: {cleaning_time} s')
@@ -194,14 +192,14 @@ class MohtTkGui(tk.Frame):
 
     def check_updates(self):
         """Check for updates."""
-        latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
+        latest, desc = utils.is_latest_ver(package='moht', current_ver=VERSION)
         current_ver = 'No updates' if latest else f'Update available: {desc}'
         self.statusbar.set(f'ver. {VERSION} - {current_ver}')
 
     def _check_clean_bin(self) -> bool:
         self.logger.debug('Checking tes3cmd')
-        out, err = run_cmd(f'{self.tes3cmd} -h')
-        result, reason = parse_cleaning(out, err, '')
+        out, err = utils.run_cmd(f'{self.tes3cmd} -h')
+        result, reason = utils.parse_cleaning(out, err, '')
         self.logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
             self.statusbar.set(f'Error: {reason}')

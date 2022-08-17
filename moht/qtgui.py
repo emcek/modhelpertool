@@ -14,9 +14,7 @@ from PyQt5 import QtCore, uic
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
-from moht import VERSION, TES3CMD, qtgui_rc
-from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here, extract_filename, get_all_plugins, get_plugins_to_clean, get_required_esm, \
-    rm_dirs_with_subdirs, find_missing_esm, copy_filelist, rm_copied_extra_esm
+from moht import VERSION, TES3CMD, utils, qtgui_rc
 
 res = qtgui_rc  # prevent to remove import statement accidentally
 
@@ -37,7 +35,7 @@ class MohtQtGui(QMainWindow):
         """Mod Helper Tool Qt5 GUI."""
         super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
         self.logger = getLogger(__name__)
-        uic.loadUi(f'{here(__file__)}/ui/qtgui.ui', self)
+        uic.loadUi(f'{utils.here(__file__)}/ui/qtgui.ui', self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
@@ -82,16 +80,16 @@ class MohtQtGui(QMainWindow):
         self._set_le_tes3cmd()
 
     def _pb_clean_clicked(self) -> None:
-        all_plugins = get_all_plugins(mods_dir=self.mods_dir)
+        all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
         self.logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
-        plugins_to_clean = get_plugins_to_clean(plugins=all_plugins)
+        plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
         no_of_plugins = len(plugins_to_clean)
         self.logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
-        req_esm = get_required_esm(plugins=plugins_to_clean)
+        req_esm = utils.get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
-        missing_esm = find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
+        missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
         self.logger.debug(f'Missing esm: {missing_esm}')
-        copy_filelist(missing_esm, self.morrowind_dir)
+        utils.copy_filelist(missing_esm, self.morrowind_dir)
         chdir(self.morrowind_dir)
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
@@ -99,9 +97,9 @@ class MohtQtGui(QMainWindow):
             self.logger.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
             self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
             copy2(plug, self.morrowind_dir)
-            mod_file = extract_filename(plug)
-            out, err = run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
-            result, reason = parse_cleaning(out, err, mod_file)
+            mod_file = utils.extract_filename(plug)
+            out, err = utils.run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
+            result, reason = utils.parse_cleaning(out, err, mod_file)
             self.logger.debug(f'Result: {result}, Reason: {reason}')
             self._update_stats(mod_file, plug, reason, result)
             if self.cb_rm_bakup.isChecked():
@@ -111,8 +109,8 @@ class MohtQtGui(QMainWindow):
         self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.cb_rm_cache.isChecked():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
-            rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
-        rm_copied_extra_esm(missing_esm, self.morrowind_dir)
+            utils.rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
+        utils.rm_copied_extra_esm(missing_esm, self.morrowind_dir)
         cleaning_time = time() - start
         self.stats['time'] = cleaning_time
         self.logger.debug(f'Total time: {cleaning_time} s')
@@ -133,12 +131,12 @@ class MohtQtGui(QMainWindow):
         self.statusbar.showMessage(f'ver. {VERSION}')
 
     def _check_updates(self):
-        latest, desc = is_latest_ver(package='moht', current_ver=VERSION)
+        latest, desc = utils.is_latest_ver(package='moht', current_ver=VERSION)
         current_ver = 'No updates' if latest else f'Update available: {desc}'
         self.statusbar.showMessage(f'ver. {VERSION} - {current_ver}')
 
     def _set_le_tes3cmd(self) -> None:
-        self.tes3cmd = path.join(here(__file__), 'resources', self.tes3cmd)
+        self.tes3cmd = path.join(utils.here(__file__), 'resources', self.tes3cmd)
 
     def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
         if result:
@@ -188,8 +186,8 @@ class MohtQtGui(QMainWindow):
 
     def _check_clean_bin(self) -> bool:
         self.logger.debug('Checking tes3cmd')
-        out, err = run_cmd(f'{self.tes3cmd} -h')
-        result, reason = parse_cleaning(out, err, '')
+        out, err = utils.run_cmd(f'{self.tes3cmd} -h')
+        result, reason = utils.parse_cleaning(out, err, '')
         self.logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
             self.statusbar.showMessage(f'Error: {reason}')
@@ -319,7 +317,7 @@ class AboutDialog(QDialog):
     def __init__(self, parent) -> None:
         """Moht about dialog window."""
         super(AboutDialog, self).__init__(parent)
-        uic.loadUi(f'{here(__file__)}/ui/about.ui', self)
+        uic.loadUi(f'{utils.here(__file__)}/ui/about.ui', self)
         self.setup_text()
 
     def setup_text(self) -> None:
