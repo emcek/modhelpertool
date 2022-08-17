@@ -280,11 +280,11 @@ class MohtQtGui(QMainWindow):
 
         :return: mods dir as string
         """
-        return str(self.le_mods_dir.text())
+        return self.le_mods_dir.text()
 
     @mods_dir.setter
-    def mods_dir(self, value: Path) -> None:
-        self.le_mods_dir.setText(str(value))
+    def mods_dir(self, value: str) -> None:
+        self.le_mods_dir.setText(value)
 
     @property
     def morrowind_dir(self) -> str:
@@ -293,11 +293,11 @@ class MohtQtGui(QMainWindow):
 
         :return: morrowind dir as string
         """
-        return str(self.le_morrowind_dir.text())
+        return self.le_morrowind_dir.text()
 
     @morrowind_dir.setter
-    def morrowind_dir(self, value: Path) -> None:
-        self.le_morrowind_dir.setText(str(value))
+    def morrowind_dir(self, value: str) -> None:
+        self.le_morrowind_dir.setText(value)
 
     @property
     def tes3cmd(self) -> str:
@@ -306,11 +306,11 @@ class MohtQtGui(QMainWindow):
 
         :return: tes3cmd file as string
         """
-        return str(self.le_tes3cmd.text())
+        return self.le_tes3cmd.text()
 
     @tes3cmd.setter
-    def tes3cmd(self, value: Path) -> None:
-        self.le_tes3cmd.setText(str(value))
+    def tes3cmd(self, value: str) -> None:
+        self.le_tes3cmd.setText(value)
 
 
 class AboutDialog(QDialog):
