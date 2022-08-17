@@ -1,9 +1,10 @@
 # v0.5.0
 * Fix removing not empty cache directory when cleaning failed
 * List of dirty plugins has required esm files to clean successfully
-* Locate esm files to be use in cleaning process
+* Locate, copy and remove (after cleaning) required (for cleaning) esm files
 * Internal:
-  * extract functionality to be share between Qt and Tak Guis
+  * extract functionality to be share between Qt and Tk GUIs
+  * add unit tests
 
 # v0.4.1
 * Hotfix - fix dependencies for Tk and Qt5 GUI versions
