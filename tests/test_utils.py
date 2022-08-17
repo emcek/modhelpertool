@@ -186,3 +186,42 @@ def test_rm_dirs_with_subdirs():
         rm_dirs_with_subdirs('/home/user/mods', ['plugin1', 'plugin2'])
         rmtree_mock.assert_has_calls([call('/home/user/mods/plugin1', ignore_errors=True),
                                       call('/home/user/mods/plugin2', ignore_errors=True)])
+
+
+def test_find_missing_esm():
+    from pathlib import Path
+    from moht.utils import find_missing_esm
+    side_effect = [
+        [
+            ('/home', ('user1', 'user2'), ()),
+            ('/home/user1', ('mods', 'datafiles'), ()),
+            ('/home/user1/datafiles', ('plugin3',), ('plugin3.esm', 'plugin4.esm', 'plugin4.esm'))
+        ],
+        [
+            ('/home', ('user1', 'user2'), ()),
+            ('/home/user1', ('mods', 'datafiles'), ()),
+            ('/home/user1/mods', (), ('plugin1.esm', 'plugin2.esm', 'plugin3.esp', 'plugin5.esm'))]
+    ]
+    with patch.object(utils, 'walk', side_effect=side_effect):
+        result = find_missing_esm(dir_path='/home/user1/mods',
+                                  data_files='/home/user1/datafiles',
+                                  esm_files={'plugin1.esm', 'plugin2.esm', 'plugin3.esm', 'plugin4.esm'})
+        assert result == [Path('/home/user1/mods/plugin1.esm'),
+                          Path('/home/user1/mods/plugin2.esm')]
+
+
+def test_copy_filelist():
+    from pathlib import Path
+    from moht.utils import copy_filelist
+    with patch.object(utils, 'copy2') as copy2_mock:
+        copy_filelist(file_list=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], dest_dir='/home/user/datafiles')
+        copy2_mock.assert_has_calls([call(Path('/home/user/mods/plugin1.esm'), '/home/user/datafiles'),
+                                     call(Path('/home/user/mods/plugin2.esm'), '/home/user/datafiles')])
+
+
+def test_rm_copied_extra_ems():
+    from pathlib import Path
+    from moht.utils import rm_copied_extra_esm
+    with patch.object(utils, 'remove') as remove_mock:
+        rm_copied_extra_esm(esm=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], data_files='/home/user/datafiles')
+        remove_mock.assert_has_calls([call('/home/user/datafiles/plugin1.esm'), call('/home/user/datafiles/plugin2.esm')])

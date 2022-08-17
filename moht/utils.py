@@ -1,10 +1,10 @@
 from itertools import chain
 from logging import getLogger
-from os import linesep, path, sep, walk
+from os import linesep, path, sep, walk, remove
 from pathlib import Path
 from re import search, MULTILINE
 from shlex import split
-from shutil import rmtree
+from shutil import rmtree, copy2
 from subprocess import Popen, PIPE
 from sys import platform
 from typing import Tuple, Union, List, Set
@@ -167,3 +167,49 @@ def rm_dirs_with_subdirs(dir_path: str, subdirs: List[str]) -> None:
     for directory in [path.join(dir_path, subdir) for subdir in subdirs]:
         logger.debug(f'Remove: {directory}')
         rmtree(directory, ignore_errors=True)
+
+
+def find_missing_esm(dir_path: str, data_files: str, esm_files: Set[str]) -> List[Path]:
+    """
+    Find missing esm files in Morrowind Data Files folder.
+
+    :param dir_path: directory path of mods
+    :param data_files: Morrowind Data Files directory
+    :param esm_files: set of esm file names
+    :return: list of files
+    """
+    in_datafiles = {filename
+                    for _, _, files in walk(data_files)
+                    for filename in files
+                    if filename in esm_files}
+    missing_files = set(esm_files) - in_datafiles
+    file_list = [Path(path.join(root, filename))
+                 for root, _, files in walk(dir_path)
+                 for filename in files
+                 if filename in missing_files]
+    return file_list
+
+
+def copy_filelist(file_list: List[Path], dest_dir: str) -> None:
+    """
+    Copy files from file_list to dest_dir.
+
+    :param file_list: list of files to copy
+    :param dest_dir: destination directory
+    """
+    for file_path in file_list:
+        logger.debug(f'Copy: {file_path} -> {dest_dir}')
+        copy2(file_path, dest_dir)
+
+
+def rm_copied_extra_esm(esm: List[Path], data_files: str) -> None:
+    """
+    Remove extra esm files from Morrowind Data Files folder.
+
+    :param esm: list of esm files
+    :param data_files: Morrowind Data Files directory
+    """
+    for esm_file in esm:
+        esm_path = path.join(data_files, extract_filename(esm_file))
+        logger.debug(f'Remove: {esm_path}')
+        remove(esm_path)
