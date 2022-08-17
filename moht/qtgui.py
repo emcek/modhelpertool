@@ -1,7 +1,8 @@
 import webbrowser
 from functools import partial
+from itertools import chain
 from logging import getLogger
-from os import path, removedirs, chdir, walk, remove, sep
+from os import path, removedirs, chdir, walk, remove
 from pathlib import Path
 from shutil import move, copy2, rmtree
 from sys import version_info, platform
@@ -15,7 +16,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
 from moht import PLUGINS2CLEAN, VERSION, TES3CMD, qtgui_rc
-from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here
+from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here, extract_filename
 
 res = qtgui_rc  # prevent to remove import statement accidentally
 
@@ -89,6 +90,8 @@ class MohtQtGui(QMainWindow):
         plugins_to_clean = [plugin_file for plugin_file in all_plugins if str(plugin_file).split(sep)[-1] in PLUGINS2CLEAN]
         no_of_plugins = len(plugins_to_clean)
         self.logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
+        req_esm = set(chain.from_iterable([PLUGINS2CLEAN[extract_filename(plugin)] for plugin in plugins_to_clean]))
+        self.logger.debug(f'Required esm: {req_esm}')
         chdir(self.le_morrowind_dir.text())
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
