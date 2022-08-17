@@ -92,26 +92,26 @@ class MohtQtGui(QMainWindow):
         self.logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
         req_esm = set(chain.from_iterable([PLUGINS2CLEAN[extract_filename(plugin)] for plugin in plugins_to_clean]))
         self.logger.debug(f'Required esm: {req_esm}')
-        chdir(self.le_morrowind_dir.text())
+        chdir(self.morrowind_dir)
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
         for idx, plug in enumerate(plugins_to_clean, 1):
             self.logger.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
-            self.logger.debug(f'Copy: {plug} -> {self.le_morrowind_dir.text()}')
-            copy2(plug, self.le_morrowind_dir.text())
+            self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
+            copy2(plug, self.morrowind_dir)
             mod_file = extract_filename(plug)
             out, err = run_cmd(f'{self.le_tes3cmd.text()} clean --output-dir --overwrite "{mod_file}"')
             result, reason = parse_cleaning(out, err, mod_file)
             self.logger.debug(f'Result: {result}, Reason: {reason}')
             self._update_stats(mod_file, plug, reason, result)
             if self.cb_rm_bakup.isChecked():
-                self.logger.debug(f'Remove: {self.le_morrowind_dir.text()}/{mod_file}')
-                remove(f'{self.le_morrowind_dir.text()}/{mod_file}')
+                self.logger.debug(f'Remove: {self.morrowind_dir}/{mod_file}')
+                remove(f'{self.morrowind_dir}/{mod_file}')
         self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.cb_rm_cache.isChecked():
-            removedirs(f'{self.le_morrowind_dir.text()}/1')  # add path.join
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
-            rmtree(f'{self.le_morrowind_dir.text()}/{cachedir}', ignore_errors=True)
+            for dir in [path.join(self.morrowind_dir, '1'), path.join(self.morrowind_dir, cachedir)]:
+                rmtree(dir, ignore_errors=True)
         cleaning_time = time() - start
         self.stats['time'] = cleaning_time
         self.logger.debug(f'Total time: {cleaning_time} s')
@@ -141,8 +141,8 @@ class MohtQtGui(QMainWindow):
 
     def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
         if result:
-            self.logger.debug(f'Move: {self.le_morrowind_dir.text()}/1/{mod_file} -> {plug}')
-            move(f'{self.le_morrowind_dir.text()}/1/{mod_file}', plug)
+            self.logger.debug(f'Move: {self.morrowind_dir}/1/{mod_file} -> {plug}')
+            move(f'{self.morrowind_dir}/1/{mod_file}', plug)
             self.stats['cleaned'] += 1
         if not result and reason == 'not modified':
             self.stats['clean'] += 1
