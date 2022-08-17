@@ -137,7 +137,7 @@ class MohtQtGui(QMainWindow):
         self.statusbar.showMessage(f'ver. {VERSION} - {current_ver}')
 
     def _set_le_tes3cmd(self) -> None:
-        self.le_tes3cmd.setText(path.join(here(__file__), 'resources', self.tes3cmd))
+        self.tes3cmd = path.join(here(__file__), 'resources', self.tes3cmd)
 
     def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
         if result:
