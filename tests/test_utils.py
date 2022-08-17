@@ -153,3 +153,20 @@ def test_extract_filename():
 
     assert extract_filename('/home/user/file.txt') == 'file.txt'
     assert extract_filename(Path('/home/user/file.txt')) == 'file.txt'
+
+
+def test_get_plugins_to_clean():
+    from pathlib import Path
+    from moht.utils import get_plugins_to_clean
+    plugins = [Path('/home/user/OAAB - Foyada Mamaea.ESP'), Path('/home/user/noplugin.esp')]
+    assert get_plugins_to_clean(plugins) == [plugins[0]]
+
+
+def test_get_required_esm():
+    from pathlib import Path
+    from moht.utils import get_required_esm
+    plugins = [Path('/home/user/OAAB - Foyada Mamaea.ESP'), Path("/home/user/Building Up Uvirith's Legacy1.1.ESP")]
+    assert get_required_esm(plugins) == {'Morrowind.esm', 'Tribunal.esm', 'Bloodmoon.esm', 'OAAB_Data.esm'}
+
+    plugins = [Path("/home/user/Building Up Uvirith's Legacy1.1.ESP")]
+    assert get_required_esm(plugins) == {'Morrowind.esm'}
