@@ -273,6 +273,45 @@ class MohtQtGui(QMainWindow):
     def _report_issue():
         webbrowser.open('https://gitlab.com/modding-openmw/modhelpertool/issues', new=2)
 
+    @property
+    def mods_dir(self) -> str:
+        """
+        Get root of mods directory.
+
+        :return: mods dir as string
+        """
+        return str(self.le_mods_dir.text())
+
+    @mods_dir.setter
+    def mods_dir(self, value: Path) -> None:
+        self.le_mods_dir.setText(str(value))
+
+    @property
+    def morrowind_dir(self) -> str:
+        """
+        Get Morrowind Data Files directory.
+
+        :return: morrowind dir as string
+        """
+        return str(self.le_morrowind_dir.text())
+
+    @morrowind_dir.setter
+    def morrowind_dir(self, value: Path) -> None:
+        self.le_morrowind_dir.setText(str(value))
+
+    @property
+    def tes3cmd(self) -> str:
+        """
+        Get tes3cmd binary file path.
+
+        :return: tes3cmd file as string
+        """
+        return str(self.le_tes3cmd.text())
+
+    @tes3cmd.setter
+    def tes3cmd(self, value: Path) -> None:
+        self.le_tes3cmd.setText(str(value))
+
 
 class AboutDialog(QDialog):
     def __init__(self, parent) -> None:
