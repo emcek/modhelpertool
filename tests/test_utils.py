@@ -186,3 +186,23 @@ def test_rm_dirs_with_subdirs():
         rm_dirs_with_subdirs('/home/user/mods', ['plugin1', 'plugin2'])
         rmtree_mock.assert_has_calls([call('/home/user/mods/plugin1', ignore_errors=True),
                                       call('/home/user/mods/plugin2', ignore_errors=True)])
+
+
+def test_find_files():
+    from pathlib import Path
+    from moht.utils import find_files
+    side_effect = [
+        [
+            ('/home', ('user1', 'user2'), ()),
+            ('/home/user1', ('plugin1', 'plugin2'), ()),
+            ('/home/user1/plugin1', (), ('plugin1.esm', 'plugin2.esm', 'plugin3.esp'))],
+        [
+            ('/home', ('user1', 'user2'), ()),
+            ('/home/user1', ('plugin1', 'plugin2'), ()),
+            ('/home/user1/plugin2', ('plugin3',), ('plugin3.esm', 'plugin4.esm', 'plugin5.esm'))
+        ]
+    ]
+    with patch.object(utils, 'walk', side_effect=side_effect):
+        result = find_files(dir_paths=['/home/user1/plugin1', '/home/user1/plugin2'], file_names=['plugin2.esm', 'plugin5.esm'])
+        assert result == [Path('/home/user1/plugin1/plugin2.esm'),
+                          Path('/home/user1/plugin2/plugin5.esm')]
