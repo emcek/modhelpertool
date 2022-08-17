@@ -1,6 +1,6 @@
 from itertools import chain
 from logging import getLogger
-from os import linesep, path, sep, walk
+from os import linesep, path, sep, walk, remove
 from pathlib import Path
 from re import search, MULTILINE
 from shlex import split
@@ -200,3 +200,16 @@ def copy_filelist(file_list: List[Path], dest_dir: str) -> None:
     for file_path in file_list:
         logger.debug(f'Copy: {file_path} -> {dest_dir}')
         copy2(file_path, dest_dir)
+
+
+def rm_copied_extra_ems(esm: List[Path], data_files: str) -> None:
+    """
+    Remove extra esm files from Morrowind Data Files folder.
+
+    :param esm: list of esm files
+    :param data_files: Morrowind Data Files directory
+    """
+    for esm_file in esm:
+        esm_path = path.join(data_files, extract_filename(esm_file))
+        logger.debug(f'Remove: {esm_path}')
+        remove(esm_path)
