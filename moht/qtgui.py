@@ -2,7 +2,7 @@ import webbrowser
 from functools import partial
 from itertools import chain
 from logging import getLogger
-from os import path, removedirs, chdir, walk, remove
+from os import path, chdir, walk, remove
 from pathlib import Path
 from shutil import move, copy2, rmtree
 from sys import version_info, platform
