@@ -7,7 +7,6 @@ PLUGINS2CLEAN = {
     "Building Up Uvirith's Legacy1.1.ESP": ['Morrowind.esm'],
     "Caldera.esp": ['Morrowind.esm', 'Tribunal.esm', 'Bloodmoon.esm', 'OAAB_Data.esm'],
     "DD_Caldera_Expansion.esp": ['Morrowind.esm', 'Tribunal.esm', 'Bloodmoon.esm'],
-    "NX9_Guards_Complete.ESP": ['Morrowind.esm', 'Tribunal.esm', 'Bloodmoon.esm'],
     "Radiant Gem.esp": ['Morrowind.esm', 'Tribunal.esm', 'Bloodmoon.esm'],  # no mode available
     "Dwemer and Ebony Service Refusal.ESP": ['Morrowind.esm', 'Tribunal.esm', 'Bloodmoon.esm'],
     "OAAB - Foyada Mamaea.ESP": ['Morrowind.esm', 'Tribunal.esm', 'Bloodmoon.esm', 'OAAB_Data.esm'],
