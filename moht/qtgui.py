@@ -83,7 +83,7 @@ class MohtQtGui(QMainWindow):
 
     def _pb_clean_clicked(self) -> None:
         all_plugins = [Path(path.join(root, filename))
-                       for root, _, files in walk(self.le_mods_dir.text())
+                       for root, _, files in walk(self.mods_dir)
                        for filename in files
                        if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
         self.logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
