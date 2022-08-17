@@ -1,8 +1,7 @@
 import webbrowser
 from functools import partial
-from itertools import chain
 from logging import getLogger
-from os import path, chdir, walk, remove
+from os import path, chdir, remove
 from pathlib import Path
 from shutil import move, copy2, rmtree
 from sys import version_info, platform
@@ -15,7 +14,7 @@ from PyQt5 import QtCore, uic
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
-from moht import PLUGINS2CLEAN, VERSION, TES3CMD, qtgui_rc
+from moht import VERSION, TES3CMD, qtgui_rc
 from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here, extract_filename, get_all_plugins, get_plugins_to_clean, get_required_esm
 
 res = qtgui_rc  # prevent to remove import statement accidentally

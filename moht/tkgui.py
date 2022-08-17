@@ -1,15 +1,14 @@
 import tkinter as tk
 from functools import partial
-from itertools import chain
 from logging import getLogger
-from os import path, removedirs, chdir, walk, remove
+from os import path, chdir, remove
 from pathlib import Path
 from shutil import move, copy2, rmtree
 from sys import platform
 from time import time
 from tkinter import filedialog, messagebox
 
-from moht import PLUGINS2CLEAN, VERSION, TES3CMD
+from moht import VERSION, TES3CMD
 from moht.utils import is_latest_ver, parse_cleaning, run_cmd, here, extract_filename, get_all_plugins, get_plugins_to_clean, get_required_esm
 
 
