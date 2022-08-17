@@ -149,7 +149,7 @@ def test_here():
 
 def test_extract_filename():
     from pathlib import Path
-    from utils import extract_filename
+    from moht.utils import extract_filename
 
     assert extract_filename('/home/user/file.txt') == 'file.txt'
     assert extract_filename(Path('/home/user/file.txt')) == 'file.txt'
