@@ -4,6 +4,7 @@ from os import linesep, path, sep, walk
 from pathlib import Path
 from re import search, MULTILINE
 from shlex import split
+from shutil import rmtree
 from subprocess import Popen, PIPE
 from sys import platform
 from typing import Tuple, Union, List, Set
@@ -154,3 +155,15 @@ def get_required_esm(plugins: List[Path]) -> Set[str]:
     :return:
     """
     return set(chain.from_iterable([PLUGINS2CLEAN[extract_filename(plugin)] for plugin in plugins]))
+
+
+def rm_dirs_with_subdirs(dir_path: str, subdirs: List[str]) -> None:
+    """
+    Remove directories with specific subdirectories.
+
+    :param dir_path: root directory
+    :param subdirs: list of subdirectories of root to remove
+    """
+    for directory in [path.join(dir_path, subdir) for subdir in subdirs]:
+        logger.debug(f'Remove: {directory}')
+        rmtree(directory, ignore_errors=True)

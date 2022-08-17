@@ -15,7 +15,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
 from moht import VERSION, TES3CMD, qtgui_rc
-from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here, extract_filename, get_all_plugins, get_plugins_to_clean, get_required_esm
+from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here, extract_filename, get_all_plugins, get_plugins_to_clean, get_required_esm, \
+    rm_dirs_with_subdirs
 
 res = qtgui_rc  # prevent to remove import statement accidentally
 
@@ -106,9 +107,7 @@ class MohtQtGui(QMainWindow):
         self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.cb_rm_cache.isChecked():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
-            for directory in [path.join(self.morrowind_dir, subdir) for subdir in ['1', cachedir]]:
-                self.logger.debug(f'Remove: {directory}')
-                rmtree(directory, ignore_errors=True)
+            rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
         cleaning_time = time() - start
         self.stats['time'] = cleaning_time
         self.logger.debug(f'Total time: {cleaning_time} s')
