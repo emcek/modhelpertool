@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
 from moht import VERSION, TES3CMD, qtgui_rc
 from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here, extract_filename, get_all_plugins, get_plugins_to_clean, get_required_esm, \
-    rm_dirs_with_subdirs
+    rm_dirs_with_subdirs, find_missing_esm
 
 res = qtgui_rc  # prevent to remove import statement accidentally
 
@@ -89,6 +89,7 @@ class MohtQtGui(QMainWindow):
         self.logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
         req_esm = get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
+        missing_esm = find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
         chdir(self.morrowind_dir)
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
