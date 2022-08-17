@@ -1,5 +1,6 @@
 import tkinter as tk
 from functools import partial
+from itertools import chain
 from logging import getLogger
 from os import path, removedirs, chdir, walk, remove, sep
 from pathlib import Path
@@ -9,7 +10,7 @@ from time import time
 from tkinter import filedialog, messagebox
 
 from moht import PLUGINS2CLEAN, VERSION, TES3CMD
-from moht.utils import is_latest_ver, parse_cleaning, run_cmd, here
+from moht.utils import is_latest_ver, parse_cleaning, run_cmd, here, extract_filename
 
 
 class MohtTkGui(tk.Frame):
@@ -132,9 +133,11 @@ class MohtTkGui(tk.Frame):
                        for filename in files
                        if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
         self.logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
-        plugins_to_clean = [plugin_file for plugin_file in all_plugins if str(plugin_file).split(sep)[-1] in PLUGINS2CLEAN]
+        plugins_to_clean = [plugin_file for plugin_file in all_plugins if extract_filename(plugin_file) in PLUGINS2CLEAN]
         no_of_plugins = len(plugins_to_clean)
         self.logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
+        req_esm = set(chain.from_iterable([PLUGINS2CLEAN[extract_filename(plugin)] for plugin in plugins_to_clean]))
+        self.logger.debug(f'Required esm: {req_esm}')
         chdir(self.morrowind_dir)
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
@@ -142,7 +145,7 @@ class MohtTkGui(tk.Frame):
             self.logger.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
             self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
             copy2(plug, self.morrowind_dir)
-            mod_file = str(plug).split(sep)[-1]
+            mod_file = extract_filename(plug)
             out, err = run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
             result, reason = parse_cleaning(out, err, mod_file)
             self.logger.debug(f'Result: {result}, Reason: {reason}')
