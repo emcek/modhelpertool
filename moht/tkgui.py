@@ -10,7 +10,7 @@ from tkinter import filedialog, messagebox
 
 from moht import VERSION, TES3CMD
 from moht.utils import is_latest_ver, parse_cleaning, run_cmd, here, extract_filename, get_all_plugins, get_plugins_to_clean, get_required_esm, \
-    rm_dirs_with_subdirs, find_missing_esm
+    rm_dirs_with_subdirs, find_missing_esm, copy_filelist
 
 
 class MohtTkGui(tk.Frame):
@@ -136,6 +136,7 @@ class MohtTkGui(tk.Frame):
         req_esm = get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
         missing_esm = find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
+        copy_filelist(missing_esm, self.morrowind_dir)
         chdir(self.morrowind_dir)
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
