@@ -1,10 +1,11 @@
 from logging import getLogger
-from os import linesep, path
+from os import linesep, path, sep
+from pathlib import Path
 from re import search, MULTILINE
 from shlex import split
 from subprocess import Popen, PIPE
 from sys import platform
-from typing import Tuple
+from typing import Tuple, Union
 
 from packaging import version
 
@@ -107,3 +108,13 @@ def here(filename: str) -> str:
     :return: path to directory as string
     """
     return path.abspath(path.dirname(filename))
+
+
+def extract_filename(file_path: Union[str, Path]) -> str:
+    """
+    Extract filename from path.
+
+    :param file_path: string or path like object
+    :return: last element of path
+    """
+    return str(file_path).split(sep)[-1]
