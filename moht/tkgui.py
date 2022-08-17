@@ -10,7 +10,7 @@ from tkinter import filedialog, messagebox
 
 from moht import VERSION, TES3CMD
 from moht.utils import is_latest_ver, parse_cleaning, run_cmd, here, extract_filename, get_all_plugins, get_plugins_to_clean, get_required_esm, \
-    rm_dirs_with_subdirs, find_missing_esm, copy_filelist
+    rm_dirs_with_subdirs, find_missing_esm, copy_filelist, rm_copied_extra_ems
 
 
 class MohtTkGui(tk.Frame):
@@ -136,6 +136,7 @@ class MohtTkGui(tk.Frame):
         req_esm = get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
         missing_esm = find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
+        self.logger.debug(f'Missing esm: {missing_esm}')
         copy_filelist(missing_esm, self.morrowind_dir)
         chdir(self.morrowind_dir)
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
@@ -157,6 +158,7 @@ class MohtTkGui(tk.Frame):
         if self.chkbox_cache.get():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
             rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
+        rm_copied_extra_ems(esm=missing_esm, data_files=self.morrowind_dir)
         cleaning_time = time() - start
         self.stats['time'] = cleaning_time
         self.logger.debug(f'Total time: {cleaning_time} s')
