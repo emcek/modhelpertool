@@ -1,8 +1,7 @@
 import webbrowser
 from functools import partial
-from itertools import chain
 from logging import getLogger
-from os import path, chdir, walk, remove
+from os import path, chdir, remove
 from pathlib import Path
 from shutil import move, copy2, rmtree
 from sys import version_info, platform
@@ -15,8 +14,9 @@ from PyQt5 import QtCore, uic
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
-from moht import PLUGINS2CLEAN, VERSION, TES3CMD, qtgui_rc
-from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here, extract_filename
+from moht import VERSION, TES3CMD, qtgui_rc
+from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here, extract_filename, get_all_plugins, get_plugins_to_clean, get_required_esm, \
+    rm_dirs_with_subdirs
 
 res = qtgui_rc  # prevent to remove import statement accidentally
 
@@ -82,15 +82,12 @@ class MohtQtGui(QMainWindow):
         self._set_le_tes3cmd()
 
     def _pb_clean_clicked(self) -> None:
-        all_plugins = [Path(path.join(root, filename))
-                       for root, _, files in walk(self.mods_dir)
-                       for filename in files
-                       if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
+        all_plugins = get_all_plugins(mods_dir=self.mods_dir)
         self.logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
-        plugins_to_clean = [plugin_file for plugin_file in all_plugins if extract_filename(plugin_file) in PLUGINS2CLEAN]
+        plugins_to_clean = get_plugins_to_clean(plugins=all_plugins)
         no_of_plugins = len(plugins_to_clean)
         self.logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
-        req_esm = set(chain.from_iterable([PLUGINS2CLEAN[extract_filename(plugin)] for plugin in plugins_to_clean]))
+        req_esm = get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
         chdir(self.morrowind_dir)
         self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
@@ -105,14 +102,13 @@ class MohtQtGui(QMainWindow):
             self.logger.debug(f'Result: {result}, Reason: {reason}')
             self._update_stats(mod_file, plug, reason, result)
             if self.cb_rm_bakup.isChecked():
-                self.logger.debug(f'Remove: {self.morrowind_dir}/{mod_file}')
-                remove(f'{self.morrowind_dir}/{mod_file}')
+                mod_path = path.join(self.morrowind_dir, mod_file)
+                self.logger.debug(f'Remove: {mod_path}')
+                remove(mod_path)
         self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.cb_rm_cache.isChecked():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
-            for directory in [path.join(self.morrowind_dir, subdir) for subdir in ['1', cachedir]]:
-                self.logger.debug(f'Remove: {directory}')
-                rmtree(directory, ignore_errors=True)
+            rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
         cleaning_time = time() - start
         self.stats['time'] = cleaning_time
         self.logger.debug(f'Total time: {cleaning_time} s')
@@ -142,8 +138,9 @@ class MohtQtGui(QMainWindow):
 
     def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
         if result:
-            self.logger.debug(f'Move: {self.morrowind_dir}/1/{mod_file} -> {plug}')
-            move(f'{self.morrowind_dir}/1/{mod_file}', plug)
+            clean_plugin = path.join(self.morrowind_dir, '1', mod_file)
+            self.logger.debug(f'Move: {clean_plugin} -> {plug}')
+            move(clean_plugin, plug)
             self.stats['cleaned'] += 1
         if not result and reason == 'not modified':
             self.stats['clean'] += 1
