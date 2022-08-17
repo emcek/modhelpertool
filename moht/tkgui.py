@@ -3,7 +3,7 @@ from functools import partial
 from logging import getLogger
 from os import path, chdir, remove
 from pathlib import Path
-from shutil import move, copy2, rmtree
+from shutil import move, copy2
 from sys import platform
 from time import time
 from tkinter import filedialog, messagebox
