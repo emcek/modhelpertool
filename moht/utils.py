@@ -1,3 +1,4 @@
+from itertools import chain
 from logging import getLogger
 from os import linesep, path, sep, walk
 from pathlib import Path
@@ -5,9 +6,11 @@ from re import search, MULTILINE
 from shlex import split
 from subprocess import Popen, PIPE
 from sys import platform
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, Set
 
 from packaging import version
+
+from moht import PLUGINS2CLEAN
 
 logger = getLogger(__name__)
 
@@ -131,3 +134,23 @@ def get_all_plugins(mods_dir: str) -> List[Path]:
             for root, _, files in walk(mods_dir)
             for filename in files
             if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
+
+
+def get_plugins_to_clean(plugins: List[Path]) -> List[Path]:
+    """
+    Get list of plugins to clean.
+
+    :param plugins: list of plugins
+    :return: list of plugins to clean
+    """
+    return [plugin_file for plugin_file in plugins if extract_filename(plugin_file) in PLUGINS2CLEAN]
+
+
+def get_required_esm(plugins: List[Path]) -> Set[str]:
+    """
+    Get set of required esm files.
+
+    :param plugins:
+    :return:
+    """
+    return set(chain.from_iterable([PLUGINS2CLEAN[extract_filename(plugin)] for plugin in plugins]))
