@@ -169,19 +169,22 @@ def rm_dirs_with_subdirs(dir_path: str, subdirs: List[str]) -> None:
         rmtree(directory, ignore_errors=True)
 
 
-def find_files(dir_paths: List[str], file_names: List[str]) -> List[Path]:
+def find_missing_esm(dir_path: str, data_files: str, file_names: Set[str]) -> List[Path]:
     """
-    Find files in directories.
+    Find missing esm files in Morrowind Data Files folder.
 
-    :param dir_paths: list of directory path
-    :param file_names: list of file name
+    :param dir_path: directory path of mods
+    :param data_files: Morrowind Data Files directory
+    :param file_names: set of esm file names
     :return: list of files
     """
-    final_list = []
-    for dir_path in dir_paths:
-        file_list = [Path(path.join(root, filename))
-                     for root, _, files in walk(dir_path)
-                     for filename in files
-                     if filename in file_names]
-        final_list.extend(file_list)
-    return final_list
+    in_datafiles = {filename
+                    for _, _, files in walk(data_files)
+                    for filename in files
+                    if filename in file_names}
+    missing_files = set(file_names) - in_datafiles
+    file_list = [Path(path.join(root, filename))
+                 for root, _, files in walk(dir_path)
+                 for filename in files
+                 if filename in missing_files]
+    return file_list

@@ -188,21 +188,23 @@ def test_rm_dirs_with_subdirs():
                                       call('/home/user/mods/plugin2', ignore_errors=True)])
 
 
-def test_find_files():
+def test_find_missing_esm():
     from pathlib import Path
-    from moht.utils import find_files
+    from moht.utils import find_missing_esm
     side_effect = [
         [
             ('/home', ('user1', 'user2'), ()),
-            ('/home/user1', ('plugin1', 'plugin2'), ()),
-            ('/home/user1/plugin1', (), ('plugin1.esm', 'plugin2.esm', 'plugin3.esp'))],
+            ('/home/user1', ('mods', 'datafiles'), ()),
+            ('/home/user1/datafiles', ('plugin3',), ('plugin3.esm', 'plugin4.esm', 'plugin4.esm'))
+        ],
         [
             ('/home', ('user1', 'user2'), ()),
-            ('/home/user1', ('plugin1', 'plugin2'), ()),
-            ('/home/user1/plugin2', ('plugin3',), ('plugin3.esm', 'plugin4.esm', 'plugin5.esm'))
-        ]
+            ('/home/user1', ('mods', 'datafiles'), ()),
+            ('/home/user1/mods', (), ('plugin1.esm', 'plugin2.esm', 'plugin3.esp', 'plugin5.esm'))]
     ]
     with patch.object(utils, 'walk', side_effect=side_effect):
-        result = find_files(dir_paths=['/home/user1/plugin1', '/home/user1/plugin2'], file_names=['plugin2.esm', 'plugin5.esm'])
-        assert result == [Path('/home/user1/plugin1/plugin2.esm'),
-                          Path('/home/user1/plugin2/plugin5.esm')]
+        result = find_missing_esm(dir_path='/home/user1/mods',
+                                  data_files='/home/user1/datafiles',
+                                  file_names={'plugin1.esm', 'plugin2.esm', 'plugin3.esm', 'plugin4.esm'})
+        assert result == [Path('/home/user1/mods/plugin1.esm'),
+                          Path('/home/user1/mods/plugin2.esm')]
