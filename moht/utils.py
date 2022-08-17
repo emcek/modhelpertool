@@ -202,7 +202,7 @@ def copy_filelist(file_list: List[Path], dest_dir: str) -> None:
         copy2(file_path, dest_dir)
 
 
-def rm_copied_extra_ems(esm: List[Path], data_files: str) -> None:
+def rm_copied_extra_esm(esm: List[Path], data_files: str) -> None:
     """
     Remove extra esm files from Morrowind Data Files folder.
 

@@ -217,3 +217,11 @@ def test_copy_filelist():
         copy_filelist(file_list=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], dest_dir='/home/user/datafiles')
         copy2_mock.assert_has_calls([call(Path('/home/user/mods/plugin1.esm'), '/home/user/datafiles'),
                                      call(Path('/home/user/mods/plugin2.esm'), '/home/user/datafiles')])
+
+
+def test_rm_copied_extra_ems():
+    from pathlib import Path
+    from moht.utils import rm_copied_extra_esm
+    with patch.object(utils, 'remove') as remove_mock:
+        rm_copied_extra_esm(esm=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], data_files='/home/user/datafiles')
+        remove_mock.assert_has_calls([call('/home/user/datafiles/plugin1.esm'), call('/home/user/datafiles/plugin2.esm')])
