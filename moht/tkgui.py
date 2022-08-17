@@ -2,7 +2,7 @@ import tkinter as tk
 from functools import partial
 from itertools import chain
 from logging import getLogger
-from os import path, removedirs, chdir, walk, remove, sep
+from os import path, removedirs, chdir, walk, remove
 from pathlib import Path
 from shutil import move, copy2, rmtree
 from sys import platform
