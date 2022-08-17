@@ -1,6 +1,7 @@
 # v0.5.0
 * Fix removing not empty cache directory when cleaning failed
 * List of dirty plugins has required esm files to clean successfully
+* Locate esm files to be use in cleaning process
 
 # v0.4.1
 * Hotfix - fix dependencies for Tk and Qt5 GUI versions
