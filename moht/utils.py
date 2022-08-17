@@ -1,13 +1,17 @@
+from itertools import chain
 from logging import getLogger
-from os import linesep, path, sep
+from os import linesep, path, sep, walk
 from pathlib import Path
 from re import search, MULTILINE
 from shlex import split
+from shutil import rmtree
 from subprocess import Popen, PIPE
 from sys import platform
-from typing import Tuple, Union
+from typing import Tuple, Union, List, Set
 
 from packaging import version
+
+from moht import PLUGINS2CLEAN
 
 logger = getLogger(__name__)
 
@@ -118,3 +122,48 @@ def extract_filename(file_path: Union[str, Path]) -> str:
     :return: last element of path
     """
     return str(file_path).split(sep)[-1]
+
+
+def get_all_plugins(mods_dir: str) -> List[Path]:
+    """
+    Get list of absolute paths  for all plugins in mods_dir directory.
+
+    :param mods_dir: rood directory of mods
+    :return: List of Path objects
+    """
+    return [Path(path.join(root, filename))
+            for root, _, files in walk(mods_dir)
+            for filename in files
+            if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
+
+
+def get_plugins_to_clean(plugins: List[Path]) -> List[Path]:
+    """
+    Get list of plugins to clean.
+
+    :param plugins: list of plugins
+    :return: list of plugins to clean
+    """
+    return [plugin_file for plugin_file in plugins if extract_filename(plugin_file) in PLUGINS2CLEAN]
+
+
+def get_required_esm(plugins: List[Path]) -> Set[str]:
+    """
+    Get set of required esm files.
+
+    :param plugins:
+    :return:
+    """
+    return set(chain.from_iterable([PLUGINS2CLEAN[extract_filename(plugin)] for plugin in plugins]))
+
+
+def rm_dirs_with_subdirs(dir_path: str, subdirs: List[str]) -> None:
+    """
+    Remove directories with specific subdirectories.
+
+    :param dir_path: root directory
+    :param subdirs: list of subdirectories of root to remove
+    """
+    for directory in [path.join(dir_path, subdir) for subdir in subdirs]:
+        logger.debug(f'Remove: {directory}')
+        rmtree(directory, ignore_errors=True)
