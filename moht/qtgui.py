@@ -16,7 +16,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
 from moht import PLUGINS2CLEAN, VERSION, TES3CMD, qtgui_rc
-from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here, extract_filename
+from moht.utils import parse_cleaning, run_cmd, is_latest_ver, here, extract_filename, get_all_plugins
 
 res = qtgui_rc  # prevent to remove import statement accidentally
 
@@ -82,10 +82,7 @@ class MohtQtGui(QMainWindow):
         self._set_le_tes3cmd()
 
     def _pb_clean_clicked(self) -> None:
-        all_plugins = [Path(path.join(root, filename))
-                       for root, _, files in walk(self.mods_dir)
-                       for filename in files
-                       if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
+        all_plugins = get_all_plugins(mods_dir=self.mods_dir)
         self.logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
         plugins_to_clean = [plugin_file for plugin_file in all_plugins if extract_filename(plugin_file) in PLUGINS2CLEAN]
         no_of_plugins = len(plugins_to_clean)
@@ -118,6 +115,7 @@ class MohtQtGui(QMainWindow):
         self.logger.debug(f'Total time: {cleaning_time} s')
         self.statusbar.showMessage('Done. See report!')
         self.pb_report.setEnabled(True)
+
 
     def _pb_report_clicked(self) -> None:
         """Show report after clean-up."""

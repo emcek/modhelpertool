@@ -1,11 +1,11 @@
 from logging import getLogger
-from os import linesep, path, sep
+from os import linesep, path, sep, walk
 from pathlib import Path
 from re import search, MULTILINE
 from shlex import split
 from subprocess import Popen, PIPE
 from sys import platform
-from typing import Tuple, Union
+from typing import Tuple, Union, List
 
 from packaging import version
 
@@ -118,3 +118,16 @@ def extract_filename(file_path: Union[str, Path]) -> str:
     :return: last element of path
     """
     return str(file_path).split(sep)[-1]
+
+
+def get_all_plugins(mods_dir: str) -> List[Path]:
+    """
+    Get list of absolute paths  for all plugins in mods_dir directory.
+
+    :param mods_dir: rood directory of mods
+    :return: List of Path objects
+    """
+    return [Path(path.join(root, filename))
+            for root, _, files in walk(mods_dir)
+            for filename in files
+            if filename.lower().endswith('.esp') or filename.lower().endswith('.esm')]
