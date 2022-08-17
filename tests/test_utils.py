@@ -208,3 +208,12 @@ def test_find_missing_esm():
                                   esm_files={'plugin1.esm', 'plugin2.esm', 'plugin3.esm', 'plugin4.esm'})
         assert result == [Path('/home/user1/mods/plugin1.esm'),
                           Path('/home/user1/mods/plugin2.esm')]
+
+
+def test_copy_filelist():
+    from pathlib import Path
+    from moht.utils import copy_filelist
+    with patch.object(utils, 'copy2') as copy2_mock:
+        copy_filelist(file_list=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], dest_dir='/home/user/datafiles')
+        copy2_mock.assert_has_calls([call(Path('/home/user/mods/plugin1.esm'), '/home/user/datafiles'),
+                                     call(Path('/home/user/mods/plugin2.esm'), '/home/user/datafiles')])
