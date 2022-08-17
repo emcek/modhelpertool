@@ -211,5 +211,9 @@ def rm_copied_extra_esm(esm: List[Path], data_files: str) -> None:
     """
     for esm_file in esm:
         esm_path = path.join(data_files, extract_filename(esm_file))
-        logger.debug(f'Remove: {esm_path}')
-        remove(esm_path)
+        try:
+            remove(esm_path)
+        except FileNotFoundError:
+            logger.debug(f'File not found: {esm_path}')
+        else:
+            logger.debug(f'Remove: {esm_path}')
