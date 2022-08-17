@@ -13,6 +13,8 @@ from moht import VERSION
 from moht.log import config_logger
 from moht.utils import here
 
+logger = getLogger(f'moht.{__name__}')
+
 
 def run_tk():
     """Function to start Mod Helper Tool Tk GUI."""
@@ -25,8 +27,11 @@ def run_tk():
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
     root.iconphoto(False, tkinter.PhotoImage(file=path.join(here(__file__), 'img', 'moht.png')))
-    window = MohtTkGui(master=root)
-    window.mainloop()
+    try:
+        window = MohtTkGui(master=root)
+        window.mainloop()
+    except Exception as exp:
+        logger.exception(f'Critical error: {exp}')
 
 
 def run_qt():
@@ -48,8 +53,11 @@ def run_qt():
     if translator.load(QLocale.system(), 'qtgui', '-', here(__file__)):  # change to _
         app.installTranslator(translator)
 
-    window = MohtQtGui()
-    window.show()
+    try:
+        window = MohtQtGui()
+        window.show()
+    except Exception as exp:
+        logger.exception(f'Critical error: {exp}')
     sys.exit(app.exec())
 
 
@@ -60,7 +68,6 @@ def run(cli_opts: Namespace) -> None:
     :param cli_opts: arguments from CLI
     """
     config_logger(verbose=cli_opts.verbose, quiet=cli_opts.quiet)
-    logger = getLogger(f'moht.{__name__}')
     logger.info(f'Log file stored at: {path.join(gettempdir(), "moht.log")}')
     logger.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
     logger.debug(f'Arch: {name} / {platform} / {" / ".join(architecture())}')
