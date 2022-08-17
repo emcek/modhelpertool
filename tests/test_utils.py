@@ -178,3 +178,11 @@ def test_get_required_esm():
 
     plugins = [Path("/home/user/Building Up Uvirith's Legacy1.1.ESP")]
     assert get_required_esm(plugins) == {'Morrowind.esm'}
+
+
+def test_rm_dirs_with_subdirs():
+    from moht.utils import rm_dirs_with_subdirs
+    with patch.object(utils, 'rmtree') as rmtree_mock:
+        rm_dirs_with_subdirs('/home/user/mods', ['plugin1', 'plugin2'])
+        rmtree_mock.assert_has_calls([call('/home/user/mods/plugin1', ignore_errors=True),
+                                      call('/home/user/mods/plugin2', ignore_errors=True)])
