@@ -110,8 +110,9 @@ class MohtQtGui(QMainWindow):
         self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.cb_rm_cache.isChecked():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
-            for dir in [path.join(self.morrowind_dir, '1'), path.join(self.morrowind_dir, cachedir)]:
-                rmtree(dir, ignore_errors=True)
+            for directory in [path.join(self.morrowind_dir, subdir) for subdir in ['1', cachedir]]:
+                self.logger.debug(f'Remove: {directory}')
+                rmtree(directory, ignore_errors=True)
         cleaning_time = time() - start
         self.stats['time'] = cleaning_time
         self.logger.debug(f'Total time: {cleaning_time} s')
