@@ -167,3 +167,21 @@ def rm_dirs_with_subdirs(dir_path: str, subdirs: List[str]) -> None:
     for directory in [path.join(dir_path, subdir) for subdir in subdirs]:
         logger.debug(f'Remove: {directory}')
         rmtree(directory, ignore_errors=True)
+
+
+def find_files(dir_paths: List[str], file_names: List[str]) -> List[Path]:
+    """
+    Find files in directories.
+
+    :param dir_paths: list of directory path
+    :param file_names: list of file name
+    :return: list of files
+    """
+    final_list = []
+    for dir_path in dir_paths:
+        file_list = [Path(path.join(root, filename))
+                     for root, _, files in walk(dir_path)
+                     for filename in files
+                     if filename in file_names]
+        final_list.extend(file_list)
+    return final_list
