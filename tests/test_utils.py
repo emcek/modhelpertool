@@ -246,3 +246,10 @@ def test_rm_copied_extra_ems():
     with patch.object(utils, 'remove') as remove_mock:
         rm_copied_extra_esm(esm=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], data_files='/home/user/datafiles')
         remove_mock.assert_has_calls([call('/home/user/datafiles/plugin1.esm'), call('/home/user/datafiles/plugin2.esm')])
+
+
+def test_rm_copied_extra_esm_exception_handling():
+    from pathlib import Path
+    from moht.utils import rm_copied_extra_esm
+    with patch.object(utils, 'remove', side_effect=FileNotFoundError):
+        rm_copied_extra_esm(esm=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], data_files='/home/user/datafiles')
