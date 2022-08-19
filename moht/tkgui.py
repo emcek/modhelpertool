@@ -172,10 +172,11 @@ class MohtTkGui(tk.Frame):
         if not result and reason == 'not modified':
             self.stats['clean'] += 1
         if not result and 'not found' in reason:
-            self.stats['error'] += 1
-            esm = self.stats.get(reason, 0)
-            esm += 1
-            self.stats.update({reason: esm})
+            for res in reason.split('**'):
+                self.stats['error'] += 1
+                esm = self.stats.get(res, 0)
+                esm += 1
+                self.stats.update({res: esm})
 
     def report(self) -> None:
         """Show report after clean-up."""
