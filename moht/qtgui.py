@@ -369,6 +369,7 @@ class WorkerSignals(QtCore.QObject):
     * result - object/any type - data returned from processing
     * progress - int as indication of progress
     """
+
     finished = QtCore.pyqtSignal()
     error = QtCore.pyqtSignal(tuple)
     result = QtCore.pyqtSignal(object)
@@ -376,13 +377,11 @@ class WorkerSignals(QtCore.QObject):
 
 
 class Worker(QtCore.QRunnable):
-    """
-    Worker thread
-
-    Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
-    """
     def __init__(self, func: Callable, *args: Any, **kwargs: Any):
         """
+        Worker thread.
+
+        Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
         :param func: The function callback to run on worker thread
         :param args: Function positional arguments
         :param kwargs: Function keyword arguments
@@ -406,4 +405,3 @@ class Worker(QtCore.QRunnable):
             self.signals.result.emit(result)
         finally:
             self.signals.finished.emit()
-
