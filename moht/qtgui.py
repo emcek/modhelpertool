@@ -1,13 +1,14 @@
+import traceback
 import webbrowser
 from functools import partial
 from logging import getLogger
 from os import path, chdir, remove
 from pathlib import Path
 from shutil import move, copy2
-from sys import version_info, platform
+from sys import exc_info, version_info, platform
 from tempfile import gettempdir
 from time import time
-from typing import Optional
+from typing import Optional, Callable, Dict, Any
 
 import qtawesome
 from PyQt5 import QtCore, uic
@@ -201,6 +202,29 @@ class MohtQtGui(QMainWindow):
             self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
         return result
 
+    def run_in_background(self, job: Callable, signal_handlers: Dict[str, Callable]) -> None:
+        """
+        Setup worker with signals callback to schedule GUI job in background.
+
+        signal_handlers parameter is a dict with signals from  WorkerSignals,
+        possibles signals are: finished, error, result, progress. Values in dict
+        are methods/callables as handlers/callbacks for particular signal.
+
+        :param job: GUI method to run in background
+        :param signal_handlers: signals as keys: finished, error, result, progress and values as callable
+        """
+        worker = Worker(job)
+        for signal, handler in signal_handlers.items():
+            getattr(worker.signals, signal).connect(handler)
+        if isinstance(job, partial):
+            job_name = job.func.__name__
+        else:
+            job_name = job.__name__
+        self.logger.debug('Setup background job for: {} with {}'.format(job_name,
+                                                                        {signal: handler.__name__
+                                                                         for signal, handler in signal_handlers.items()}))
+        self.threadpool.start(worker)
+
     def _set_icons(self, button: Optional[str] = None, icon_name: Optional[str] = None, color: str = 'black', spin: bool = False):
         """
         Universal method to set icon for QPushButtons.
@@ -333,3 +357,53 @@ class AboutDialog(QDialog):
         text += '<br><b>python:</b> {0}.{1}.{2}-{3}.{4}'.format(*version_info)
         text += f'<br><b>PyQt:</b> {qt_version}</p></body></html>'
         self.label.setText(text)
+
+
+class WorkerSignals(QtCore.QObject):
+    """
+    Defines the signals available from a running worker thread.
+
+    Supported signals are:
+    * finished - no data
+    * error - tuple with exctype, value, traceback.format_exc()
+    * result - object/any type - data returned from processing
+    * progress - int as indication of progress
+    """
+    finished = QtCore.pyqtSignal()
+    error = QtCore.pyqtSignal(tuple)
+    result = QtCore.pyqtSignal(object)
+    progress = QtCore.pyqtSignal(int)
+
+
+class Worker(QtCore.QRunnable):
+    """
+    Worker thread
+
+    Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
+    """
+    def __init__(self, func: Callable, *args: Any, **kwargs: Any):
+        """
+        :param func: The function callback to run on worker thread
+        :param args: Function positional arguments
+        :param kwargs: Function keyword arguments
+        """
+        super(Worker, self).__init__()
+        self.func = func
+        self.args = args
+        self.kwargs = kwargs
+        self.signals = WorkerSignals()
+        self.kwargs['progress_callback'] = self.signals.progress
+
+    @QtCore.pyqtSlot()
+    def run(self):
+        """Initialise the runner function with passed args, kwargs."""
+        try:
+            result = self.func(*self.args, **self.kwargs)
+        except Exception:
+            exctype, value = exc_info()[:2]
+            self.signals.error.emit((exctype, value, traceback.format_exc()))
+        else:
+            self.signals.result.emit(result)
+        finally:
+            self.signals.finished.emit()
+
