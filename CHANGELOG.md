@@ -1,3 +1,6 @@
+# v0.6.0
+* Make GUI responsive - separate thread for cleaning
+
 # v0.5.0
 * Fix removing not empty cache directory when cleaning failed
 * List of dirty plugins has required esm files to clean successfully
