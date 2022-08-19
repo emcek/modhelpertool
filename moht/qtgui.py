@@ -68,8 +68,8 @@ class MohtQtGui(QMainWindow):
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
         self._set_le_tes3cmd()
-        self.mods_dir = str(Path.home())
-        self.morrowind_dir = str(Path.home())
+        self.mods_dir = str('/home/emc/clean/Library of Vivec Overhaul - Full-49916-1-4-1644052808')
+        self.morrowind_dir = str('/home/emc/.wine/drive_c/Morrowind/Data Files')
 
     def _init_radio_buttons(self):
         for ver in ['0_37', '0_40']:
@@ -147,10 +147,11 @@ class MohtQtGui(QMainWindow):
         if not result and reason == 'not modified':
             self.stats['clean'] += 1
         if not result and 'not found' in reason:
-            self.stats['error'] += 1
-            esm = self.stats.get(reason, 0)
-            esm += 1
-            self.stats.update({reason: esm})
+            for res in reason.split('**'):
+                self.stats['error'] += 1
+                esm = self.stats.get(res, 0)
+                esm += 1
+                self.stats.update({res: esm})
 
     def _is_dir_exists(self, text: str, widget_name: str) -> None:
         dir_exists = path.isdir(text)
@@ -190,12 +191,13 @@ class MohtQtGui(QMainWindow):
         result, reason = utils.parse_cleaning(out, err, '')
         self.logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
-            self.statusbar.showMessage(f'Error: {reason}')
-            if 'Config::IniFiles' in reason:
-                reason = 'Use package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
-            elif 'Not tes3cmd' in reason:
-                reason = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
-            self._show_message_box(kind_of='warning', title='Not tes3cmd', message=reason)
+            self.statusbar.showMessage(f'Error: {reason[0]}')
+            msg = ''
+            if 'Config::IniFiles' in reason[0]:
+                msg = 'Use package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
+            elif 'Not tes3cmd' in reason[0]:
+                msg = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
+            self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
         return result
 
     def _set_icons(self, button: Optional[str] = None, icon_name: Optional[str] = None, color: str = 'black', spin: bool = False):

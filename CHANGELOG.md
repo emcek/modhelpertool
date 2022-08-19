@@ -3,6 +3,7 @@
 * List of dirty plugins has required esm files to clean successfully
 * Locate, copy and remove (after cleaning) required (for cleaning) esm files
 * Log critical error when starting GUI
+* Show correct data in Report when plugin missing more than one esm files
 * Internal:
   * extract functionality to be share between Qt and Tk GUIs
   * add unit tests

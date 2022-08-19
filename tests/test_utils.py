@@ -33,7 +33,7 @@ FLG - Balmora's Underworld V1.1.esp was not modified"""
     assert utils.parse_cleaning(out, err, "FLG - Balmora's Underworld V1.1.esp") == (False, 'not modified')
 
 
-def test_parse_cleaning_no_master():
+def test_parse_cleaning_no_1_master():
     err = """Use of uninitialized value in -s at /home/emc/git/Modding-OpenMW/modhelpertool/moht/resources/tes3cmd-0.37w line 6282.
 Use of uninitialized value $curr_size in numeric eq (==) at /home/emc/git/Modding-OpenMW/modhelpertool/moht/resources/tes3cmd-0.37w line 6283.
 Use of uninitialized value $curr_size in concatenation (.) or string at /home/emc/git/Modding-OpenMW/modhelpertool/moht/resources/tes3cmd-0.37w line 6287.
@@ -47,6 +47,27 @@ Loaded cached Master: <DATADIR>/bloodmoon.esm
 Loading Master: oaab_data.esm
 Caldera.esp was not modified"""
     assert utils.parse_cleaning(out, err, 'Caldera.esp') == (False, 'oaab_data.esm not found')
+
+
+def test_parse_cleaning_no_2_master():
+    err = """[ERROR (Library of Vivec Overhaul - Full.esp): Master: tamriel_data.esm not found in <DATADIR>]
+[ERROR (Library of Vivec Overhaul - Full.esp): Master: oaab_data.esm not found in <DATADIR>]"""
+    out = """CLEANING: "Library of Vivec Overhaul - Full.esp" ...
+Loading Master: morrowind.esm
+Loading Master: tribunal.esm
+Loading Master: bloodmoon.esm
+Loading Master: tamriel_data.esm
+Loading Master: oaab_data.esm
+ Cleaned duplicate object instance (in_velothismall_ndoor_01 FRMR: 482716) from CELL: vivec, hall of wisdom
+ Cleaned redundant AMBI,WHGT from CELL: vivec, hall of wisdom
+ Cleaned redundant AMBI,WHGT from CELL: vivec, library of vivec
+Output saved in: "1/Library of Vivec Overhaul - Full.esp"
+Original unaltered: "Library of Vivec Overhaul - Full.esp"
+Cleaning Stats for "Library of Vivec Overhaul - Full.esp":
+       duplicate object instance:     1
+             redundant CELL.AMBI:     2
+             redundant CELL.WHGT:     2"""
+    assert utils.parse_cleaning(out, err, 'Library of Vivec Overhaul - Full.esp') == (False, 'tamriel_data.esm not found**oaab_data.esm not found')
 
 
 def test_parse_cleaning_check_bin_no_config_inifiles():

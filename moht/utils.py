@@ -2,7 +2,7 @@ from itertools import chain
 from logging import getLogger
 from os import linesep, path, sep, walk, remove
 from pathlib import Path
-from re import search, MULTILINE
+from re import findall, search, MULTILINE
 from shlex import split
 from shutil import rmtree, copy2
 from subprocess import Popen, PIPE
@@ -32,7 +32,7 @@ def run_cmd(cmd: str) -> Tuple[str, str]:
     return out, err
 
 
-def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:  # type: ignore
+def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:
     """
     Parse output of cleaning command printout.
 
@@ -41,23 +41,33 @@ def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:  
     :param mod_filename: Mod filename
     :return: Result and reason
     """
+    result = False, 'Not tes3cmd'
     ceases = {
         1: {'args': (r'\[ERROR \({}\): Master: (.* not found) in <DATADIR>]'.format(mod_filename), err, MULTILINE),
-            'result': False},
+            'result': False,
+            'join': True},
         2: {'args': (r'{} was (not modified)'.format(mod_filename), out, MULTILINE),
-            'result': False},
+            'result': False,
+            'join': False},
         3: {'args': (r'Output (saved) in: "1/{}"{}Original unaltered: "{}"'.format(mod_filename, linesep, mod_filename), out, MULTILINE),
-            'result': True},
+            'result': True,
+            'join': False},
         4: {'args': (r'Can\'t locate Config/IniFiles.pm in @INC \(you may need to install the (Config::IniFiles module)\)', err, MULTILINE),
-            'result': False},
+            'result': False,
+            'join': False},
         5: {'args': (r'(Usage): tes3cmd COMMAND OPTIONS plugin...', err, MULTILINE),
-            'result': True},
+            'result': True,
+            'join': False},
     }
     for data in ceases.values():
-        match = search(*data['args'])  # type: ignore
-        if match:
-            return data['result'], match.group(1)  # type: ignore
-    return False, 'Not tes3cmd'
+        match = findall(*data['args'])  # type: ignore
+        if match and data['join']:
+            result = bool(data['result']), '**'.join(match)
+            break
+        elif match and not data['join']:
+            result = bool(data['result']), str(match[0])
+            break
+    return result
 
 
 def is_latest_ver(package: str, current_ver: str) -> Tuple[bool, str]:
