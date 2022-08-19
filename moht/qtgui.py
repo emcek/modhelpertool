@@ -191,11 +191,11 @@ class MohtQtGui(QMainWindow):
         result, reason = utils.parse_cleaning(out, err, '')
         self.logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
-            self.statusbar.showMessage(f'Error: {reason[0]}')
+            self.statusbar.showMessage(f'Error: {reason}')
             msg = ''
-            if 'Config::IniFiles' in reason[0]:
+            if 'Config::IniFiles' in reason:
                 msg = 'Use package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
-            elif 'Not tes3cmd' in reason[0]:
+            elif 'Not tes3cmd' in reason:
                 msg = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
             self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
         return result
