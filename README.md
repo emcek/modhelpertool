@@ -24,37 +24,78 @@ For now, application can only clean your mods, but in future more features will 
 * Simple report after cleaning
 
 ## Requirements
-* Python 3.7+ (with tcl/tk support, see [installation](#installation)) should be fine
+* Python 3.7+ (with tcl/tk support, see [GUI Tk](#gui-tk)) should be fine
+* Linux users require install additional [Perl module](#perl-module)
 * Optional:
-  * `PyQt5` for Qt GUI version, see [GUI Style](#gui-style)
+  * `PyQt5` for Qt GUI version, see [GUI Style](#gui-pyqt5)
   * `pip` >= 22.2.1 - use to check new version of Moht
 
 ## Installation
 1. Any Python version grater the 3.7 with tcl/tk support
-2. For Windows, during Python installation please select:  
-   * Optional Features:
-     * pip
-     * tcl/tk and IDLE
-     * py launcher
-   * Advanced Options:
-     * Associate files with Python (requires the py launcher)
-     * Add Python to environment variables
-     * Customize install location: C:\Python310 or C:\Python
-3. For Linux check your package manage for `python3-tk` package or similar
-4. Package is available on [PyPI](https://pypi.org/project/moht/), open Windows Command Prompt (cmd.exe) or any terminal and type:
-    ```shell
-    pip install moht
-    ```
-5. You can drag and drop `moht_tk.exe` to desktop and make shortcut (with custom icon, you can find icon in installation 
+2. Package is available on [PyPI](https://pypi.org/project/moht/), open Windows Command Prompt (cmd.exe) or any terminal and type:
+   ```shell
+   pip install moht
+   ```
+3. You can drag and drop `moht_tk.exe` to desktop and make shortcut (with custom icon, you can find icon in installation 
 directory i.e. C:\Python310\lib\site-packages\moht\img\moht.ico).
 
-## GUI Style
-By default, application use `tkinter` (`tk` for short) Python's built-in library for GUI. You can choose to install `PyQt5` version of 
-GUI as well. Please note this will require ~200 MB on Linux and ~50 MB on Windows of additional space.
+## GUI Tk
+By default, application use `tkinter` (`tk` for short) Python's built-in library for GUI. Install with:
+```shell
+pip install moht
+```
+You can [find](#start) executable called `moht_tk.exe` or script `moht_tk`. However, sometimes `tk` isn't available by default:
+  * Windows 10/11, during Python installation please select:  
+    * Optional Features:
+      * pip
+      * tcl/tk and IDLE
+      * py launcher
+    * Advanced Options:
+      * Associate files with Python (requires the py launcher)
+      * Add Python to environment variables
+      * Customize install location: C:\Python310 or C:\Python
+  * Debian
+    ```shell
+    sudo apt install python3-tk
+    ``` 
+  * OpenSUSE
+    ```shell
+    sudo zypper install python3-tk
+    ```
+
+## GUI PyQt5
+You can choose to install `PyQt5` version of GUI as well. Please note this will require depending on 
+platform (~50 MB or ~200 MB) of additional space.
 ```shell
 pip install moht[qt5]
 ```
-You can find second executable called `moht_qt.exe`.
+You can [find](#start) executable called `moht_qt.exe` or script `moht_qt`.
+
+## Perl module
+`perl-Config-IniFiles` is required for `tes3cmd` which Moht use to clean-up mods. Install with
+  * Debian
+    ```shell
+    sudo apt install python3-tk
+    ``` 
+  * OpenSUSE
+    ```shell
+    sudo zypper install python3-tk
+    ```
+
+## Start
+* Windows
+  You can find executable(s) with little trick, open Windows Command Prompt (cmd.exe) and type:
+  ```shell
+  pip uninstall moht
+  ```
+  Note: answer **No** to question. It will show you, where Moht was installed. Usually pip should install moht into your Python directory: i.e.:
+  ``` 
+  C:\Python310\lib\site-packages\moht-0.5.0.dist-info\*
+  C:\Python310\lib\site-packages\moht\*
+  C:\Python310\scripts\moht_qt.exe
+  C:\Python310\scripts\moht_tk.exe
+  ```
+* Linux - simply run `moht_tk` or `moht_qt` from terminal
 
 ## Upgrade
 To upgrade Moht to the latest version:
