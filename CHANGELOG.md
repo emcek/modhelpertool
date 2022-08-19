@@ -4,6 +4,8 @@
 * Locate, copy and remove (after cleaning) required (for cleaning) esm files
 * Log critical error when starting GUI
 * Show correct data in Report when plugin missing more than one esm files
+* Fix no popup on TkGui when missing perl InitFiles package
+* Fix to many popups on QtGui when missing perl InitFiles package
 * Internal:
   * extract functionality to be share between Qt and Tk GUIs
   * add unit tests
