@@ -34,6 +34,7 @@ class MohtTkGui(tk.Frame):
         self._mods_dir.set(str(Path.home()))
         self._morrowind_dir.set(str(Path.home()))
         self._tes3cmd.set(path.join(utils.here(__file__), 'resources', TES3CMD[platform]['0_37']))
+        self._check_clean_bin()
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
         self.tes3cmd_file.config(state=tk.DISABLED)
@@ -120,6 +121,7 @@ class MohtTkGui(tk.Frame):
             self._tes3cmd.set(path.join(utils.here(__file__), 'resources', TES3CMD[platform][self.rb_tes3cmd.get()]))
             self.tes3cmd_file.config(state=tk.DISABLED)
             self.tes3cmd_btn.config(state=tk.DISABLED)
+            self._check_clean_bin()
 
     def start_clean(self) -> None:
         """Start cleaning process."""

@@ -75,9 +75,10 @@ class MohtQtGui(QMainWindow):
         for ver in ['0_37', '0_40']:
             getattr(self, f'rb_{ver}').toggled.connect(partial(self._rb_tes3cmd_toggled, ver))
 
-    def _rb_tes3cmd_toggled(self, version: str) -> None:
-        self.tes3cmd = TES3CMD[platform][version]
-        self._set_le_tes3cmd()
+    def _rb_tes3cmd_toggled(self, version: str, state: bool) -> None:
+        if state:
+            self.tes3cmd = TES3CMD[platform][version]
+            self._set_le_tes3cmd()
 
     def _pb_clean_clicked(self) -> None:
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
@@ -185,17 +186,17 @@ class MohtQtGui(QMainWindow):
         else:
             self.pb_clean.setEnabled(False)
 
-    def _check_clean_bin(self) -> bool:
+    def _check_clean_bin(self,) -> bool:
         self.logger.debug('Checking tes3cmd')
         out, err = utils.run_cmd(f'{self.tes3cmd} -h')
         result, reason = utils.parse_cleaning(out, err, '')
         self.logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
-            self.statusbar.showMessage(f'Error: {reason[0]}')
+            self.statusbar.showMessage(f'Error: {reason}')
             msg = ''
-            if 'Config::IniFiles' in reason[0]:
+            if 'Config::IniFiles' in reason:
                 msg = 'Use package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
-            elif 'Not tes3cmd' in reason[0]:
+            elif 'Not tes3cmd' in reason:
                 msg = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
             self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
         return result
