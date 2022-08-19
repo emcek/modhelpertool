@@ -75,9 +75,10 @@ class MohtQtGui(QMainWindow):
         for ver in ['0_37', '0_40']:
             getattr(self, f'rb_{ver}').toggled.connect(partial(self._rb_tes3cmd_toggled, ver))
 
-    def _rb_tes3cmd_toggled(self, version: str) -> None:
-        self.tes3cmd = TES3CMD[platform][version]
-        self._set_le_tes3cmd()
+    def _rb_tes3cmd_toggled(self, version: str, state: bool) -> None:
+        if state:
+            self.tes3cmd = TES3CMD[platform][version]
+            self._set_le_tes3cmd()
 
     def _pb_clean_clicked(self) -> None:
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
@@ -185,7 +186,7 @@ class MohtQtGui(QMainWindow):
         else:
             self.pb_clean.setEnabled(False)
 
-    def _check_clean_bin(self) -> bool:
+    def _check_clean_bin(self,) -> bool:
         self.logger.debug('Checking tes3cmd')
         out, err = utils.run_cmd(f'{self.tes3cmd} -h')
         result, reason = utils.parse_cleaning(out, err, '')
