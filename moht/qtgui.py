@@ -35,7 +35,6 @@ class MohtQtGui(QMainWindow):
     def __init__(self) -> None:
         """Mod Helper Tool Qt5 GUI."""
         super().__init__()
-        # super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
         self.logger = getLogger(__name__)
         uic.loadUi(f'{utils.here(__file__)}/ui/qtgui.ui', self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
