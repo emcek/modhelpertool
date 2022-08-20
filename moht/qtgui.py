@@ -83,6 +83,7 @@ class MohtQtGui(QMainWindow):
 
     def _pb_clean_clicked(self) -> None:
         self._set_icons(button='pb_clean', icon_name='fa5s.spinner', color='green', spin=True)
+        self.pb_clean.disconnect()
         self.run_in_background(job=self._clean_start, signal_handlers={'progress': self._progress_during_clean,
                                                                        'error': self._error_during_clean,
                                                                        'finished': self._clean_finished})
@@ -137,6 +138,7 @@ class MohtQtGui(QMainWindow):
         self._set_icons(button='pb_clean', icon_name='fa5s.hand-sparkles', color='brown')
         self.pb_report.setEnabled(True)
         self.statusbar.showMessage('Done. See report!')
+        self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
     def _pb_report_clicked(self) -> None:
         """Show report after clean-up."""
