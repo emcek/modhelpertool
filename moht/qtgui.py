@@ -113,7 +113,7 @@ class MohtQtGui(QMainWindow):
                 mod_path = path.join(self.morrowind_dir, mod_file)
                 self.logger.debug(f'Remove: {mod_path}')
                 remove(mod_path)
-            progress_callback.emit(idx/no_of_plugins)
+            progress_callback.emit(idx / no_of_plugins)
         self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.cb_rm_cache.isChecked():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
