@@ -8,7 +8,7 @@ from shutil import move, copy2
 from sys import exc_info, version_info, platform
 from tempfile import gettempdir
 from time import time
-from typing import Optional, Callable, Dict, Any
+from typing import Optional, Callable, Dict, Any, Tuple
 
 import qtawesome
 from PyQt5 import QtCore, uic
@@ -83,6 +83,11 @@ class MohtQtGui(QMainWindow):
             self._set_le_tes3cmd()
 
     def _pb_clean_clicked(self) -> None:
+        self.run_in_background(job=self._clean_start, signal_handlers={'progress': self._progress_during_clean,
+                                                                       'error': self._error_during_clean,
+                                                                       'finished': self._clean_finished})
+
+    def _clean_start(self, progress_callback: QtCore.pyqtBoundSignal) -> None:
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
         self.logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
         plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
@@ -109,6 +114,7 @@ class MohtQtGui(QMainWindow):
                 mod_path = path.join(self.morrowind_dir, mod_file)
                 self.logger.debug(f'Remove: {mod_path}')
                 remove(mod_path)
+            progress_callback.emit(idx/no_of_plugins)
         self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
         if self.cb_rm_cache.isChecked():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
@@ -117,6 +123,16 @@ class MohtQtGui(QMainWindow):
         cleaning_time = time() - start
         self.stats['time'] = cleaning_time
         self.logger.debug(f'Total time: {cleaning_time} s')
+
+    def _error_during_clean(self, exc_tuple: Tuple[Exception, str, str]) -> None:
+        exc_type, exc_val, exc_tb = exc_tuple
+        self.logger.warning('{}: {}'.format(exc_type.__class__.__name__, exc_val))
+        self.logger.debug(exc_tb)
+
+    def _progress_during_clean(self, one: float) -> None:
+        self.logger.debug(f'Progress: {one:.2f}')
+
+    def _clean_finished(self):
         self.statusbar.showMessage('Done. See report!')
         self.pb_report.setEnabled(True)
 
