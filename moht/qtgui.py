@@ -368,13 +368,13 @@ class WorkerSignals(QtCore.QObject):
     * finished - no data
     * error - tuple with exctype, value, traceback.format_exc()
     * result - object/any type - data returned from processing
-    * progress - int as indication of progress
+    * progress - float between 0 and 1 as indication of progress
     """
 
     finished = QtCore.pyqtSignal()
     error = QtCore.pyqtSignal(tuple)
     result = QtCore.pyqtSignal(object)
-    progress = QtCore.pyqtSignal(int)
+    progress = QtCore.pyqtSignal(float)
 
 
 class Worker(QtCore.QRunnable):
