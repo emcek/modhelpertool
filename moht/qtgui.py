@@ -34,7 +34,8 @@ def tr(text2translate: str):
 class MohtQtGui(QMainWindow):
     def __init__(self) -> None:
         """Mod Helper Tool Qt5 GUI."""
-        super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
+        super().__init__()
+        # super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
         self.logger = getLogger(__name__)
         uic.loadUi(f'{utils.here(__file__)}/ui/qtgui.ui', self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
@@ -386,7 +387,7 @@ class Worker(QtCore.QRunnable):
         :param args: Function positional arguments
         :param kwargs: Function keyword arguments
         """
-        super(Worker, self).__init__()
+        super().__init__()
         self.func = func
         self.args = args
         self.kwargs = kwargs
