@@ -344,7 +344,7 @@ class MohtQtGui(QMainWindow):
 class AboutDialog(QDialog):
     def __init__(self, parent) -> None:
         """Moht about dialog window."""
-        super(AboutDialog, self).__init__(parent)
+        super().__init__(parent)
         uic.loadUi(f'{utils.here(__file__)}/ui/about.ui', self)
         self.setup_text()
 
