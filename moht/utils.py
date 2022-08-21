@@ -187,11 +187,14 @@ def find_missing_esm(dir_path: str, data_files: str, esm_files: Set[str]) -> Lis
                     for _, _, files in walk(data_files)
                     for filename in files
                     if filename in esm_files}
-    missing_files = set(esm_files) - in_datafiles
+    logger.debug(f'esm found in Data Files: {in_datafiles}')
+    missing_files = esm_files - in_datafiles
+    logger.debug(f'Missing esm files: {missing_files}')
     file_list = [Path(path.join(root, filename))
                  for root, _, files in walk(dir_path)
                  for filename in files
                  if filename in missing_files]
+    logger.debug(f'Missing esm found in Mods: {file_list}')
     return file_list
 
 
