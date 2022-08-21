@@ -88,6 +88,7 @@ class MohtQtGui(QMainWindow):
             self._set_le_tes3cmd()
 
     def _pb_clean_clicked(self) -> None:
+        self.pbar_clean.setValue(0)
         self._set_icons(button='pb_clean', icon_name='fa5s.spinner', color='green', spin=True)
         self.pb_clean.disconnect()
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
@@ -95,6 +96,7 @@ class MohtQtGui(QMainWindow):
         plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
         self.no_of_plugins = len(plugins_to_clean)
         self.logger.debug(f'to_clean: {self.no_of_plugins}: {plugins_to_clean}')
+        self.statusbar.showMessage(f'Plugins to clean: {self.no_of_plugins}')
         req_esm = utils.get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
         self.missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
@@ -131,11 +133,14 @@ class MohtQtGui(QMainWindow):
 
     def _clean_finished(self) -> None:
         self.progress += 1
-        self.logger.debug(f'Progress: {self.progress * 100 / self.no_of_plugins:.2f} %')
+        percent = self.progress * 100 / self.no_of_plugins
+        self.logger.debug(f'Progress: {percent:.2f} %')
+        self.pbar_clean.setValue(int(percent))
         if self.progress == self.no_of_plugins:
             self._clean_done()
 
     def _clean_done(self) -> None:
+        self.pbar_clean.setValue(100)
         if self.cb_rm_cache.isChecked():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
             utils.rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])

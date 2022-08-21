@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>609</width>
-    <height>355</height>
+    <width>640</width>
+    <height>405</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -35,13 +35,60 @@
         <string>Cleaner</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="2">
-         <widget class="QPushButton" name="pb_mods_dir">
+        <item row="2" column="2">
+         <widget class="QPushButton" name="pb_tes3cmd">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select root folder with Mods to clean.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
-           <string>Select Mods</string>
+           <string>Select tes3cmd</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QPushButton" name="pb_report">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Report</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QPushButton" name="pb_clean">
+          <property name="text">
+           <string>Clean</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QLineEdit" name="le_mods_dir"/>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="pb_morrowind_dir">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;Data Files &lt;/span&gt;folder of Morrowind installation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Select Data Files</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QLineEdit" name="le_tes3cmd">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="2">
+         <widget class="QPushButton" name="pb_chk_updates">
+          <property name="text">
+           <string>Check Updates</string>
           </property>
          </widget>
         </item>
@@ -76,49 +123,6 @@
             </widget>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLineEdit" name="le_mods_dir"/>
-        </item>
-        <item row="2" column="0" colspan="2">
-         <widget class="QLineEdit" name="le_tes3cmd">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QPushButton" name="pb_tes3cmd">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="text">
-           <string>Select tes3cmd</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="2">
-         <widget class="QPushButton" name="pb_report">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Report</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QPushButton" name="pb_morrowind_dir">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;Data Files &lt;/span&gt;folder of Morrowind installation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="text">
-           <string>Select Data Files</string>
-          </property>
          </widget>
         </item>
         <item row="3" column="0" rowspan="4">
@@ -156,15 +160,18 @@
           </layout>
          </widget>
         </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QLineEdit" name="le_morrowind_dir"/>
-        </item>
-        <item row="3" column="2">
-         <widget class="QPushButton" name="pb_clean">
+        <item row="0" column="2">
+         <widget class="QPushButton" name="pb_mods_dir">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select root folder with Mods to clean.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
-           <string>Clean</string>
+           <string>Select Mods</string>
           </property>
          </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QLineEdit" name="le_morrowind_dir"/>
         </item>
         <item row="6" column="2">
          <widget class="QPushButton" name="pb_close">
@@ -173,10 +180,10 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="2">
-         <widget class="QPushButton" name="pb_chk_updates">
-          <property name="text">
-           <string>Check Updates</string>
+        <item row="7" column="0" colspan="3">
+         <widget class="QProgressBar" name="pbar_clean">
+          <property name="value">
+           <number>0</number>
           </property>
          </widget>
         </item>
@@ -191,7 +198,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>609</width>
+     <width>640</width>
      <height>27</height>
     </rect>
    </property>
