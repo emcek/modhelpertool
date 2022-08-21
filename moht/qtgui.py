@@ -18,7 +18,7 @@ from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
 from moht import VERSION, TES3CMD, utils, qtgui_rc
 
-res = qtgui_rc  # prevent to remove import statement accidentally
+resources = qtgui_rc  # prevent to remove import statement accidentally
 
 
 def tr(text2translate: str):
