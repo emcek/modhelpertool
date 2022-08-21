@@ -118,8 +118,8 @@ def test_run_cmd():
 Collecting wheel==0.37.1
   Using cached wheel-0.37.1-py2.py3-none-any.whl (35 kB)
 Requirement already satisfied: pluggy>=0.12.0 in /home/emc/.pyenv/versions/3.10.5/envs/moth310/lib/python3.10/site-packages (from tox==3.25.1) (1.0.0)
-Would install tox-3.25.1 wheel-0.37.1""", ""), (False, '0.37.1')),
-    ('0.37.1', ("Requirement already satisfied: wheel==0.37.1 in /home/emc/.pyenv/versions/3.10.5/envs/moth310/lib/python3.10/site-packages (0.37.1)", ""), (True, '0.37.1')),
+Would install tox-3.25.1 wheel-0.37.1""", ""), (False, 'Update available: 0.37.1')),
+    ('0.37.1', ("Requirement already satisfied: wheel==0.37.1 in /home/emc/.pyenv/versions/3.10.5/envs/moth310/lib/python3.10/site-packages (0.37.1)", ""), (True, 'No updates')),
 ])
 def test_is_latest_ver_success(local_ver, out_err, result):
     with patch.object(utils, 'run_cmd') as run_cmd_mock:
@@ -153,7 +153,7 @@ pip          22.2
 wheel        0.37.1
 platformdirs 2.5.2
 pluggy       1.0.0
-""", "")], (True, 'unknown switch --dry-run pip: 22.2')),
+""", "")], (True, 'Version check failed, old pip: 22.2')),
 ])
 def test_is_latest_ver_check_failed(local_ver, effect, result):
     with patch.object(utils, 'run_cmd', side_effect=effect) as run_cmd_mock:
