@@ -131,7 +131,9 @@ class MohtQtGui(QMainWindow):
 
     def _clean_finished(self) -> None:
         self.progress += 1
-        self.logger.debug(f'Progress: {self.progress * 100 / self.no_of_plugins:.2f} %')
+        percent = self.progress * 100 / self.no_of_plugins
+        self.logger.debug(f'Progress: {percent:.2f} %')
+        self.pbar_clean.setValue(int(percent))
         if self.progress == self.no_of_plugins:
             self._clean_done()
 
