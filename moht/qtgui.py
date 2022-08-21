@@ -88,6 +88,7 @@ class MohtQtGui(QMainWindow):
             self._set_le_tes3cmd()
 
     def _pb_clean_clicked(self) -> None:
+        self.pbar_clean.setValue(0)
         self._set_icons(button='pb_clean', icon_name='fa5s.spinner', color='green', spin=True)
         self.pb_clean.disconnect()
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
@@ -138,6 +139,7 @@ class MohtQtGui(QMainWindow):
             self._clean_done()
 
     def _clean_done(self) -> None:
+        self.pbar_clean.setValue(100)
         if self.cb_rm_cache.isChecked():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
             utils.rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
