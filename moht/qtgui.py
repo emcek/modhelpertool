@@ -1,13 +1,15 @@
+import traceback
 import webbrowser
 from functools import partial
 from logging import getLogger
 from os import path, chdir, remove
 from pathlib import Path
 from shutil import move, copy2
-from sys import version_info, platform
+from sys import exc_info, version_info, platform
 from tempfile import gettempdir
+from threading import Lock
 from time import time
-from typing import Optional
+from typing import Optional, Callable, Dict, Tuple, Union, List
 
 import qtawesome
 from PyQt5 import QtCore, uic
@@ -16,7 +18,7 @@ from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
 
 from moht import VERSION, TES3CMD, utils, qtgui_rc
 
-res = qtgui_rc  # prevent to remove import statement accidentally
+resources = qtgui_rc  # prevent to remove import statement accidentally
 
 
 def tr(text2translate: str):
@@ -33,7 +35,7 @@ def tr(text2translate: str):
 class MohtQtGui(QMainWindow):
     def __init__(self) -> None:
         """Mod Helper Tool Qt5 GUI."""
-        super(MohtQtGui, self).__init__(flags=QtCore.Qt.Window)
+        super().__init__()
         self.logger = getLogger(__name__)
         uic.loadUi(f'{utils.here(__file__)}/ui/qtgui.ui', self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
@@ -41,6 +43,11 @@ class MohtQtGui(QMainWindow):
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
         self.tes3cmd = TES3CMD[platform]['0_37']
+        self.progress = 0
+        self.no_of_plugins = 0
+        self.missing_esm: List[Path] = []
+        self.duration = 0.0
+        self.lock = Lock()
         self._init_menu_bar()
         self._init_buttons()
         self._init_radio_buttons()
@@ -68,8 +75,8 @@ class MohtQtGui(QMainWindow):
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
         self._set_le_tes3cmd()
-        self.mods_dir = str(Path.home())
-        self.morrowind_dir = str(Path.home())
+        self.mods_dir = '/home/emc/clean/Data Files'
+        self.morrowind_dir = '/home/emc/.wine/drive_c/Morrowind/Data Files'
 
     def _init_radio_buttons(self):
         for ver in ['0_37', '0_40']:
@@ -81,42 +88,65 @@ class MohtQtGui(QMainWindow):
             self._set_le_tes3cmd()
 
     def _pb_clean_clicked(self) -> None:
+        self._set_icons(button='pb_clean', icon_name='fa5s.spinner', color='green', spin=True)
+        self.pb_clean.disconnect()
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
         self.logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
         plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
-        no_of_plugins = len(plugins_to_clean)
-        self.logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
+        self.no_of_plugins = len(plugins_to_clean)
+        self.logger.debug(f'to_clean: {self.no_of_plugins}: {plugins_to_clean}')
         req_esm = utils.get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
-        missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
-        self.logger.debug(f'Missing esm: {missing_esm}')
-        utils.copy_filelist(missing_esm, self.morrowind_dir)
-        chdir(self.morrowind_dir)
-        self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
-        start = time()
+        self.missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
+        self.logger.debug(f'Missing esm: {self.missing_esm}')
+        utils.copy_filelist(self.missing_esm, self.morrowind_dir)
+        self.stats = {'all': self.no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
+        self.duration = time()
         for idx, plug in enumerate(plugins_to_clean, 1):
-            self.logger.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
-            self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
-            copy2(plug, self.morrowind_dir)
-            mod_file = utils.extract_filename(plug)
-            out, err = utils.run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
-            result, reason = utils.parse_cleaning(out, err, mod_file)
-            self.logger.debug(f'Result: {result}, Reason: {reason}')
+            self.logger.debug(f'Start: {idx} / {self.no_of_plugins}')
+            self.run_in_background(job=partial(self._clean_start, plug=plug, lock=self.lock),
+                                   signal_handlers={'error': self._error_during_clean,
+                                                    'finished': self._clean_finished})
+
+    def _clean_start(self, plug: Path, lock: Lock) -> None:
+        chdir(self.morrowind_dir)
+        self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
+        copy2(plug, self.morrowind_dir)
+        mod_file = utils.extract_filename(plug)
+        out, err = utils.run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
+        result, reason = utils.parse_cleaning(out, err, mod_file)
+        self.logger.debug(f'Result: {result}, Reason: {reason}')
+        with lock:
             self._update_stats(mod_file, plug, reason, result)
-            if self.cb_rm_bakup.isChecked():
-                mod_path = path.join(self.morrowind_dir, mod_file)
-                self.logger.debug(f'Remove: {mod_path}')
-                remove(mod_path)
-        self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
+        if self.cb_rm_bakup.isChecked():
+            mod_path = path.join(self.morrowind_dir, mod_file)
+            self.logger.debug(f'Remove: {mod_path}')
+            remove(mod_path)
+        self.logger.debug(f'Done: {mod_file}')
+
+    def _error_during_clean(self, exc_tuple: Tuple[Exception, str, str]) -> None:
+        exc_type, exc_val, exc_tb = exc_tuple
+        self.logger.warning('{}: {}'.format(exc_type.__class__.__name__, exc_val))
+        self.logger.debug(exc_tb)
+
+    def _clean_finished(self) -> None:
+        self.progress += 1
+        self.logger.debug(f'Progress: {self.progress * 100 / self.no_of_plugins:.2f} %')
+        if self.progress == self.no_of_plugins:
+            self._clean_done()
+
+    def _clean_done(self) -> None:
         if self.cb_rm_cache.isChecked():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
             utils.rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
-        utils.rm_copied_extra_esm(missing_esm, self.morrowind_dir)
-        cleaning_time = time() - start
+        utils.rm_copied_extra_esm(self.missing_esm, self.morrowind_dir)
+        cleaning_time = time() - self.duration
         self.stats['time'] = cleaning_time
         self.logger.debug(f'Total time: {cleaning_time} s')
-        self.statusbar.showMessage('Done. See report!')
+        self._set_icons(button='pb_clean', icon_name='fa5s.hand-sparkles', color='brown')
         self.pb_report.setEnabled(True)
+        self.statusbar.showMessage('Done. See report!')
+        self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
     def _pb_report_clicked(self) -> None:
         """Show report after clean-up."""
@@ -186,7 +216,7 @@ class MohtQtGui(QMainWindow):
         else:
             self.pb_clean.setEnabled(False)
 
-    def _check_clean_bin(self,) -> bool:
+    def _check_clean_bin(self) -> bool:
         self.logger.debug('Checking tes3cmd')
         out, err = utils.run_cmd(f'{self.tes3cmd} -h')
         result, reason = utils.parse_cleaning(out, err, '')
@@ -200,6 +230,33 @@ class MohtQtGui(QMainWindow):
                 msg = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
             self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
         return result
+
+    def run_in_background(self, job: Union[partial, Callable], signal_handlers: Dict[str, Callable]) -> None:
+        """
+        Setup worker with signals callback to schedule GUI job in background.
+
+        signal_handlers parameter is a dict with signals from  WorkerSignals,
+        possibles signals are: finished, error, result, progress. Values in dict
+        are methods/callables as handlers/callbacks for particular signal.
+
+        :param job: GUI method or function to run in background
+        :param signal_handlers: signals as keys: finished, error, result, progress and values as callable
+        """
+        progress = True if 'progress' in signal_handlers.keys() else False
+        worker = Worker(func=job, with_progress=progress)
+        for signal, handler in signal_handlers.items():
+            getattr(worker.signals, signal).connect(handler)
+        if isinstance(job, partial):
+            job_name = job.func.__name__
+            args = job.args
+            kwargs = job.keywords
+        else:
+            job_name = job.__name__
+            args = tuple()
+            kwargs = dict()
+        signals = {signal: handler.__name__ for signal, handler in signal_handlers.items()}
+        self.logger.debug(f'bg job for: {job_name} args: {args} kwargs: {kwargs} signals {signals}')
+        self.threadpool.start(worker)
 
     def _set_icons(self, button: Optional[str] = None, icon_name: Optional[str] = None, color: str = 'black', spin: bool = False):
         """
@@ -319,7 +376,7 @@ class MohtQtGui(QMainWindow):
 class AboutDialog(QDialog):
     def __init__(self, parent) -> None:
         """Moht about dialog window."""
-        super(AboutDialog, self).__init__(parent)
+        super().__init__(parent)
         uic.loadUi(f'{utils.here(__file__)}/ui/about.ui', self)
         self.setup_text()
 
@@ -333,3 +390,51 @@ class AboutDialog(QDialog):
         text += '<br><b>python:</b> {0}.{1}.{2}-{3}.{4}'.format(*version_info)
         text += f'<br><b>PyQt:</b> {qt_version}</p></body></html>'
         self.label.setText(text)
+
+
+class WorkerSignals(QtCore.QObject):
+    """
+    Defines the signals available from a running worker thread.
+
+    Supported signals are:
+    * finished - no data
+    * error - tuple with exctype, value, traceback.format_exc()
+    * result - object/any type - data returned from processing
+    * progress - float between 0 and 1 as indication of progress
+    """
+
+    finished = QtCore.pyqtSignal()
+    error = QtCore.pyqtSignal(tuple)
+    result = QtCore.pyqtSignal(object)
+    progress = QtCore.pyqtSignal(float)
+
+
+class Worker(QtCore.QRunnable):
+    def __init__(self, func: Union[partial, Callable], with_progress: bool) -> None:
+        """
+        Worker thread.
+
+        Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
+        :param func: The function callback to run on worker thread
+        :param args: Function positional arguments
+        :param kwargs: Function keyword arguments
+        """
+        super().__init__()
+        self.func = func
+        self.signals = WorkerSignals()
+        self.kwargs = {}
+        if with_progress:
+            self.kwargs['progress_callback'] = self.signals.progress
+
+    @QtCore.pyqtSlot()
+    def run(self):
+        """Initialise the runner function with passed args, kwargs."""
+        try:
+            result = self.func(**self.kwargs)
+        except Exception:
+            exctype, value = exc_info()[:2]
+            self.signals.error.emit((exctype, value, traceback.format_exc()))
+        else:
+            self.signals.result.emit(result)
+        finally:
+            self.signals.finished.emit()
