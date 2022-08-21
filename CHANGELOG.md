@@ -2,6 +2,7 @@
 * Make GUI responsive - separate thread for plugin cleaning
 * Add progress bar for cleaning process
 * Make some log entries more clear
+* Be more verbose with problem during checking new version
 
 # v0.5.0
 * Fix removing not empty cache directory when cleaning failed
