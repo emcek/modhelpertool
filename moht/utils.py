@@ -56,11 +56,8 @@ def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:
     ]
     for data in ceases:
         match = findall(*data['args'])  # type: ignore
-        if match and isinstance(match, list):
+        if match:
             result = bool(data['result']), '**'.join(match)
-            break
-        elif match and not isinstance(match, list):
-            result = bool(data['result']), str(match[0])
             break
     return result
 
