@@ -1,6 +1,6 @@
 [![pipeline status](https://gitlab.com/modding-openmw/modhelpertool/badges/main/pipeline.svg)](https://gitlab.com/modding-openmw/modhelpertool/-/commits/main)
 [![coverage report](https://gitlab.com/modding-openmw/modhelpertool/badges/main/coverage.svg)](https://gitlab.com/modding-openmw/modhelpertool/-/commits/main)
-[![image](https://img.shields.io/badge/pypi-v0.5.0-blue.svg)](https://pypi.org/project/moht/)
+[![image](https://img.shields.io/badge/pypi-v0.6.0-blue.svg)](https://pypi.org/project/moht/)
 [![License](https://img.shields.io/badge/Licence-MIT-blue.svg)](./LICENSE.md)
 [![image](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue.svg)](https://gitlab.com/modding-openmw/modhelpertool)
 [![moht](https://snyk.io/advisor/python/moht/badge.svg)](https://snyk.io/advisor/python/moht)  
@@ -90,7 +90,7 @@ You can [find](#start) executable called `moht_qt.exe` or script `moht_qt`.
   ```
   Note: answer **No** to question. It will show you, where Moht was installed. Usually pip should install moht into your Python directory: i.e.:
   ``` 
-  C:\Python310\lib\site-packages\moht-0.5.0.dist-info\*
+  C:\Python310\lib\site-packages\moht-0.6.0.dist-info\*
   C:\Python310\lib\site-packages\moht\*
   C:\Python310\scripts\moht_qt.exe
   C:\Python310\scripts\moht_tk.exe
