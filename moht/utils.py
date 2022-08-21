@@ -72,12 +72,14 @@ def is_latest_ver(package: str, current_ver: str) -> Tuple[bool, str]:
     :param package: package name
     :param current_ver: currently installed version
     """
-    extra_data = current_ver
+    remote_ver = current_ver
+    extra_data = 'No updates'
     out, err = run_cmd(f'pip install --dry-run --no-color --timeout 3 --retries 1 --progress-bar off --upgrade {package}')
     match = search(r'Would install\s.*{}-([\d.-]+)'.format(package), out)
     if match:
-        extra_data = match.group(1)
-        logger.debug(f'Latest available version: {extra_data}')
+        remote_ver = match.group(1)
+        logger.debug(f'Latest available version: {remote_ver}')
+        extra_data = f'Update available: {remote_ver}'
     match = search(r'no such option:\s(.*)', err)
     if match:
         extra_data = match.group(1)
@@ -85,9 +87,10 @@ def is_latest_ver(package: str, current_ver: str) -> Tuple[bool, str]:
         out, _ = run_cmd('pip list')
         match = search(r'pip\s*([\d.]*)', out)
         if match:
-            extra_data = f'unknown switch {extra_data} pip: {match.group(1)}'
-            logger.debug(f'Pip version: {match.group(1)}')
-    latest = _compare_versions(package, current_ver, extra_data)
+            pip_ver = match.group(1)
+            extra_data = f'Version check failed, old pip: {pip_ver}'
+            logger.debug(f'Pip version: {pip_ver}')
+    latest = _compare_versions(package, current_ver, remote_ver)
     return latest, extra_data
 
 

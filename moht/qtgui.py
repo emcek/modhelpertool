@@ -166,9 +166,8 @@ class MohtQtGui(QMainWindow):
         self.statusbar.showMessage(f'ver. {VERSION}')
 
     def _check_updates(self):
-        latest, desc = utils.is_latest_ver(package='moht', current_ver=VERSION)
-        current_ver = 'No updates' if latest else f'Update available: {desc}'
-        self.statusbar.showMessage(f'ver. {VERSION} - {current_ver}')
+        _, desc = utils.is_latest_ver(package='moht', current_ver=VERSION)
+        self.statusbar.showMessage(f'ver. {VERSION} - {desc}')
 
     def _set_le_tes3cmd(self) -> None:
         self.tes3cmd = path.join(utils.here(__file__), 'resources', self.tes3cmd)
