@@ -42,29 +42,24 @@ def parse_cleaning(out: str, err: str, mod_filename: str) -> Tuple[bool, str]:
     :return: Result and reason
     """
     result = False, 'Not tes3cmd'
-    ceases = {
-        1: {'args': (r'\[ERROR \({}\): Master: (.* not found) in <DATADIR>]'.format(mod_filename), err, MULTILINE),
-            'result': False,
-            'join': True},
-        2: {'args': (r'{} was (not modified)'.format(mod_filename), out, MULTILINE),
-            'result': False,
-            'join': False},
-        3: {'args': (r'Output (saved) in: "1/{}"{}Original unaltered: "{}"'.format(mod_filename, linesep, mod_filename), out, MULTILINE),
-            'result': True,
-            'join': False},
-        4: {'args': (r'Can\'t locate Config/IniFiles.pm in @INC \(you may need to install the (Config::IniFiles module)\)', err, MULTILINE),
-            'result': False,
-            'join': False},
-        5: {'args': (r'(Usage): tes3cmd COMMAND OPTIONS plugin...', err, MULTILINE),
-            'result': True,
-            'join': False},
-    }
-    for data in ceases.values():
+    ceases = [
+        {'args': (r'\[ERROR \({}\): Master: (.* not found) in <DATADIR>]'.format(mod_filename), err, MULTILINE),
+         'result': False},
+        {'args': (r'{} was (not modified)'.format(mod_filename), out, MULTILINE),
+         'result': False},
+        {'args': (r'Output (saved) in: "1/{}"{}Original unaltered: "{}"'.format(mod_filename, linesep, mod_filename), out, MULTILINE),
+         'result': True},
+        {'args': (r'Can\'t locate Config/IniFiles.pm in @INC \(you may need to install the (Config::IniFiles module)\)', err, MULTILINE),
+         'result': False},
+        {'args': (r'(Usage): tes3cmd COMMAND OPTIONS plugin...', err, MULTILINE),
+         'result': True},
+    ]
+    for data in ceases:
         match = findall(*data['args'])  # type: ignore
-        if match and data['join']:
+        if match and isinstance(match, list):
             result = bool(data['result']), '**'.join(match)
             break
-        elif match and not data['join']:
+        elif match and not isinstance(match, list):
             result = bool(data['result']), str(match[0])
             break
     return result
