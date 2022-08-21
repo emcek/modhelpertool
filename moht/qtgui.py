@@ -8,7 +8,7 @@ from shutil import move, copy2
 from sys import exc_info, version_info, platform
 from tempfile import gettempdir
 from time import time
-from typing import Optional, Callable, Dict, Any, Tuple
+from typing import Optional, Callable, Dict, Tuple, Union
 
 import qtawesome
 from PyQt5 import QtCore, uic
@@ -223,7 +223,7 @@ class MohtQtGui(QMainWindow):
             self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
         return result
 
-    def run_in_background(self, job: Callable, signal_handlers: Dict[str, Callable]) -> None:
+    def run_in_background(self, job: Union[partial, Callable], signal_handlers: Dict[str, Callable]) -> None:
         """
         Setup worker with signals callback to schedule GUI job in background.
 
@@ -231,19 +231,23 @@ class MohtQtGui(QMainWindow):
         possibles signals are: finished, error, result, progress. Values in dict
         are methods/callables as handlers/callbacks for particular signal.
 
-        :param job: GUI method to run in background
+        :param job: GUI method or function to run in background
         :param signal_handlers: signals as keys: finished, error, result, progress and values as callable
         """
-        worker = Worker(job)
+        progress = True if 'progress' in signal_handlers.keys() else False
+        worker = Worker(func=job, with_progress=progress)
         for signal, handler in signal_handlers.items():
             getattr(worker.signals, signal).connect(handler)
         if isinstance(job, partial):
             job_name = job.func.__name__
+            args = job.args
+            kwargs = job.keywords
         else:
             job_name = job.__name__
-        self.logger.debug('Setup background job for: {} with {}'.format(job_name,
-                                                                        {signal: handler.__name__
-                                                                         for signal, handler in signal_handlers.items()}))
+            args = tuple()
+            kwargs = dict()
+        signals = {signal: handler.__name__ for signal, handler in signal_handlers.items()}
+        self.logger.debug(f'bg job for: {job_name} args: {args} kwargs: {kwargs} signals {signals}')
         self.threadpool.start(worker)
 
     def _set_icons(self, button: Optional[str] = None, icon_name: Optional[str] = None, color: str = 'black', spin: bool = False):
@@ -398,7 +402,7 @@ class WorkerSignals(QtCore.QObject):
 
 
 class Worker(QtCore.QRunnable):
-    def __init__(self, func: Callable, *args: Any, **kwargs: Any):
+    def __init__(self, func: Union[partial, Callable], with_progress: bool) -> None:
         """
         Worker thread.
 
@@ -409,16 +413,16 @@ class Worker(QtCore.QRunnable):
         """
         super().__init__()
         self.func = func
-        self.args = args
-        self.kwargs = kwargs
         self.signals = WorkerSignals()
-        self.kwargs['progress_callback'] = self.signals.progress
+        self.kwargs = {}
+        if with_progress:
+            self.kwargs['progress_callback'] = self.signals.progress
 
     @QtCore.pyqtSlot()
     def run(self):
         """Initialise the runner function with passed args, kwargs."""
         try:
-            result = self.func(*self.args, **self.kwargs)
+            result = self.func(**self.kwargs)
         except Exception:
             exctype, value = exc_info()[:2]
             self.signals.error.emit((exctype, value, traceback.format_exc()))
