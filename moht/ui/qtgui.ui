@@ -183,7 +183,7 @@
         <item row="7" column="0" colspan="3">
          <widget class="QProgressBar" name="pbar_clean">
           <property name="value">
-           <number>24</number>
+           <number>0</number>
           </property>
          </widget>
         </item>
