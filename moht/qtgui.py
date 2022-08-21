@@ -133,17 +133,20 @@ class MohtQtGui(QMainWindow):
         self.progress += 1
         self.logger.debug(f'Progress: {self.progress * 100 / self.no_of_plugins:.2f} %')
         if self.progress == self.no_of_plugins:
-            if self.cb_rm_cache.isChecked():
-                cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
-                utils.rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
-            utils.rm_copied_extra_esm(self.missing_esm, self.morrowind_dir)
-            cleaning_time = time() - self.duration
-            self.stats['time'] = cleaning_time
-            self.logger.debug(f'Total time: {cleaning_time} s')
-            self._set_icons(button='pb_clean', icon_name='fa5s.hand-sparkles', color='brown')
-            self.pb_report.setEnabled(True)
-            self.statusbar.showMessage('Done. See report!')
-            self.pb_clean.clicked.connect(self._pb_clean_clicked)
+            self._clean_done()
+
+    def _clean_done(self) -> None:
+        if self.cb_rm_cache.isChecked():
+            cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
+            utils.rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
+        utils.rm_copied_extra_esm(self.missing_esm, self.morrowind_dir)
+        cleaning_time = time() - self.duration
+        self.stats['time'] = cleaning_time
+        self.logger.debug(f'Total time: {cleaning_time} s')
+        self._set_icons(button='pb_clean', icon_name='fa5s.hand-sparkles', color='brown')
+        self.pb_report.setEnabled(True)
+        self.statusbar.showMessage('Done. See report!')
+        self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
     def _pb_report_clicked(self) -> None:
         """Show report after clean-up."""
