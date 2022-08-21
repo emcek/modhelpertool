@@ -7,8 +7,9 @@ from pathlib import Path
 from shutil import move, copy2
 from sys import exc_info, version_info, platform
 from tempfile import gettempdir
+from threading import Lock
 from time import time
-from typing import Optional, Callable, Dict, Tuple, Union
+from typing import Optional, Callable, Dict, Tuple, Union, List
 
 import qtawesome
 from PyQt5 import QtCore, uic
@@ -42,6 +43,11 @@ class MohtQtGui(QMainWindow):
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
         self.tes3cmd = TES3CMD[platform]['0_37']
+        self.progress = 0
+        self.no_of_plugins = 0
+        self.missing_esm: List[Path] = []
+        self.duration = 0.0
+        self.lock = Lock()
         self._init_menu_bar()
         self._init_buttons()
         self._init_radio_buttons()
@@ -69,8 +75,8 @@ class MohtQtGui(QMainWindow):
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
         self._set_le_tes3cmd()
-        self.mods_dir = str(Path.home())
-        self.morrowind_dir = str(Path.home())
+        self.mods_dir = '/home/emc/clean/Data Files'
+        self.morrowind_dir = '/home/emc/.wine/drive_c/Morrowind/Data Files'
 
     def _init_radio_buttons(self):
         for ver in ['0_37', '0_40']:
@@ -84,61 +90,60 @@ class MohtQtGui(QMainWindow):
     def _pb_clean_clicked(self) -> None:
         self._set_icons(button='pb_clean', icon_name='fa5s.spinner', color='green', spin=True)
         self.pb_clean.disconnect()
-        self.run_in_background(job=self._clean_start, signal_handlers={'progress': self._progress_during_clean,
-                                                                       'error': self._error_during_clean,
-                                                                       'finished': self._clean_finished})
-
-    def _clean_start(self, progress_callback: QtCore.pyqtBoundSignal) -> None:
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
         self.logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
         plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
-        no_of_plugins = len(plugins_to_clean)
-        self.logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
+        self.no_of_plugins = len(plugins_to_clean)
+        self.logger.debug(f'to_clean: {self.no_of_plugins}: {plugins_to_clean}')
         req_esm = utils.get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
-        missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
-        self.logger.debug(f'Missing esm: {missing_esm}')
-        utils.copy_filelist(missing_esm, self.morrowind_dir)
-        chdir(self.morrowind_dir)
-        self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
-        start = time()
+        self.missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
+        self.logger.debug(f'Missing esm: {self.missing_esm}')
+        utils.copy_filelist(self.missing_esm, self.morrowind_dir)
+        self.stats = {'all': self.no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
+        self.duration = time()
         for idx, plug in enumerate(plugins_to_clean, 1):
-            self.logger.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
-            self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
-            copy2(plug, self.morrowind_dir)
-            mod_file = utils.extract_filename(plug)
-            out, err = utils.run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
-            result, reason = utils.parse_cleaning(out, err, mod_file)
-            self.logger.debug(f'Result: {result}, Reason: {reason}')
+            self.logger.debug(f'Start: {idx} / {self.no_of_plugins}')
+            self.run_in_background(job=partial(self._clean_start, plug=plug, lock=self.lock),
+                                   signal_handlers={'error': self._error_during_clean,
+                                                    'finished': self._clean_finished})
+
+    def _clean_start(self, plug: Path, lock: Lock) -> None:
+        chdir(self.morrowind_dir)
+        self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
+        copy2(plug, self.morrowind_dir)
+        mod_file = utils.extract_filename(plug)
+        out, err = utils.run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
+        result, reason = utils.parse_cleaning(out, err, mod_file)
+        self.logger.debug(f'Result: {result}, Reason: {reason}')
+        with lock:
             self._update_stats(mod_file, plug, reason, result)
-            if self.cb_rm_bakup.isChecked():
-                mod_path = path.join(self.morrowind_dir, mod_file)
-                self.logger.debug(f'Remove: {mod_path}')
-                remove(mod_path)
-            progress_callback.emit(idx / no_of_plugins)
-        self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
-        if self.cb_rm_cache.isChecked():
-            cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
-            utils.rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
-        utils.rm_copied_extra_esm(missing_esm, self.morrowind_dir)
-        cleaning_time = time() - start
-        self.stats['time'] = cleaning_time
-        self.logger.debug(f'Total time: {cleaning_time} s')
+        if self.cb_rm_bakup.isChecked():
+            mod_path = path.join(self.morrowind_dir, mod_file)
+            self.logger.debug(f'Remove: {mod_path}')
+            remove(mod_path)
+        self.logger.debug(f'Done: {mod_file}')
 
     def _error_during_clean(self, exc_tuple: Tuple[Exception, str, str]) -> None:
         exc_type, exc_val, exc_tb = exc_tuple
         self.logger.warning('{}: {}'.format(exc_type.__class__.__name__, exc_val))
         self.logger.debug(exc_tb)
 
-    def _progress_during_clean(self, one: float) -> None:
-        self.logger.debug(f'Progress: {one:.2f}')
-
-    def _clean_finished(self):
-        self.pb_clean.setEnabled(True)
-        self._set_icons(button='pb_clean', icon_name='fa5s.hand-sparkles', color='brown')
-        self.pb_report.setEnabled(True)
-        self.statusbar.showMessage('Done. See report!')
-        self.pb_clean.clicked.connect(self._pb_clean_clicked)
+    def _clean_finished(self) -> None:
+        self.progress += 1
+        self.logger.debug(f'Progress: {self.progress * 100 / self.no_of_plugins:.2f} %')
+        if self.progress == self.no_of_plugins:
+            if self.cb_rm_cache.isChecked():
+                cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
+                utils.rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
+            utils.rm_copied_extra_esm(self.missing_esm, self.morrowind_dir)
+            cleaning_time = time() - self.duration
+            self.stats['time'] = cleaning_time
+            self.logger.debug(f'Total time: {cleaning_time} s')
+            self._set_icons(button='pb_clean', icon_name='fa5s.hand-sparkles', color='brown')
+            self.pb_report.setEnabled(True)
+            self.statusbar.showMessage('Done. See report!')
+            self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
     def _pb_report_clicked(self) -> None:
         """Show report after clean-up."""
