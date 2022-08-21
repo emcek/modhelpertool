@@ -89,6 +89,7 @@ class MohtQtGui(QMainWindow):
 
     def _pb_clean_clicked(self) -> None:
         self.pbar_clean.setValue(0)
+        self.pb_report.setEnabled(False)
         self._set_icons(button='pb_clean', icon_name='fa5s.spinner', color='green', spin=True)
         self.pb_clean.disconnect()
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
@@ -162,7 +163,6 @@ class MohtQtGui(QMainWindow):
         report += '\n\nCopy missing esm file(s) to Data Files directory and clean again.\n\n' if 'Error' in report else '\n'
         report += f'Total time: {self.stats["time"]:.2f} s'
         self._show_message_box(kind_of='information', title='Cleaning Report', message=report)
-        self.pb_report.setEnabled(False)
         self.statusbar.showMessage(f'ver. {VERSION}')
 
     def _check_updates(self):
