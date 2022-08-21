@@ -25,9 +25,9 @@ For now, application can only clean your mods, but in future more features will 
 
 ## Requirements
 * Python 3.7+ (with tcl/tk support, see [GUI Tk](#gui-tk)) should be fine
+* `PyQt5` for Qt GUI version, see [GUI PyQt5](#gui-pyqt5)
 * Linux users require install additional [Perl module](#perl-module)
 * Optional:
-  * `PyQt5` for Qt GUI version, see [GUI Style](#gui-pyqt5)
   * `pip` >= 22.2.1 - use to check new version of Moht
 
 ## Installation
@@ -36,14 +36,16 @@ For now, application can only clean your mods, but in future more features will 
    ```shell
    pip install moht
    ```
-3. You can drag and drop `moht_tk.exe` to desktop and make shortcut (with custom icon, you can find icon in installation 
+3. You can drag and drop `moht_tk.exe` (for `tkinter`) or `moht_qt.exe` (for `PyQt5`) to desktop and make shortcut (with custom icon, you can find icon in installation 
 directory i.e. C:\Python310\lib\site-packages\moht\img\moht.ico).
 
+## GUI PyQt5
+You can use `PyQt5` version of GUI. You can [find](#start) executable called `moht_qt.exe` or script `moht_qt`.
+This version will be actively develop and will get new features. In future will probably become the default option.
+
 ## GUI Tk
-By default, application use `tkinter` (`tk` for short) Python's built-in library for GUI. Install with:
-```shell
-pip install moht
-```
+Application use `tkinter` (`tk` for short) of GUI as well. `Tk` is Python's built-in library for GUI. 
+Right now this version is almost as functional as `Qt` version, however in future some differences can be introduced.
 You can [find](#start) executable called `moht_tk.exe` or script `moht_tk`. However, sometimes `tk` isn't available by default:
   * Windows 10/11, during Python installation please select:  
     * Optional Features:
@@ -62,14 +64,6 @@ You can [find](#start) executable called `moht_tk.exe` or script `moht_tk`. Howe
     ```shell
     sudo zypper install python3-tk
     ```
-
-## GUI PyQt5
-You can choose to install `PyQt5` version of GUI as well. Please note this will require depending on 
-platform (~50 MB or ~200 MB) of additional space.
-```shell
-pip install moht[qt5]
-```
-You can [find](#start) executable called `moht_qt.exe` or script `moht_qt`.
 
 ## Perl module
 `perl-Config-IniFiles` is required for `tes3cmd` which Moht use to clean-up mods. Install with
