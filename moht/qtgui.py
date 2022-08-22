@@ -90,6 +90,7 @@ class MohtQtGui(QMainWindow):
 
     def _pb_clean_clicked(self) -> None:
         self.pbar_clean.setValue(0)
+        self.progress = 0
         self.pb_report.setEnabled(False)
         self._set_icons(button='pb_clean', icon_name='fa5s.spinner', color='green', spin=True)
         self.pb_clean.disconnect()
