@@ -1,3 +1,8 @@
+# v0.7.0
+* Fix double content verification of tes3cmd line edit field
+* Internal:
+  * format long lists in logger entries
+
 # v0.6.1
 * Hotfix - fix starting script
 
