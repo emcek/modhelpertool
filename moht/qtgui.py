@@ -43,7 +43,6 @@ class MohtQtGui(QMainWindow):
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
-        self.tes3cmd = TES3CMD[platform]['0_37']
         self.progress = 0
         self.no_of_plugins = 0
         self.missing_esm: List[Path] = []
@@ -75,7 +74,7 @@ class MohtQtGui(QMainWindow):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
-        self._set_le_tes3cmd()
+        self._set_le_tes3cmd(TES3CMD[platform]['0_37'])
         self.mods_dir = str(Path.home())
         self.morrowind_dir = str(Path.home())
 
@@ -85,8 +84,7 @@ class MohtQtGui(QMainWindow):
 
     def _rb_tes3cmd_toggled(self, version: str, state: bool) -> None:
         if state:
-            self.tes3cmd = TES3CMD[platform][version]
-            self._set_le_tes3cmd()
+            self._set_le_tes3cmd(TES3CMD[platform][version])
 
     def _pb_clean_clicked(self) -> None:
         self.pbar_clean.setValue(0)
@@ -171,8 +169,8 @@ class MohtQtGui(QMainWindow):
         _, desc = utils.is_latest_ver(package='moht', current_ver=VERSION)
         self.statusbar.showMessage(f'ver. {VERSION} - {desc}')
 
-    def _set_le_tes3cmd(self) -> None:
-        self.tes3cmd = path.join(utils.here(__file__), 'resources', self.tes3cmd)
+    def _set_le_tes3cmd(self, tes3cmd: str) -> None:
+        self.tes3cmd = path.join(utils.here(__file__), 'resources', tes3cmd)
 
     def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
         if result:
