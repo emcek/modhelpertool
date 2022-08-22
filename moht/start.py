@@ -17,7 +17,7 @@ logger = getLogger(f'moht.{__name__}')
 
 
 def run_tk():
-    """Function to start Mod Helper Tool Tk GUI."""
+    """Function to start Mod Helper Tool TkGUI."""
     import tkinter
     from moht.tkgui import MohtTkGui
 
@@ -61,12 +61,7 @@ def run_qt():
     sys.exit(app.exec())
 
 
-def run(cli_opts: Namespace) -> None:
-    """
-    Function to start selected GUI of Mod Helper Tool.
-
-    :param cli_opts: arguments from CLI
-    """
+def _run_gui(cli_opts: Namespace) -> None:
     config_logger(verbose=cli_opts.verbose, quiet=cli_opts.quiet)
     logger.info(f'Log file stored at: {path.join(gettempdir(), "moht.log")}')
     logger.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
@@ -76,7 +71,8 @@ def run(cli_opts: Namespace) -> None:
     globals()[f'run_{cli_opts.gui}']()
 
 
-if __name__ == '__main__':
+def run() -> None:
+    """Function to parse cli parameters and start selected GUI of Mod Helper Tool."""
     parser = ArgumentParser(description='Simple yet powerful tool to help you manage your mods in several ways.', formatter_class=RawTextHelpFormatter)
     parser.add_argument('-V', '--version', action='version', version='%(prog)s Version: ' + VERSION)
     parser.add_argument('-q', '--quiet', action='store_true', dest='quiet', default=False, help='be quiet')
@@ -87,6 +83,10 @@ if __name__ == '__main__':
     gui_tk = gui.add_parser(name='tk', help='starting Tk GUI interface for Moht', formatter_class=RawTextHelpFormatter)
     args = parser.parse_args()
     if args.gui:
-        run(args)
+        _run_gui(args)
     else:
         parser.print_help()
+
+
+if __name__ == '__main__':
+    run()
