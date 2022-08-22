@@ -2,6 +2,7 @@ from itertools import chain
 from logging import getLogger
 from os import linesep, path, sep, walk, remove
 from pathlib import Path
+from pprint import pformat
 from re import findall, search, MULTILINE
 from shlex import split
 from shutil import rmtree, copy2
@@ -194,7 +195,8 @@ def find_missing_esm(dir_path: str, data_files: str, esm_files: Set[str]) -> Lis
                  for root, _, files in walk(dir_path)
                  for filename in files
                  if filename in missing_files]
-    logger.debug(f'Missing esm found in Mods: {file_list}')
+    debug_file_list = f'\n{pformat(file_list)}' if len(file_list) > 0 else file_list
+    logger.debug(f'Missing esm found in Mods: {debug_file_list}')
     return file_list
 
 

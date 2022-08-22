@@ -3,6 +3,7 @@ from functools import partial
 from logging import getLogger
 from os import path, chdir, remove
 from pathlib import Path
+from pprint import pformat
 from shutil import move, copy2
 from sys import platform
 from time import time
@@ -129,10 +130,10 @@ class MohtTkGui(tk.Frame):
             self.statusbar.set('Check directories and try again')
             return
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
-        self.logger.debug(f'all_plugins: {len(all_plugins)}: {all_plugins}')
+        self.logger.debug(f'all_plugins: {len(all_plugins)}:\n{pformat(all_plugins)}')
         plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
         no_of_plugins = len(plugins_to_clean)
-        self.logger.debug(f'to_clean: {no_of_plugins}: {plugins_to_clean}')
+        self.logger.debug(f'to_clean: {self.no_of_plugins}:\n{pformat(plugins_to_clean)}')
         req_esm = utils.get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
         missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
