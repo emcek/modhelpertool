@@ -86,6 +86,7 @@ You can [find](#start) executable called `moht_tk.exe` or script `moht_tk`. Howe
   ``` 
   C:\Python310\lib\site-packages\moht-0.6.0.dist-info\*
   C:\Python310\lib\site-packages\moht\*
+  C:\Python310\scripts\moht.exe
   C:\Python310\scripts\moht_qt.exe
   C:\Python310\scripts\moht_tk.exe
   ```
