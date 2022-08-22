@@ -1,4 +1,4 @@
-VERSION = '0.6.0'
+VERSION = '0.6.1'
 PLUGINS2CLEAN = {
     "Abandoned_Flatv2_0.esp": ['Morrowind.esm'],
     "Almalexia_Voicev1.esp": ['Morrowind.esm', 'Tribunal.esm'],
