@@ -3,10 +3,8 @@ import signal
 import sys
 from argparse import ArgumentParser, RawTextHelpFormatter, Namespace
 from logging import getLogger
-from os import name
-from os import path
+from os import name, path
 from platform import architecture, uname, python_implementation, python_version
-from sys import platform
 from tempfile import gettempdir
 
 from moht import VERSION
@@ -65,7 +63,7 @@ def _run_gui(cli_opts: Namespace) -> None:
     config_logger(verbose=cli_opts.verbose, quiet=cli_opts.quiet)
     logger.info(f'Log file stored at: {path.join(gettempdir(), "moht.log")}')
     logger.info(f'moht v{VERSION} https://gitlab.com/modding-openmw/modhelpertool')
-    logger.debug(f'Arch: {name} / {platform} / {" / ".join(architecture())}')
+    logger.debug(f'Arch: {name} / {sys.platform} / {" / ".join(architecture())}')
     logger.debug(f'Python: {python_implementation()}-{python_version()}')
     logger.debug(f'{uname()}')
     globals()[f'run_{cli_opts.gui}']()
