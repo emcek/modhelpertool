@@ -1,3 +1,6 @@
+# v0.6.1
+* Hotfix - fix starting script
+
 # v0.6.0
 * Make GUI responsive - separate thread for plugin cleaning
 * Add progress bar for cleaning process
