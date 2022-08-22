@@ -30,7 +30,7 @@ For now, application can only clean your mods, but in future more features will 
 * `PyQt5` for Qt GUI version, see [GUI PyQt5](#gui-pyqt5)
 * Linux users require install additional [Perl module](#perl-module)
 * Optional:
-  * `pip` >= 22.2.1 - use to check new version of Moht
+  * `pip` >= 22.2 - use to check new version of Moht
 
 ## Installation
 1. Any Python version grater the 3.7 with tcl/tk support
