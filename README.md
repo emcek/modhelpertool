@@ -17,7 +17,8 @@ Anyway if you not pay attention to details or your english is not fluent (as min
 ## General
 For now, application can only clean your mods, but in future more features will be added.
 
-* Run Linux, Windows and Mac
+* Run Linux, Windows and Mac (not tested)
+* Multithreading cleaning (faster) - only [PyQt5](#gui-pyqt5) version
 * Two built-in version `tes3cmd` binary (0.37 and 0.40) - no additional downloads needed
 * Allow to select custom `tes3cmd` executable file
 * Select location of directory with Mods
