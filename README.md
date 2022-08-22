@@ -79,7 +79,7 @@ You can [find](#start) executable called `moht_tk.exe` or script `moht_tk`. Howe
     ```
 
 ## Start
-* Windows
+* Windows  
   You can find executable(s) with little trick, open Windows Command Prompt (cmd.exe) and type:
   ```shell
   pip uninstall moht
@@ -92,7 +92,8 @@ You can [find](#start) executable called `moht_tk.exe` or script `moht_tk`. Howe
   C:\Python310\scripts\moht_qt.exe
   C:\Python310\scripts\moht_tk.exe
   ```
-* Linux - simply run `moht_tk` or `moht_qt` from terminal
+* Linux  
+  Simply run `moht_tk` or `moht_qt` from terminal
 
 ## Upgrade
 To upgrade Moht to the latest version:
