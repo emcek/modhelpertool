@@ -32,8 +32,8 @@ class MohtTkGui(tk.Frame):
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
         self._init_widgets()
         self.statusbar.set(f'ver. {VERSION}')
-        self._mods_dir.set(str(Path.home()))
-        self._morrowind_dir.set(str(Path.home()))
+        self._mods_dir.set('/home/emc/clean/')
+        self._morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')
         self._tes3cmd.set(path.join(utils.here(__file__), 'resources', TES3CMD[platform]['0_37']))
         self._check_clean_bin()
         self.chkbox_backup.set(True)
