@@ -1,4 +1,5 @@
-# v0.7.0
+# v0.6.2
+* Fix missing internal field for TkGui
 * Fix double content verification of tes3cmd line edit field
 * Internal:
   * format long lists in logger entries
