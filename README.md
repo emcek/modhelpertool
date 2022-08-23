@@ -69,13 +69,25 @@ You can [find](#start) executable called `moht_tk.exe` or script `moht_tk`. Howe
 
 ## Perl module
 `perl-Config-IniFiles` is required for `tes3cmd-0.37` which Moht use to clean-up mods. Install with
-  * Debian
+  * Arch / Manjaro (AUR)
     ```shell
-    sudo apt install python3-tk
+    sudo yay -S perl-config-inifiles
+    ```
+  * Gentoo
+    ```shell
+    sudo emerge dev-perl/Config-IniFiles
+    ```
+  * Debian / Ubuntu / Mint
+    ```shell
+    sudo apt install libconfig-inifiles-perl
     ``` 
   * OpenSUSE
     ```shell
-    sudo zypper install python3-tk
+    sudo zypper install perl-Config-IniFiles
+    ```
+  * Fedora / CentOS / RHEL
+    ```shell
+    sudo dnf install perl-Config-IniFiles.noarch
     ```
 However, moht has v0.40 built-in as well which do not require perl package.
 
