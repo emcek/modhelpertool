@@ -99,9 +99,9 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QRadioButton" name="rb_0_37">
+            <widget class="QRadioButton" name="rb_0_40">
              <property name="text">
-              <string>built-in v0.37</string>
+              <string>built-in v0.40</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -109,9 +109,12 @@
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="rb_0_40">
+            <widget class="QRadioButton" name="rb_0_37">
              <property name="text">
-              <string>built-in v0.40</string>
+              <string>built-in v0.37</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
              </property>
             </widget>
            </item>

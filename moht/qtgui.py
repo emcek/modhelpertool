@@ -74,9 +74,9 @@ class MohtQtGui(QMainWindow):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
-        self._set_le_tes3cmd(TES3CMD[platform]['0_37'])
-        self.mods_dir = str(Path.home())
-        self.morrowind_dir = str(Path.home())
+        self._set_le_tes3cmd(TES3CMD[platform]['0_40'])
+        self.mods_dir = '/home/emc/clean/CitiesTowns/'
+        self.morrowind_dir = '/home/emc/.wine/drive_c/Morrowind/Data Files/'
 
     def _init_radio_buttons(self):
         for ver in ['0_37', '0_40']:
@@ -221,14 +221,31 @@ class MohtQtGui(QMainWindow):
 
     def _check_clean_bin(self) -> bool:
         self.logger.debug('Checking tes3cmd')
-        out, err = utils.run_cmd(f'{self.tes3cmd} -h')
+        out, err = utils.run_cmd(f'{self.tes3cmd} help')
         result, reason = utils.parse_cleaning(out, err, '')
         self.logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
             self.statusbar.showMessage(f'Error: {reason}')
             msg = ''
             if 'Config::IniFiles' in reason:
-                msg = 'Use package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
+                msg = '''
+Check for `perl-Config-IniFiles` or a similar package.
+Use you package manage:
+
+Arch / Manjaro (AUR):
+yay -S perl-config-inifiles
+
+Gentoo:
+emerge dev-perl/Config-IniFiles
+
+Debian / Ubuntu / Mint:
+apt install libconfig-inifiles-perl
+
+OpenSUSE:
+zypper install perl-Config-IniFiles
+
+Fedora / CentOS / RHEL:
+dnf install perl-Config-IniFiles.noarch'''
             elif 'Not tes3cmd' in reason:
                 msg = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
             self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
