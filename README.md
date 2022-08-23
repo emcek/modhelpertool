@@ -19,7 +19,7 @@ For now, application can only clean your mods, but in future more features will 
 
 * Run Linux, Windows and Mac (not tested)
 * Multithreading cleaning (faster) - only [PyQt5](#gui-pyqt5) version
-* Two built-in version `tes3cmd` binary (0.37 and 0.40) - no additional downloads needed
+* Two built-in version `tes3cmd` binary (0.40 and 0.37) - no additional downloads needed
 * Allow to select custom `tes3cmd` executable file
 * Select location of directory with Mods
 * Select location of `Morrowind/Data Files` directory
@@ -68,7 +68,7 @@ You can [find](#start) executable called `moht_tk.exe` or script `moht_tk`. Howe
     ```
 
 ## Perl module
-`perl-Config-IniFiles` is required for `tes3cmd` which Moht use to clean-up mods. Install with
+`perl-Config-IniFiles` is required for `tes3cmd-0.37` which Moht use to clean-up mods. Install with
   * Debian
     ```shell
     sudo apt install python3-tk
@@ -77,6 +77,7 @@ You can [find](#start) executable called `moht_tk.exe` or script `moht_tk`. Howe
     ```shell
     sudo zypper install python3-tk
     ```
+However, moht has v0.40 built-in as well which do not require perl package.
 
 ## Start
 * Windows  
