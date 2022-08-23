@@ -200,7 +200,7 @@ class MohtTkGui(tk.Frame):
 
     def _check_clean_bin(self) -> bool:
         self.logger.debug('Checking tes3cmd')
-        out, err = utils.run_cmd(f'{self.tes3cmd} -h')
+        out, err = utils.run_cmd(f'{self.tes3cmd} help')
         result, reason = utils.parse_cleaning(out, err, '')
         self.logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
