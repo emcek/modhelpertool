@@ -74,7 +74,7 @@ class MohtQtGui(QMainWindow):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
-        self._set_le_tes3cmd(TES3CMD[platform]['0_37'])
+        self._set_le_tes3cmd(TES3CMD[platform]['0_40'])
         self.mods_dir = '/home/emc/clean/CitiesTowns/'
         self.morrowind_dir = '/home/emc/.wine/drive_c/Morrowind/Data Files/'
 
