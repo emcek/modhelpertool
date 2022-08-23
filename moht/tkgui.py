@@ -30,6 +30,7 @@ class MohtTkGui(tk.Frame):
         self.chkbox_cache = tk.BooleanVar()
         self.rb_tes3cmd = tk.StringVar()
         self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
+        self.no_of_plugins = 0
         self._init_widgets()
         self.statusbar.set(f'ver. {VERSION}')
         self._mods_dir.set('/home/emc/clean/')
@@ -132,17 +133,17 @@ class MohtTkGui(tk.Frame):
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
         self.logger.debug(f'all_plugins: {len(all_plugins)}:\n{pformat(all_plugins)}')
         plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
-        no_of_plugins = len(plugins_to_clean)
+        self.no_of_plugins = len(plugins_to_clean)
         self.logger.debug(f'to_clean: {self.no_of_plugins}:\n{pformat(plugins_to_clean)}')
         req_esm = utils.get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
         missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
         utils.copy_filelist(missing_esm, self.morrowind_dir)
         chdir(self.morrowind_dir)
-        self.stats = {'all': no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
+        self.stats = {'all': self.no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         start = time()
         for idx, plug in enumerate(plugins_to_clean, 1):
-            self.logger.debug(f'---------------------------- {idx} / {no_of_plugins} ---------------------------- ')
+            self.logger.debug(f'---------------------------- {idx} / {self.no_of_plugins} ---------------------------- ')
             self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
             copy2(plug, self.morrowind_dir)
             mod_file = utils.extract_filename(plug)
@@ -154,7 +155,7 @@ class MohtTkGui(tk.Frame):
                 mod_path = path.join(self.morrowind_dir, mod_file)
                 self.logger.debug(f'Remove: {mod_path}')
                 remove(mod_path)
-        self.logger.debug(f'---------------------------- Done: {no_of_plugins} ---------------------------- ')
+        self.logger.debug(f'---------------------------- Done: {self.no_of_plugins} ---------------------------- ')
         if self.chkbox_cache.get():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
             utils.rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
