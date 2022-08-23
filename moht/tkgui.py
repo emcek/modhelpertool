@@ -207,7 +207,19 @@ class MohtTkGui(tk.Frame):
         if not result:
             self.statusbar.set(f'Error: {reason}')
             if 'Config::IniFiles' in reason:
-                reason = 'Use package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
+                reason = '''
+Check for `perl-Config-IniFiles` or a similar package. Use you package manage:
+
+Arch:
+yay -S perl-config-inifiles
+Gentoo:
+emerge dev-perl/Config-IniFiles
+Debian:
+apt install libconfig-inifiles-perl
+OpenSUSE:
+zypper install perl-Config-IniFiles
+Fedora:
+dnf install perl-Config-IniFiles.noarch'''
             elif 'Not tes3cmd' in reason:
                 reason = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
             messagebox.showerror('Not tes3cmd', reason)

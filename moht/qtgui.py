@@ -228,7 +228,24 @@ class MohtQtGui(QMainWindow):
             self.statusbar.showMessage(f'Error: {reason}')
             msg = ''
             if 'Config::IniFiles' in reason:
-                msg = 'Use package manager, check for `perl-Config-IniFiles` or a similar package.\n\nOr run from a terminal:\ncpan install Config::IniFiles'
+                msg = '''
+Check for `perl-Config-IniFiles` or a similar package.
+Use you package manage:
+
+Arch / Manjaro (AUR):
+yay -S perl-config-inifiles
+
+Gentoo:
+emerge dev-perl/Config-IniFiles
+
+Debian / Ubuntu / Mint:
+apt install libconfig-inifiles-perl
+
+OpenSUSE:
+zypper install perl-Config-IniFiles
+
+Fedora / CentOS / RHEL:
+dnf install perl-Config-IniFiles.noarch'''
             elif 'Not tes3cmd' in reason:
                 msg = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
             self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
