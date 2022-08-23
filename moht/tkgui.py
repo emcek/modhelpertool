@@ -34,7 +34,7 @@ class MohtTkGui(tk.Frame):
         self.statusbar.set(f'ver. {VERSION}')
         self._mods_dir.set('/home/emc/clean/')
         self._morrowind_dir.set('/home/emc/.wine/drive_c/Morrowind/Data Files/')
-        self._tes3cmd.set(path.join(utils.here(__file__), 'resources', TES3CMD[platform]['0_37']))
+        self._tes3cmd.set(path.join(utils.here(__file__), 'resources', TES3CMD[platform]['0_40']))
         self._check_clean_bin()
         self.chkbox_backup.set(True)
         self.chkbox_cache.set(True)
@@ -66,7 +66,7 @@ class MohtTkGui(tk.Frame):
         rb_037 = tk.Radiobutton(master=rb_frame, text='built-in v0.37', value='0_37', variable=self.rb_tes3cmd, command=self._rb_tes3cmd_toggled)
         rb_040 = tk.Radiobutton(master=rb_frame, text='built-in v0.40', value='0_40', variable=self.rb_tes3cmd, command=self._rb_tes3cmd_toggled)
         rb_custom = tk.Radiobutton(master=rb_frame, text='custom', value='custom', variable=self.rb_tes3cmd, command=self._rb_tes3cmd_toggled)
-        rb_037.select()
+        rb_040.select()
 
         mods_dir.grid(row=0, column=0, padx=2, pady=2, columnspan=2, sticky=f'{tk.W}{tk.E}')
         morrowind_dir.grid(row=1, column=0, padx=2, pady=2, columnspan=2, sticky=f'{tk.W}{tk.E}')
@@ -77,8 +77,8 @@ class MohtTkGui(tk.Frame):
         statusbar.grid(row=7, column=0, columnspan=3, sticky=tk.W)
 
         rb_frame.grid(row=3, column=1, padx=2, pady=2, rowspan=3)
-        rb_037.grid(row=3, column=1, padx=2, pady=2, sticky=tk.W)
-        rb_040.grid(row=4, column=1, padx=2, pady=2, sticky=tk.W)
+        rb_040.grid(row=3, column=1, padx=2, pady=2, sticky=tk.W)
+        rb_037.grid(row=4, column=1, padx=2, pady=2, sticky=tk.W)
         rb_custom.grid(row=5, column=1, padx=2, pady=2, sticky=tk.W)
 
         mods_btn.grid(row=0, column=2, padx=2, pady=2)
