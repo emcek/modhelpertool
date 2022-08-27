@@ -175,8 +175,11 @@ class MohtQtGui(QMainWindow):
     def _add_report_data(self, mod_file: str, result: bool, reason: str, cleaning_time: float, out: str, err: str):
         tip_text = '\n'.join(reason.split('**'))
         if 'not found' in reason:
+            # todo: depending on number missing show esm file as reason on missing when many
             reason = 'missing esm'
+        # todo: show tima as min:ss
         item = QTreeWidgetItem([mod_file, reason, f'{cleaning_time:.2f}', 'Hover to see details'])
+        # todo: remove last column show smotehow more details of cmd - time?
         item.setToolTip(REP_COL_CMD, f'{out.strip()}\n{err.strip()}')
         if result:
             self._add_report_child_item(top_item=self.top_cleaned, child_item=item, icon=qtawesome.icon('fa5s.check', color='green'))
