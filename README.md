@@ -58,6 +58,10 @@ You can [find](#start) executable called `moht_tk.exe` or script `moht_tk`. Howe
       * Associate files with Python (requires the py launcher)
       * Add Python to environment variables
       * Customize install location: C:\Python310 or C:\Python
+  * Arch / Manjaro
+    ```shell
+    sudo pacman -S tk
+    ```
   * Debian
     ```shell
     sudo apt install python3-tk
