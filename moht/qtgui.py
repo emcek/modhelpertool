@@ -47,7 +47,6 @@ class MohtQtGui(QMainWindow):
         self.threadpool = QtCore.QThreadPool.globalInstance()
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
-        self.stats = {'all': 0, 'cleaned': 0, 'clean': 0, 'error': 0, 'time': 0.0}
         self.progress = 0
         self.no_of_plugins = 0
         self.missing_esm: List[Path] = []
@@ -125,7 +124,6 @@ class MohtQtGui(QMainWindow):
         self.logger.debug(f'Required esm: {req_esm}')
         self.missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
         utils.copy_filelist(self.missing_esm, self.morrowind_dir)
-        self.stats = {'all': self.no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         self.duration = time()
         self.pbar_clean.setValue(int(100 / (self.no_of_plugins * 2)))
         for idx, plug in enumerate(plugins_to_clean, 1):
@@ -174,7 +172,6 @@ class MohtQtGui(QMainWindow):
             utils.rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
         utils.rm_copied_extra_esm(self.missing_esm, self.morrowind_dir)
         cleaning_time = time() - self.duration
-        self.stats['time'] = cleaning_time
         self.logger.debug(f'Total time: {cleaning_time} s')
         self._set_icons(button='pb_clean', icon_name='fa5s.hand-sparkles', color='brown')
         self.statusbar.showMessage(f'Done. Took: {utils.get_string_duration(cleaning_time)} min')
