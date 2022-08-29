@@ -171,21 +171,22 @@ class MohtQtGui(QMainWindow):
         self.statusbar.showMessage(f'Done. Took: {cleaning_time:.2f} s')
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
-    def _add_report_data(self, mod_file: str, result: bool, reason: str, cleaning_time: float, out: str, err: str):
-        tip_text = '\n'.join(reason.split('**'))
+    def _add_report_data(self, plug: Path, result: bool, reason: str, cleaning_time: float, out: str, err: str):
+        error_txt = '\n'.join(reason.split('**'))
         if 'not found' in reason:
             reason = 'missing esm'
-        item = QTreeWidgetItem([mod_file, reason, f'{utils.get_string_duration(cleaning_time)}', 'Hover to see details'])
-        # todo: remove last column show smotehow more details of cmd - time?
-        item.setToolTip(REP_COL_CMD, f'{out.strip()}\n{err.strip()}')
+        mod_file = utils.extract_filename(plug)
+        item = QTreeWidgetItem([mod_file, reason, f'{utils.get_string_duration(cleaning_time)}'])
+        item.setToolTip(REP_COL_PLUGIN, f'{plug}')
+        item.setToolTip(REP_COL_TIME, f'{out.strip()}\n{err.strip()}')
         if result:
-            self._add_report_child_item(top_item=self.top_cleaned, child_item=item, icon=qtawesome.icon('fa5s.check', color='green'))
-        if not result and reason == 'not modified':
-            self._add_report_child_item(top_item=self.top_clean, child_item=item, icon=qtawesome.icon('fa5s.check', color='green'))
-        if not result and 'missing' in reason:
-            self._add_report_child_item(top_item=self.top_error, child_item=item, icon=qtawesome.icon('fa5s.times', color='red'), tip_text=tip_text)
+            self._report_icon_update_plugin_number(top_item=self.top_cleaned, child_item=item, icon=qtawesome.icon('fa5s.check', color='green'))
+        elif not result and reason == 'not modified':
+            self._report_icon_update_plugin_number(top_item=self.top_clean, child_item=item, icon=qtawesome.icon('fa5s.check', color='green'))
+        elif not result and 'missing esm' in reason:
+            self._report_icon_update_plugin_number(top_item=self.top_error, child_item=item, icon=qtawesome.icon('fa5s.times', color='red'), tip_text=error_txt)
 
-    def _add_report_child_item(self, top_item: QTreeWidgetItem, child_item: QTreeWidgetItem, icon: QIcon, tip_text: str = ''):
+    def _report_icon_update_plugin_number(self, top_item: QTreeWidgetItem, child_item: QTreeWidgetItem, icon: QIcon, tip_text: str = ''):
         child_item.setIcon(REP_COL_STATUS, icon)
         if tip_text:
             child_item.setToolTip(REP_COL_STATUS, tip_text)
