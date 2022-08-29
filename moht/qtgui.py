@@ -73,7 +73,6 @@ class MohtQtGui(QMainWindow):
         self.pb_morrowind_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True, widget_name='le_morrowind_dir'))
         self.pb_tes3cmd.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False, widget_name='le_tes3cmd'))
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
-        self.pb_report.clicked.connect(self._pb_report_clicked)
         self.pb_chk_updates.clicked.connect(self._check_updates)
 
     def _init_line_edits(self):
@@ -113,7 +112,6 @@ class MohtQtGui(QMainWindow):
     def _pb_clean_clicked(self) -> None:
         self.pbar_clean.setValue(0)
         self.progress = 0
-        self.pb_report.setEnabled(False)
         self._clear_tree_report()
         self._set_icons(button='pb_clean', icon_name='fa5s.spinner', color='green', spin=True)
         self.pb_clean.disconnect()
@@ -179,8 +177,7 @@ class MohtQtGui(QMainWindow):
         self.stats['time'] = cleaning_time
         self.logger.debug(f'Total time: {cleaning_time} s')
         self._set_icons(button='pb_clean', icon_name='fa5s.hand-sparkles', color='brown')
-        self.pb_report.setEnabled(True)
-        self.statusbar.showMessage(f'Done. Took: {cleaning_time:.2f} s')
+        self.statusbar.showMessage(f'Done. Took: {utils.get_string_duration(cleaning_time)} min')
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
     def _add_report_data(self, plug: Path, result: bool, reason: str, cleaning_time: float, out: str, err: str):
@@ -216,18 +213,6 @@ class MohtQtGui(QMainWindow):
         """
         if item.parent():
             QApplication.clipboard().setText(item.toolTip(REP_COL_PLUGIN))
-
-    def _pb_report_clicked(self) -> None:
-        """Show report after clean-up."""
-        self.logger.debug(f'Report: {self.stats}')
-        report = f'Detected plugins to clean: {self.stats["all"]}\n'
-        report += f'Already clean plugins: {self.stats["clean"]}\n'
-        report += f'Cleaned plugins: {self.stats["cleaned"]}\n'
-        report += '\n'.join([f'Error {k}: {self.stats[k]}' for k in self.stats if 'not found' in k])
-        report += '\n\nCopy missing esm file(s) to Data Files directory and clean again.\n\n' if 'Error' in report else '\n'
-        report += f'Total time: {self.stats["time"]:.2f} s'
-        self._show_message_box(kind_of='information', title='Cleaning Report', message=report)
-        self.statusbar.showMessage(f'ver. {VERSION}')
 
     def _check_updates(self):
         _, desc = utils.is_latest_ver(package='moht', current_ver=VERSION)
@@ -359,7 +344,6 @@ dnf install perl-Config-IniFiles.noarch'''
             self.pb_morrowind_dir.setIcon(qtawesome.icon('fa5s.folder', color='brown'))
             self.pb_tes3cmd.setIcon(qtawesome.icon('fa5s.file', color='brown'))
             self.pb_clean.setIcon(qtawesome.icon('fa5s.hand-sparkles', color='brown'))
-            self.pb_report.setIcon(qtawesome.icon('fa5s.file-contract', color='brown'))
             self.pb_chk_updates.setIcon(qtawesome.icon('fa5s.arrow-down', color='brown'))
             self.pb_close.setIcon(qtawesome.icon('fa5s.sign-out-alt', color='brown'))
             return
