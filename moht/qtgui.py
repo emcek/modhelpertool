@@ -23,7 +23,6 @@ resources = qtgui_rc  # prevent to remove import statement accidentally
 REP_COL_PLUGIN = 0
 REP_COL_STATUS = 1
 REP_COL_TIME = 2
-REP_COL_CMD = 3
 
 
 def tr(text2translate: str):
@@ -101,8 +100,8 @@ class MohtQtGui(QMainWindow):
         self.tree_report.addTopLevelItem(self.top_cleaned)
         self.tree_report.addTopLevelItem(self.top_error)
         self.tree_report.addTopLevelItem(self.top_clean)
-        self.tree_report.setColumnWidth(REP_COL_PLUGIN, 290)
-        self.tree_report.setColumnWidth(REP_COL_STATUS, 130)
+        self.tree_report.setColumnWidth(REP_COL_PLUGIN, 400)
+        self.tree_report.setColumnWidth(REP_COL_STATUS, 140)
         self.tree_report.setColumnWidth(REP_COL_TIME, 60)
         self._set_icons(button='pb_clean', icon_name='fa5s.spinner', color='green', spin=True)
         self.pb_clean.disconnect()
