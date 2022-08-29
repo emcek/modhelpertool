@@ -175,7 +175,6 @@ class MohtQtGui(QMainWindow):
     def _add_report_data(self, mod_file: str, result: bool, reason: str, cleaning_time: float, out: str, err: str):
         tip_text = '\n'.join(reason.split('**'))
         if 'not found' in reason:
-            # todo: depending on number missing show esm file as reason on missing when many
             reason = 'missing esm'
         item = QTreeWidgetItem([mod_file, reason, f'{utils.get_string_duration(cleaning_time)}', 'Hover to see details'])
         # todo: remove last column show smotehow more details of cmd - time?
