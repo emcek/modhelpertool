@@ -124,7 +124,7 @@ class MohtQtGui(QMainWindow):
                                    signal_handlers={'error': self._error_during_clean,
                                                     'result': self._clean_finished})
 
-    def _clean_start(self, plug: Path, lock: Lock) -> Tuple[str, bool, str, float, str, str]:
+    def _clean_start(self, plug: Path, lock: Lock) -> Tuple[Path, bool, str, float, str, str]:
         start = time()
         chdir(self.morrowind_dir)
         self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
@@ -141,14 +141,14 @@ class MohtQtGui(QMainWindow):
             remove(mod_path)
         self.logger.debug(f'Done: {mod_file}')
         duration = time() - start
-        return mod_file, result, reason, duration, out, err
+        return plug, result, reason, duration, out, err
 
     def _error_during_clean(self, exc_tuple: Tuple[Exception, str, str]) -> None:
         exc_type, exc_val, exc_tb = exc_tuple
         self.logger.warning('{}: {}'.format(exc_type.__class__.__name__, exc_val))
         self.logger.debug(exc_tb)
 
-    def _clean_finished(self, clean_result: Tuple[str, bool, str, float, str, str]) -> None:
+    def _clean_finished(self, clean_result: Tuple[Path, bool, str, float, str, str]) -> None:
         self._add_report_data(*clean_result)
         self.progress += 1
         percent = self.progress * 100 / self.no_of_plugins
