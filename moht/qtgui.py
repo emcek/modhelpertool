@@ -15,7 +15,7 @@ from typing import Optional, Callable, Dict, Tuple, Union, List
 import qtawesome
 from PyQt5 import QtCore, uic
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem, QApplication
 
 from moht import VERSION, TES3CMD, utils, qtgui_rc
 
@@ -23,6 +23,8 @@ resources = qtgui_rc  # prevent to remove import statement accidentally
 REP_COL_PLUGIN = 0
 REP_COL_STATUS = 1
 REP_COL_TIME = 2
+MAIN_CLEAR_TAB = 0
+MAIN_REPORT_TAB = 1
 
 
 def tr(text2translate: str):
@@ -55,6 +57,7 @@ class MohtQtGui(QMainWindow):
         self._init_buttons()
         self._init_radio_buttons()
         self._init_line_edits()
+        self._init_tree_report()
         self.statusbar.showMessage(f'ver. {VERSION}')
         self._set_icons()
 
@@ -85,6 +88,24 @@ class MohtQtGui(QMainWindow):
         for ver in ['0_37', '0_40']:
             getattr(self, f'rb_{ver}').toggled.connect(partial(self._rb_tes3cmd_toggled, ver))
 
+    def _init_tree_report(self):
+        self.tree_report.setColumnWidth(REP_COL_PLUGIN, 400)
+        self.tree_report.setColumnWidth(REP_COL_STATUS, 140)
+        self.tree_report.setColumnWidth(REP_COL_TIME, 60)
+        self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
+        self.tw_main.setTabEnabled(MAIN_REPORT_TAB, False)
+
+    def _clear_tree_report(self):
+        self.tree_report.clear()
+        self.top_cleaned = QTreeWidgetItem(['Cleaned: 0', '', '', ''])
+        self.top_error = QTreeWidgetItem(['Error: 0', '', '', ''])
+        self.top_clean = QTreeWidgetItem(['Clean: 0', '', '', ''])
+        self.tree_report.addTopLevelItem(self.top_cleaned)
+        self.tree_report.addTopLevelItem(self.top_error)
+        self.tree_report.addTopLevelItem(self.top_clean)
+        self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
+        self.tw_main.setTabEnabled(MAIN_REPORT_TAB, True)
+
     def _rb_tes3cmd_toggled(self, version: str, state: bool) -> None:
         if state:
             self._set_le_tes3cmd(TES3CMD[platform][version])
@@ -93,16 +114,7 @@ class MohtQtGui(QMainWindow):
         self.pbar_clean.setValue(0)
         self.progress = 0
         self.pb_report.setEnabled(False)
-        self.tree_report.clear()
-        self.top_cleaned = QTreeWidgetItem(['Cleaned: 0', '', '', ''])
-        self.top_error = QTreeWidgetItem(['Error: 0', '', '', ''])
-        self.top_clean = QTreeWidgetItem(['Clean: 0', '', '', ''])
-        self.tree_report.addTopLevelItem(self.top_cleaned)
-        self.tree_report.addTopLevelItem(self.top_error)
-        self.tree_report.addTopLevelItem(self.top_clean)
-        self.tree_report.setColumnWidth(REP_COL_PLUGIN, 400)
-        self.tree_report.setColumnWidth(REP_COL_STATUS, 140)
-        self.tree_report.setColumnWidth(REP_COL_TIME, 60)
+        self._clear_tree_report()
         self._set_icons(button='pb_clean', icon_name='fa5s.spinner', color='green', spin=True)
         self.pb_clean.disconnect()
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
@@ -194,6 +206,16 @@ class MohtQtGui(QMainWindow):
         top_text = top_item.text(REP_COL_PLUGIN).split(' ')
         top_item.setText(REP_COL_PLUGIN, f'{top_text[0]} {int(top_text[1]) + 1}')
         self.tree_report.expandItem(top_item)
+
+    @staticmethod
+    def _item_double_clicked(item: QTreeWidgetItem) -> None:
+        """
+        Copy tool tip text of first column of clicked tree item to clipboard.
+
+        :param item: item clicked
+        """
+        if item.parent():
+            QApplication.clipboard().setText(item.toolTip(REP_COL_PLUGIN))
 
     def _pb_report_clicked(self) -> None:
         """Show report after clean-up."""
