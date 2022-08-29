@@ -177,8 +177,7 @@ class MohtQtGui(QMainWindow):
         if 'not found' in reason:
             # todo: depending on number missing show esm file as reason on missing when many
             reason = 'missing esm'
-        # todo: show tima as min:ss
-        item = QTreeWidgetItem([mod_file, reason, f'{cleaning_time:.2f}', 'Hover to see details'])
+        item = QTreeWidgetItem([mod_file, reason, f'{utils.get_string_duration(cleaning_time)}', 'Hover to see details'])
         # todo: remove last column show smotehow more details of cmd - time?
         item.setToolTip(REP_COL_CMD, f'{out.strip()}\n{err.strip()}')
         if result:
