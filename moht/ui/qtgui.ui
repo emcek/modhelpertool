@@ -207,11 +207,6 @@
             <string>Time</string>
            </property>
           </column>
-          <column>
-           <property name="text">
-            <string>Command output</string>
-           </property>
-          </column>
          </widget>
         </item>
        </layout>
