@@ -3,6 +3,7 @@
 * QtGUI:
   * nice report in separate tab
   * remove Report button from main window
+  * move close and update button to common area 
 
 # v0.6.2
 * Fix missing internal field for TkGui
