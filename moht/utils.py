@@ -1,3 +1,4 @@
+from datetime import datetime, date, time, timedelta
 from itertools import chain
 from logging import getLogger
 from os import linesep, path, sep, walk, remove
@@ -227,3 +228,8 @@ def rm_copied_extra_esm(esm: List[Path], data_files: str) -> None:
             logger.debug(f'File not found: {esm_path}')
         else:
             logger.debug(f'Remove: {esm_path}')
+
+
+def get_string_duration(seconds: float, time_format='%M:%S'):
+    now = datetime.combine(date.today(), time()) + timedelta(seconds=seconds)
+    return now.strftime(time_format)

@@ -253,3 +253,14 @@ def test_rm_copied_extra_esm_exception_handling():
     from moht.utils import rm_copied_extra_esm
     with patch.object(utils, 'remove', side_effect=FileNotFoundError):
         rm_copied_extra_esm(esm=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], data_files='/home/user/datafiles')
+
+
+@mark.parametrize('duration, result', [
+    (9.50, '00:09'),
+    (19.24, '00:19'),
+    (58.1, '00:58'),
+    (128.95, '02:08'),
+    (453.83, '07:33'),
+])
+def test_get_string_duration(duration, result):
+    assert utils.get_string_duration(duration) == result
