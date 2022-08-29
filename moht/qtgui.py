@@ -139,6 +139,10 @@ class MohtQtGui(QMainWindow):
         out, err = utils.run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
         result, reason = utils.parse_cleaning(out, err, mod_file)
         self.logger.debug(f'Result: {result}, Reason: {reason}')
+        if result:
+            clean_plugin = path.join(self.morrowind_dir, '1', mod_file)
+            self.logger.debug(f'Move: {clean_plugin} -> {plug}')
+            move(clean_plugin, plug)
         if self.cb_rm_bakup.isChecked():
             mod_path = path.join(self.morrowind_dir, mod_file)
             self.logger.debug(f'Remove: {mod_path}')
