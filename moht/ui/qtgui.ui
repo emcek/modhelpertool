@@ -204,7 +204,7 @@
           </column>
           <column>
            <property name="text">
-            <string>Time [s]</string>
+            <string>Time</string>
            </property>
           </column>
           <column>
