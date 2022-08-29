@@ -26,7 +26,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="QTabWidget" name="tw_main">
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -183,15 +183,41 @@
           </property>
          </widget>
         </item>
-        <item row="7" column="0" colspan="3">
-         <widget class="QProgressBar" name="pbar_clean">
-          <property name="value">
-           <number>0</number>
-          </property>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_report">
+       <attribute name="title">
+        <string>Report</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QTreeWidget" name="tree_report">
+          <column>
+           <property name="text">
+            <string>Plugin</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Status</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Time</string>
+           </property>
+          </column>
          </widget>
         </item>
        </layout>
       </widget>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QProgressBar" name="pbar_clean">
+      <property name="value">
+       <number>0</number>
+      </property>
      </widget>
     </item>
    </layout>
@@ -256,7 +282,7 @@
   </action>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
+  <tabstop>tw_main</tabstop>
   <tabstop>le_mods_dir</tabstop>
   <tabstop>pb_mods_dir</tabstop>
   <tabstop>le_morrowind_dir</tabstop>

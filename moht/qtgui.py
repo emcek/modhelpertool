@@ -15,11 +15,16 @@ from typing import Optional, Callable, Dict, Tuple, Union, List
 import qtawesome
 from PyQt5 import QtCore, uic
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem, QApplication
 
 from moht import VERSION, TES3CMD, utils, qtgui_rc
 
 resources = qtgui_rc  # prevent to remove import statement accidentally
+REP_COL_PLUGIN = 0
+REP_COL_STATUS = 1
+REP_COL_TIME = 2
+MAIN_CLEAR_TAB = 0
+MAIN_REPORT_TAB = 1
 
 
 def tr(text2translate: str):
@@ -52,6 +57,7 @@ class MohtQtGui(QMainWindow):
         self._init_buttons()
         self._init_radio_buttons()
         self._init_line_edits()
+        self._init_tree_report()
         self.statusbar.showMessage(f'ver. {VERSION}')
         self._set_icons()
 
@@ -76,11 +82,29 @@ class MohtQtGui(QMainWindow):
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
         self._set_le_tes3cmd(TES3CMD[platform]['0_40'])
         self.mods_dir = '/home/emc/clean/CitiesTowns/'
-        self.morrowind_dir = '/home/emc/.wine/drive_c/Morrowind/Data Files/'
+        self.morrowind_dir = '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'
 
     def _init_radio_buttons(self):
         for ver in ['0_37', '0_40']:
             getattr(self, f'rb_{ver}').toggled.connect(partial(self._rb_tes3cmd_toggled, ver))
+
+    def _init_tree_report(self):
+        self.tree_report.setColumnWidth(REP_COL_PLUGIN, 400)
+        self.tree_report.setColumnWidth(REP_COL_STATUS, 140)
+        self.tree_report.setColumnWidth(REP_COL_TIME, 60)
+        self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
+        self.tw_main.setTabEnabled(MAIN_REPORT_TAB, False)
+
+    def _clear_tree_report(self):
+        self.tree_report.clear()
+        self.top_cleaned = QTreeWidgetItem(['Cleaned: 0', '', '', ''])
+        self.top_error = QTreeWidgetItem(['Error: 0', '', '', ''])
+        self.top_clean = QTreeWidgetItem(['Clean: 0', '', '', ''])
+        self.tree_report.addTopLevelItem(self.top_cleaned)
+        self.tree_report.addTopLevelItem(self.top_error)
+        self.tree_report.addTopLevelItem(self.top_clean)
+        self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
+        self.tw_main.setTabEnabled(MAIN_REPORT_TAB, True)
 
     def _rb_tes3cmd_toggled(self, version: str, state: bool) -> None:
         if state:
@@ -90,6 +114,7 @@ class MohtQtGui(QMainWindow):
         self.pbar_clean.setValue(0)
         self.progress = 0
         self.pb_report.setEnabled(False)
+        self._clear_tree_report()
         self._set_icons(button='pb_clean', icon_name='fa5s.spinner', color='green', spin=True)
         self.pb_clean.disconnect()
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
@@ -97,20 +122,22 @@ class MohtQtGui(QMainWindow):
         plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
         self.no_of_plugins = len(plugins_to_clean)
         self.logger.debug(f'to_clean: {self.no_of_plugins}:\n{pformat(plugins_to_clean)}')
-        self.statusbar.showMessage(f'Plugins to clean: {self.no_of_plugins}')
+        self.statusbar.showMessage(f'Plugins to clean: {self.no_of_plugins} - See Report tab')
         req_esm = utils.get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
         self.missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
         utils.copy_filelist(self.missing_esm, self.morrowind_dir)
         self.stats = {'all': self.no_of_plugins, 'cleaned': 0, 'clean': 0, 'error': 0}
         self.duration = time()
+        self.pbar_clean.setValue(int(100 / (self.no_of_plugins * 2)))
         for idx, plug in enumerate(plugins_to_clean, 1):
             self.logger.debug(f'Start: {idx} / {self.no_of_plugins}')
             self.run_in_background(job=partial(self._clean_start, plug=plug, lock=self.lock),
                                    signal_handlers={'error': self._error_during_clean,
-                                                    'finished': self._clean_finished})
+                                                    'result': self._clean_finished})
 
-    def _clean_start(self, plug: Path, lock: Lock) -> None:
+    def _clean_start(self, plug: Path, lock: Lock) -> Tuple[Path, bool, str, float, str, str]:
+        start = time()
         chdir(self.morrowind_dir)
         self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
         copy2(plug, self.morrowind_dir)
@@ -125,13 +152,16 @@ class MohtQtGui(QMainWindow):
             self.logger.debug(f'Remove: {mod_path}')
             remove(mod_path)
         self.logger.debug(f'Done: {mod_file}')
+        duration = time() - start
+        return plug, result, reason, duration, out, err
 
     def _error_during_clean(self, exc_tuple: Tuple[Exception, str, str]) -> None:
         exc_type, exc_val, exc_tb = exc_tuple
         self.logger.warning('{}: {}'.format(exc_type.__class__.__name__, exc_val))
         self.logger.debug(exc_tb)
 
-    def _clean_finished(self) -> None:
+    def _clean_finished(self, clean_result: Tuple[Path, bool, str, float, str, str]) -> None:
+        self._add_report_data(*clean_result)
         self.progress += 1
         percent = self.progress * 100 / self.no_of_plugins
         self.logger.debug(f'Progress: {percent:.2f} %')
@@ -150,8 +180,42 @@ class MohtQtGui(QMainWindow):
         self.logger.debug(f'Total time: {cleaning_time} s')
         self._set_icons(button='pb_clean', icon_name='fa5s.hand-sparkles', color='brown')
         self.pb_report.setEnabled(True)
-        self.statusbar.showMessage('Done. See report!')
+        self.statusbar.showMessage(f'Done. Took: {cleaning_time:.2f} s')
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
+
+    def _add_report_data(self, plug: Path, result: bool, reason: str, cleaning_time: float, out: str, err: str):
+        error_txt = '\n'.join(reason.split('**'))
+        if 'not found' in reason:
+            reason = 'missing esm'
+        mod_file = utils.extract_filename(plug)
+        item = QTreeWidgetItem([mod_file, reason, f'{utils.get_string_duration(cleaning_time)}'])
+        item.setToolTip(REP_COL_PLUGIN, f'{plug}')
+        item.setToolTip(REP_COL_TIME, f'{out.strip()}\n{err.strip()}')
+        if result:
+            self._report_icon_update_plugin_number(top_item=self.top_cleaned, child_item=item, icon=qtawesome.icon('fa5s.check', color='green'))
+        elif not result and reason == 'not modified':
+            self._report_icon_update_plugin_number(top_item=self.top_clean, child_item=item, icon=qtawesome.icon('fa5s.check', color='green'))
+        elif not result and 'missing esm' in reason:
+            self._report_icon_update_plugin_number(top_item=self.top_error, child_item=item, icon=qtawesome.icon('fa5s.times', color='red'), tip_text=error_txt)
+
+    def _report_icon_update_plugin_number(self, top_item: QTreeWidgetItem, child_item: QTreeWidgetItem, icon: QIcon, tip_text: str = ''):
+        child_item.setIcon(REP_COL_STATUS, icon)
+        if tip_text:
+            child_item.setToolTip(REP_COL_STATUS, tip_text)
+        top_item.addChild(child_item)
+        top_text = top_item.text(REP_COL_PLUGIN).split(' ')
+        top_item.setText(REP_COL_PLUGIN, f'{top_text[0]} {int(top_text[1]) + 1}')
+        self.tree_report.expandItem(top_item)
+
+    @staticmethod
+    def _item_double_clicked(item: QTreeWidgetItem) -> None:
+        """
+        Copy tool tip text of first column of clicked tree item to clipboard.
+
+        :param item: item clicked
+        """
+        if item.parent():
+            QApplication.clipboard().setText(item.toolTip(REP_COL_PLUGIN))
 
     def _pb_report_clicked(self) -> None:
         """Show report after clean-up."""
