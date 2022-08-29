@@ -8,7 +8,6 @@ from pprint import pformat
 from shutil import move, copy2
 from sys import exc_info, version_info, platform
 from tempfile import gettempdir
-from threading import Lock
 from time import time
 from typing import Optional, Callable, Dict, Tuple, Union, List
 
@@ -51,7 +50,6 @@ class MohtQtGui(QMainWindow):
         self.no_of_plugins = 0
         self.missing_esm: List[Path] = []
         self.duration = 0.0
-        self.lock = Lock()
         self._init_menu_bar()
         self._init_buttons()
         self._init_radio_buttons()
@@ -128,11 +126,11 @@ class MohtQtGui(QMainWindow):
         self.pbar_clean.setValue(int(100 / (self.no_of_plugins * 2)))
         for idx, plug in enumerate(plugins_to_clean, 1):
             self.logger.debug(f'Start: {idx} / {self.no_of_plugins}')
-            self.run_in_background(job=partial(self._clean_start, plug=plug, lock=self.lock),
+            self.run_in_background(job=partial(self._clean_start, plug=plug),
                                    signal_handlers={'error': self._error_during_clean,
                                                     'result': self._clean_finished})
 
-    def _clean_start(self, plug: Path, lock: Lock) -> Tuple[Path, bool, str, float, str, str]:
+    def _clean_start(self, plug: Path) -> Tuple[Path, bool, str, float, str, str]:
         start = time()
         chdir(self.morrowind_dir)
         self.logger.debug(f'Copy: {plug} -> {self.morrowind_dir}')
@@ -141,8 +139,6 @@ class MohtQtGui(QMainWindow):
         out, err = utils.run_cmd(f'{self.tes3cmd} clean --output-dir --overwrite "{mod_file}"')
         result, reason = utils.parse_cleaning(out, err, mod_file)
         self.logger.debug(f'Result: {result}, Reason: {reason}')
-        with lock:
-            self._update_stats(mod_file, plug, reason, result)
         if self.cb_rm_bakup.isChecked():
             mod_path = path.join(self.morrowind_dir, mod_file)
             self.logger.debug(f'Remove: {mod_path}')
