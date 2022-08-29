@@ -1,5 +1,6 @@
 # v0.7.0
 * make `tes3cmd-v0.40` default version (it not require `perl-Config-IniFiles`)
+* QtGUI has nice report in separate tab
 
 # v0.6.2
 * Fix missing internal field for TkGui
