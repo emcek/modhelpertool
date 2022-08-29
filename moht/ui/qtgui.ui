@@ -35,47 +35,39 @@
         <string>Cleaner</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="2" column="2">
-         <widget class="QPushButton" name="pb_tes3cmd">
-          <property name="enabled">
-           <bool>false</bool>
+        <item row="3" column="0" rowspan="3">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>After successful clean-up:</string>
           </property>
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="text">
-           <string>Select tes3cmd</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="2">
-         <widget class="QPushButton" name="pb_report">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Report</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="QPushButton" name="pb_clean">
-          <property name="text">
-           <string>Clean</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLineEdit" name="le_mods_dir"/>
-        </item>
-        <item row="1" column="2">
-         <widget class="QPushButton" name="pb_morrowind_dir">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;Data Files &lt;/span&gt;folder of Morrowind installation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="text">
-           <string>Select Data Files</string>
-          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QCheckBox" name="cb_rm_bakup">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;During clean-up plugin file is copied to Data Files folder.&lt;/p&gt;&lt;p&gt;Cleaning proces create new plugin file.&lt;/p&gt;&lt;p&gt;When checkbox is checked dirty pkugin file is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Remove backups of plugins</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cb_rm_cache">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clean-up proccess create cache of master files in Data FIles folder.&lt;/p&gt;&lt;p&gt;It speed up cleaning a bit, but it takes some disk space as well.&lt;/p&gt;&lt;p&gt;When checkbox is checked, this cache is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Remove cache of master files</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item row="2" column="0" colspan="2">
@@ -85,14 +77,17 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="2">
-         <widget class="QPushButton" name="pb_chk_updates">
+        <item row="0" column="2">
+         <widget class="QPushButton" name="pb_mods_dir">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select root folder with Mods to clean.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
-           <string>Check Updates</string>
+           <string>Select Mods</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1" rowspan="4">
+        <item row="3" column="1" rowspan="3">
          <widget class="QGroupBox" name="groupBox_2">
           <property name="title">
            <string>Version of tes3cmd</string>
@@ -128,58 +123,53 @@
           </layout>
          </widget>
         </item>
-        <item row="3" column="0" rowspan="4">
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>After successful clean-up:</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <item>
-            <widget class="QCheckBox" name="cb_rm_bakup">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;During clean-up plugin file is copied to Data Files folder.&lt;/p&gt;&lt;p&gt;Cleaning proces create new plugin file.&lt;/p&gt;&lt;p&gt;When checkbox is checked dirty pkugin file is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Remove backups of plugins</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="cb_rm_cache">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clean-up proccess create cache of master files in Data FIles folder.&lt;/p&gt;&lt;p&gt;It speed up cleaning a bit, but it takes some disk space as well.&lt;/p&gt;&lt;p&gt;When checkbox is checked, this cache is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Remove cache of master files</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="pb_mods_dir">
+        <item row="1" column="2">
+         <widget class="QPushButton" name="pb_morrowind_dir">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select root folder with Mods to clean.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;Data Files &lt;/span&gt;folder of Morrowind installation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
-           <string>Select Mods</string>
+           <string>Select Data Files</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="2">
+         <widget class="QPushButton" name="pb_close">
+          <property name="text">
+           <string>Close</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QPushButton" name="pb_tes3cmd">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Select tes3cmd</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0" colspan="2">
          <widget class="QLineEdit" name="le_morrowind_dir"/>
         </item>
-        <item row="6" column="2">
-         <widget class="QPushButton" name="pb_close">
+        <item row="0" column="0" colspan="2">
+         <widget class="QLineEdit" name="le_mods_dir"/>
+        </item>
+        <item row="3" column="2">
+         <widget class="QPushButton" name="pb_clean">
           <property name="text">
-           <string>Close</string>
+           <string>Clean</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QPushButton" name="pb_chk_updates">
+          <property name="text">
+           <string>Check Updates</string>
           </property>
          </widget>
         </item>
@@ -292,7 +282,6 @@
   <tabstop>cb_rm_bakup</tabstop>
   <tabstop>cb_rm_cache</tabstop>
   <tabstop>pb_clean</tabstop>
-  <tabstop>pb_report</tabstop>
   <tabstop>pb_close</tabstop>
  </tabstops>
  <resources>
