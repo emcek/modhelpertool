@@ -25,7 +25,28 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+    <item row="1" column="0">
+     <widget class="QProgressBar" name="pbar_clean">
+      <property name="value">
+       <number>0</number>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QPushButton" name="pb_close">
+      <property name="text">
+       <string>Close</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="pb_chk_updates">
+      <property name="text">
+       <string>Check Updates</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="3">
      <widget class="QTabWidget" name="tw_main">
       <property name="currentIndex">
        <number>0</number>
@@ -35,6 +56,9 @@
         <string>Cleaner</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0" colspan="2">
+         <widget class="QLineEdit" name="le_mods_dir"/>
+        </item>
         <item row="3" column="0" rowspan="3">
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
@@ -77,6 +101,29 @@
           </property>
          </widget>
         </item>
+        <item row="2" column="2">
+         <widget class="QPushButton" name="pb_tes3cmd">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Select tes3cmd</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="pb_morrowind_dir">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;Data Files &lt;/span&gt;folder of Morrowind installation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Select Data Files</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="2">
          <widget class="QPushButton" name="pb_mods_dir">
           <property name="toolTip">
@@ -86,6 +133,9 @@
            <string>Select Mods</string>
           </property>
          </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QLineEdit" name="le_morrowind_dir"/>
         </item>
         <item row="3" column="1" rowspan="3">
          <widget class="QGroupBox" name="groupBox_2">
@@ -123,53 +173,10 @@
           </layout>
          </widget>
         </item>
-        <item row="1" column="2">
-         <widget class="QPushButton" name="pb_morrowind_dir">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;Data Files &lt;/span&gt;folder of Morrowind installation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="text">
-           <string>Select Data Files</string>
-          </property>
-         </widget>
-        </item>
         <item row="5" column="2">
-         <widget class="QPushButton" name="pb_close">
-          <property name="text">
-           <string>Close</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QPushButton" name="pb_tes3cmd">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="text">
-           <string>Select tes3cmd</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QLineEdit" name="le_morrowind_dir"/>
-        </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLineEdit" name="le_mods_dir"/>
-        </item>
-        <item row="3" column="2">
          <widget class="QPushButton" name="pb_clean">
           <property name="text">
            <string>Clean</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="2">
-         <widget class="QPushButton" name="pb_chk_updates">
-          <property name="text">
-           <string>Check Updates</string>
           </property>
          </widget>
         </item>
@@ -201,13 +208,6 @@
         </item>
        </layout>
       </widget>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QProgressBar" name="pbar_clean">
-      <property name="value">
-       <number>0</number>
-      </property>
      </widget>
     </item>
    </layout>
@@ -281,8 +281,6 @@
   <tabstop>pb_tes3cmd</tabstop>
   <tabstop>cb_rm_bakup</tabstop>
   <tabstop>cb_rm_cache</tabstop>
-  <tabstop>pb_clean</tabstop>
-  <tabstop>pb_close</tabstop>
  </tabstops>
  <resources>
   <include location="../qtgui.qrc"/>
