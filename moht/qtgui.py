@@ -201,8 +201,7 @@ class MohtQtGui(QMainWindow):
         top_item.setText(REP_COL_PLUGIN, f'{top_text[0]} {int(top_text[1]) + 1}')
         self.tree_report.expandItem(top_item)
 
-    @staticmethod
-    def _item_double_clicked(item: QTreeWidgetItem) -> None:
+    def _item_double_clicked(self, item: QTreeWidgetItem) -> None:
         """
         Copy tool tip text of first column of clicked tree item to clipboard.
 
@@ -210,6 +209,7 @@ class MohtQtGui(QMainWindow):
         """
         if item.parent():
             QApplication.clipboard().setText(item.toolTip(REP_COL_PLUGIN))
+            self.statusbar.showMessage('Path of plugin copied to clipboard')
 
     def _check_updates(self):
         _, desc = utils.is_latest_ver(package='moht', current_ver=VERSION)
