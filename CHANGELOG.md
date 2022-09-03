@@ -1,5 +1,10 @@
 # v0.7.0
 * make `tes3cmd-v0.40` default version (it not require `perl-Config-IniFiles`)
+* QtGUI:
+  * nice report in separate tab
+  * remove Report button from main window
+  * move close and update button to common area 
+  * double-click on report item, copied path of plugin to clipboard
 
 # v0.6.2
 * Fix missing internal field for TkGui
