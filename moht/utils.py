@@ -90,6 +90,8 @@ def is_latest_ver(package: str, current_ver: str) -> Tuple[bool, str]:
             extra_data = f'Version check failed, old pip: {pip_ver}'
             logger.debug(f'Pip version: {pip_ver}')
     latest = _compare_versions(package, current_ver, remote_ver)
+    if latest and current_ver == remote_ver:
+        extra_data = 'No updates'
     return latest, extra_data
 
 
