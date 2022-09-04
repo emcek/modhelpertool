@@ -174,7 +174,11 @@ class MohtQtGui(QMainWindow):
         cleaning_time = time() - self.duration
         self.logger.debug(f'Total time: {cleaning_time} s')
         self._set_icons(button='pb_clean', icon_name='fa5s.hand-sparkles', color='brown')
-        self.statusbar.showMessage(f'Done. Took: {utils.get_string_duration(cleaning_time)} min')
+        if cleaning_time <= 60.0:
+            duration = f'{utils.get_string_duration(seconds=cleaning_time, time_format="%S")} [sec]'
+        else:
+            duration = f'{utils.get_string_duration(seconds=cleaning_time, time_format="%M:%S")} [min:sec]'
+        self.statusbar.showMessage(f'Done. Took: {duration}')
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
     def _add_report_data(self, plug: Path, result: bool, reason: str, cleaning_time: float, out: str, err: str):

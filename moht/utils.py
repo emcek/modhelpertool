@@ -234,12 +234,12 @@ def rm_copied_extra_esm(esm: List[Path], data_files: str) -> None:
             logger.debug(f'Remove: {esm_path}')
 
 
-def get_string_duration(seconds: float, time_format='%M:%S'):
+def get_string_duration(seconds: float, time_format='%M:%S') -> str:
     """
     Return time duration as string with formatting.
 
     :param seconds: number of seconds as float
-    :param time_format: way of formatting output
+    :param time_format: way of formatting output i.e. '%M:%S'
     :return: time as string with format
     """
     now = datetime.combine(date.today(), time()) + timedelta(seconds=seconds)

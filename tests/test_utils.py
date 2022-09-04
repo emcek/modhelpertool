@@ -255,12 +255,15 @@ def test_rm_copied_extra_esm_exception_handling():
         rm_copied_extra_esm(esm=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], data_files='/home/user/datafiles')
 
 
-@mark.parametrize('duration, result', [
-    (9.50, '00:09'),
-    (19.24, '00:19'),
-    (58.1, '00:58'),
-    (128.95, '02:08'),
-    (453.83, '07:33'),
+@mark.parametrize('args, result', [
+    ((9.50, '%M:%S'), '00:09'),
+    ((9.50, '%S'), '09'),
+    ((19.24, '%M:%S'), '00:19'),
+    ((19.24, '%S'), '19'),
+    ((58.1, '%M:%S'), '00:58'),
+    ((128.95, '%M:%S'), '02:08'),
+    ((453.83, '%M:%S'), '07:33'),
+    ((453.83, '%H:%M:%S'), '00:07:33'),
 ])
-def test_get_string_duration(duration, result):
-    assert utils.get_string_duration(duration) == result
+def test_get_string_duration(args, result):
+    assert utils.get_string_duration(*args) == result
