@@ -100,6 +100,9 @@ class MohtQtGui(QMainWindow):
         self.tree_report.addTopLevelItem(self.top_error)
         self.tree_report.addTopLevelItem(self.top_clean)
         self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
+        header = self.tree_report.headerItem()
+        header.setToolTip(REP_COL_PLUGIN, 'Double click on item to copy plugin`s path.')
+        header.setToolTip(REP_COL_TIME, 'Cleaning time in min:sec\nHold on item to see cleaning details.')
         self.tw_main.setTabEnabled(MAIN_REPORT_TAB, True)
 
     def _rb_tes3cmd_toggled(self, version: str, state: bool) -> None:
