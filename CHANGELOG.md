@@ -5,6 +5,9 @@
   * remove Report button from main window
   * move close and update button to common area 
   * double-click on report item, copied path of plugin to clipboard
+  * add tooltips for header row
+  * total time is now nice formatted
+* TkGUI - become deprecated - no further development due to much manual changes
 
 # v0.6.2
 * Fix missing internal field for TkGui
