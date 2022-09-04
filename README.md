@@ -1,6 +1,6 @@
 [![pipeline status](https://gitlab.com/modding-openmw/modhelpertool/badges/main/pipeline.svg)](https://gitlab.com/modding-openmw/modhelpertool/-/commits/main)
 [![coverage report](https://gitlab.com/modding-openmw/modhelpertool/badges/main/coverage.svg)](https://gitlab.com/modding-openmw/modhelpertool/-/commits/main)
-[![image](https://img.shields.io/badge/pypi-v0.6.2-blue.svg)](https://pypi.org/project/moht/)
+[![image](https://img.shields.io/badge/pypi-v0.7.0-blue.svg)](https://pypi.org/project/moht/)
 [![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE.md)
 [![image](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue.svg)](https://gitlab.com/modding-openmw/modhelpertool)
 [![release](https://gitlab.com/modding-openmw/modhelpertool/-/badges/release.svg)](https://gitlab.com/modding-openmw/modhelpertool/-/releases)
@@ -47,7 +47,8 @@ This version will be actively develop and will get new features. In future will 
 
 ## GUI Tk
 Application use `tkinter` (`tk` for short) of GUI as well. `Tk` is Python's built-in library for GUI. 
-Right now this version is almost as functional as `Qt` version, however in future some differences can be introduced.
+Right now this version is almost as functional as `Qt` version, however in future more differences can be introduced. 
+This version can is deprecated as with version `0.7.0` and can be removed in the future. 
 You can [find](#start) executable called `moht_tk.exe` or script `moht_tk`. However, sometimes `tk` isn't available by default:
   * Windows 10/11, during Python installation please select:  
     * Optional Features:
@@ -103,7 +104,7 @@ However, moht has v0.40 built-in as well which do not require perl package.
   ```
   Note: answer **No** to question. It will show you, where Moht was installed. Usually pip should install moht into your Python directory: i.e.:
   ``` 
-  C:\Python310\lib\site-packages\moht-0.6.2.dist-info\*
+  C:\Python310\lib\site-packages\moht-0.7.0.dist-info\*
   C:\Python310\lib\site-packages\moht\*
   C:\Python310\scripts\moht.exe
   C:\Python310\scripts\moht_qt.exe
