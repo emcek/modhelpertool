@@ -157,7 +157,7 @@ class MohtQtGui(QMainWindow):
 
     def _error_during_clean(self, exc_tuple: Tuple[Exception, str, str]) -> None:
         exc_type, exc_val, exc_tb = exc_tuple
-        self.logger.warning('{}: {}'.format(exc_type.__class__.__name__, exc_val))
+        self.logger.warning(f'{exc_type.__class__.__name__}: {exc_val}')
         self.logger.debug(exc_tb)
 
     def _clean_finished(self, clean_result: Tuple[Path, bool, str, float, str, str]) -> None:
@@ -356,9 +356,9 @@ dnf install perl-Config-IniFiles.noarch''')
             return
         btn = getattr(self, button)  # type: ignore
         if spin and icon_name:
-            icon = qtawesome.icon('{}'.format(icon_name), color=color, animation=qtawesome.Spin(btn, 2, 1))
+            icon = qtawesome.icon(f'{icon_name}', color=color, animation=qtawesome.Spin(btn, 2, 1))
         elif not spin and icon_name:
-            icon = qtawesome.icon('{}'.format(icon_name), color=color)
+            icon = qtawesome.icon(f'{icon_name}', color=color)
         else:
             icon = QIcon()
         btn.setIcon(icon)
@@ -374,7 +374,7 @@ dnf install perl-Config-IniFiles.noarch''')
         """
         result_path = ''
         if file_filter != 'All Files [*.*](*.*)':
-            file_filter = '{};;All Files [*.*](*.*)'.format(file_filter)
+            file_filter = f'{file_filter};;All Files [*.*](*.*)'
         if for_load and for_dir:
             result_path = QFileDialog.getExistingDirectory(QFileDialog(), caption='Open Directory', directory=str(Path.home()),
                                                            options=QFileDialog.ShowDirsOnly)
