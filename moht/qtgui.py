@@ -507,8 +507,6 @@ class Worker(QtCore.QRunnable):
 
         Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
         :param func: The function callback to run on worker thread
-        :param args: Function positional arguments
-        :param kwargs: Function keyword arguments
         """
         super().__init__()
         self.func = func
