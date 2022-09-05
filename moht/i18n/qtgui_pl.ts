@@ -110,11 +110,6 @@ Please select a correct binary file.</source>
 Prosze wybierz poprawny plik wykonywalny.</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="60"/>
-        <source>ver. {0}</source>
-        <translation>wersja {0}</translation>
-    </message>
-    <message>
         <location filename="../qtgui.py" line="128"/>
         <source>Plugins to clean: {0} - See Report</source>
         <translation>Pluginy do wyczyszczenia: {0} - Zobacz Raport</translation>
@@ -133,6 +128,11 @@ Prosze wybierz poprawny plik wykonywalny.</translation>
         <location filename="../qtgui.py" line="271"/>
         <source>Error: {0}</source>
         <translation>Błąd: {0}</translation>
+    </message>
+    <message>
+        <location filename="../qtgui.py" line="60"/>
+        <source>ver. {0}</source>
+        <translation>wersja {0}</translation>
     </message>
 </context>
 <context>
