@@ -258,21 +258,6 @@ class MohtQtGui(QMainWindow):
     def _set_le_tes3cmd(self, tes3cmd: str) -> None:
         self.tes3cmd = path.join(utils.here(__file__), 'resources', tes3cmd)
 
-    def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
-        if result:
-            clean_plugin = path.join(self.morrowind_dir, '1', mod_file)
-            self.logger.debug(f'Move: {clean_plugin} -> {plug}')
-            move(clean_plugin, plug)
-            self.stats['cleaned'] += 1
-        if not result and reason == 'not modified':
-            self.stats['clean'] += 1
-        if not result and 'not found' in reason:
-            for res in reason.split('**'):
-                self.stats['error'] += 1
-                esm = self.stats.get(res, 0)
-                esm += 1
-                self.stats.update({res: esm})
-
     def _is_dir_exists(self, text: str, widget_name: str) -> None:
         dir_exists = path.isdir(text)
         self.logger.debug(f'Path: {text} for {widget_name} exists: {dir_exists}')
