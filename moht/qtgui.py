@@ -21,7 +21,7 @@ from PyQt5.QtWidgets import (
 
 from moht import VERSION, TES3CMD, utils, qtgui_rc
 
-resources = qtgui_rc  # prevent to remove import statement accidentally
+_ = qtgui_rc  # prevent to remove import statement accidentally
 REP_COL_PLUGIN = 0
 REP_COL_STATUS = 1
 REP_COL_TIME = 2
