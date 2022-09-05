@@ -22,8 +22,6 @@ resources = qtgui_rc  # prevent to remove import statement accidentally
 REP_COL_PLUGIN = 0
 REP_COL_STATUS = 1
 REP_COL_TIME = 2
-MAIN_CLEAR_TAB = 0
-MAIN_REPORT_TAB = 1
 
 
 def tr(text2translate: str):
@@ -71,16 +69,18 @@ class MohtQtGui(QMainWindow):
         self.pb_tes3cmd.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False, widget_name='le_tes3cmd'))
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
         self.pb_chk_updates.clicked.connect(self._check_updates)
+        self.pb_report.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 1))
+        self.pb_back_clean.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 0))
 
     def _init_line_edits(self):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
         self._set_le_tes3cmd(TES3CMD[platform]['0_40'])
-        self.mods_dir = str(Path.home())
-        self.morrowind_dir = str(Path.home())
-        # self.mods_dir = '/home/emc/clean/CitiesTowns/'
-        # self.morrowind_dir = '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'
+        # self.mods_dir = str(Path.home())
+        # self.morrowind_dir = str(Path.home())
+        self.mods_dir = '/home/emc/clean/CitiesTowns/'
+        self.morrowind_dir = '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'
 
     def _init_radio_buttons(self):
         for ver in ['0_37', '0_40']:
@@ -91,7 +91,6 @@ class MohtQtGui(QMainWindow):
         self.tree_report.setColumnWidth(REP_COL_STATUS, 140)
         self.tree_report.setColumnWidth(REP_COL_TIME, 60)
         self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
-        self.tw_main.setTabEnabled(MAIN_REPORT_TAB, False)
 
     def _clear_tree_report(self):
         self.tree_report.clear()
@@ -105,7 +104,6 @@ class MohtQtGui(QMainWindow):
         header = self.tree_report.headerItem()
         header.setToolTip(REP_COL_PLUGIN, 'Double click on item to copy plugin`s path.')
         header.setToolTip(REP_COL_TIME, 'Cleaning time in min:sec\nHold on item to see cleaning details.')
-        self.tw_main.setTabEnabled(MAIN_REPORT_TAB, True)
 
     def _rb_tes3cmd_toggled(self, version: str, state: bool) -> None:
         if state:
@@ -115,6 +113,7 @@ class MohtQtGui(QMainWindow):
         self.pbar_clean.setValue(0)
         self.progress = 0
         self._clear_tree_report()
+        self.pb_report.setEnabled(True)
         self._set_icons(button='pb_clean', icon_name='fa5s.spinner', color='green', spin=True)
         self.pb_clean.disconnect()
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
@@ -350,6 +349,8 @@ dnf install perl-Config-IniFiles.noarch'''
             self.pb_morrowind_dir.setIcon(qtawesome.icon('fa5s.folder', color='brown'))
             self.pb_tes3cmd.setIcon(qtawesome.icon('fa5s.file', color='brown'))
             self.pb_clean.setIcon(qtawesome.icon('fa5s.hand-sparkles', color='brown'))
+            self.pb_report.setIcon(qtawesome.icon('fa5s.file-contract', color='brown'))
+            self.pb_back_clean.setIcon(qtawesome.icon('fa5s.arrow-left', color='brown'))
             self.pb_chk_updates.setIcon(qtawesome.icon('fa5s.arrow-down', color='brown'))
             self.pb_close.setIcon(qtawesome.icon('fa5s.sign-out-alt', color='brown'))
             return
