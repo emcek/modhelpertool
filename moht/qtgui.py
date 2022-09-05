@@ -24,15 +24,15 @@ REP_COL_STATUS = 1
 REP_COL_TIME = 2
 
 
-def tr(text2translate: str):
+def tr(text: str, context='@default'):
     """
     Translate wrapper function.
 
-    :param text2translate: string to translate
+    :param text: string to translate
+    :param context: for translation
     :return:
     """
-    # return QtCore.QCoreApplication.translate('mw_gui', text2translate)
-    return QtCore.QCoreApplication.translate('@default', text2translate)
+    return QtCore.QCoreApplication.translate(context=context, sourceText=text)
 
 
 class MohtQtGui(QMainWindow):
