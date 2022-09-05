@@ -60,34 +60,6 @@ class MohtQtGui(QMainWindow):
         self.statusbar.showMessage(self.tr('ver. {0}'.format(VERSION)))
         self._set_icons()
 
-    def _find_children(self) -> None:
-        self.actionQuit = self.findChild(QAction, 'actionQuit')
-        self.actionAboutMoht = self.findChild(QAction, 'actionAboutMoht')
-        self.actionAboutQt = self.findChild(QAction, 'actionAboutQt')
-        self.actionReportIssue = self.findChild(QAction, 'actionReportIssue')
-        self.actionCheckUpdates = self.findChild(QAction, 'actionCheckUpdates')
-
-        self.pb_mods_dir = self.findChild(QPushButton, 'pb_mods_dir')
-        self.pb_morrowind_dir = self.findChild(QPushButton, 'pb_morrowind_dir')
-        self.pb_tes3cmd = self.findChild(QPushButton, 'pb_tes3cmd')
-        self.pb_report = self.findChild(QPushButton, 'pb_report')
-        self.pb_back_clean = self.findChild(QPushButton, 'pb_back_clean')
-        self.pb_clean = self.findChild(QPushButton, 'pb_clean')
-        self.pb_chk_updates = self.findChild(QPushButton, 'pb_chk_updates')
-        self.pb_close = self.findChild(QPushButton, 'pb_close')
-
-        self.cb_rm_backup = self.findChild(QCheckBox, 'cb_rm_backup')
-        self.cb_rm_cache = self.findChild(QCheckBox, 'cb_rm_cache')
-
-        self.le_mods_dir = self.findChild(QLineEdit, 'le_mods_dir')
-        self.le_morrowind_dir = self.findChild(QLineEdit, 'le_morrowind_dir')
-        self.le_tes3cmd = self.findChild(QLineEdit, 'le_tes3cmd')
-
-        self.statusbar = self.findChild(QStatusBar, 'statusbar')
-        self.progressbar = self.findChild(QProgressBar, 'progressbar')
-        self.stacked_clean = self.findChild(QStackedWidget, 'stacked_clean')
-        self.tree_report = self.findChild(QTreeWidget, 'tree_report')
-
     def _init_menu_bar(self) -> None:
         self.actionQuit.triggered.connect(self.close)
         self.actionAboutMoht.triggered.connect(AboutDialog(self).open)
@@ -462,6 +434,34 @@ dnf install perl-Config-IniFiles.noarch''')
     def tes3cmd(self, value: str) -> None:
         self.le_tes3cmd.setText(value)
 
+    def _find_children(self) -> None:
+        self.actionQuit = self.findChild(QAction, 'actionQuit')
+        self.actionAboutMoht = self.findChild(QAction, 'actionAboutMoht')
+        self.actionAboutQt = self.findChild(QAction, 'actionAboutQt')
+        self.actionReportIssue = self.findChild(QAction, 'actionReportIssue')
+        self.actionCheckUpdates = self.findChild(QAction, 'actionCheckUpdates')
+
+        self.pb_mods_dir = self.findChild(QPushButton, 'pb_mods_dir')
+        self.pb_morrowind_dir = self.findChild(QPushButton, 'pb_morrowind_dir')
+        self.pb_tes3cmd = self.findChild(QPushButton, 'pb_tes3cmd')
+        self.pb_report = self.findChild(QPushButton, 'pb_report')
+        self.pb_back_clean = self.findChild(QPushButton, 'pb_back_clean')
+        self.pb_clean = self.findChild(QPushButton, 'pb_clean')
+        self.pb_chk_updates = self.findChild(QPushButton, 'pb_chk_updates')
+        self.pb_close = self.findChild(QPushButton, 'pb_close')
+
+        self.cb_rm_backup = self.findChild(QCheckBox, 'cb_rm_backup')
+        self.cb_rm_cache = self.findChild(QCheckBox, 'cb_rm_cache')
+
+        self.le_mods_dir = self.findChild(QLineEdit, 'le_mods_dir')
+        self.le_morrowind_dir = self.findChild(QLineEdit, 'le_morrowind_dir')
+        self.le_tes3cmd = self.findChild(QLineEdit, 'le_tes3cmd')
+
+        self.statusbar = self.findChild(QStatusBar, 'statusbar')
+        self.progressbar = self.findChild(QProgressBar, 'progressbar')
+        self.stacked_clean = self.findChild(QStackedWidget, 'stacked_clean')
+        self.tree_report = self.findChild(QTreeWidget, 'tree_report')
+
 
 class AboutDialog(QDialog):
     def __init__(self, parent) -> None:
@@ -475,12 +475,12 @@ class AboutDialog(QDialog):
         """Prepare text information about Moht application."""
         qt_version = f'{QtCore.PYQT_VERSION_STR} / <b>Qt</b>: {QtCore.QT_VERSION_STR}'
         log_path = path.join(gettempdir(), 'moht.log')
-        text = self.label.text().rstrip('</body></html>')  # type: ignore
+        text = self.label.text().rstrip('</body></html>')
         text += self.tr('<p>Attach log file: {0}<br/><br/>'.format(log_path))
         text += f'<b>moht:</b> {VERSION}'
         text += '<br><b>python:</b> {0}.{1}.{2}-{3}.{4}'.format(*version_info)
         text += f'<br><b>PyQt:</b> {qt_version}</p></body></html>'
-        self.label.setText(text)  # type: ignore
+        self.label.setText(text)
 
 
 class WorkerSignals(QtCore.QObject):
