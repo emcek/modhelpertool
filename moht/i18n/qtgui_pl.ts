@@ -21,6 +21,11 @@ Strona projektu: &lt;a href=&quot;https://gitlab.com/modding-openmw/modhelpertoo
 Discord: &lt;a href=&quot;https://discord.gg/sKyZwumQuU&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;OpenMW/modding-openmw-dot-com&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;
 Załaszanie problemów: &lt;a href=&quot;https://gitlab.com/modding-openmw/modhelpertool/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Zgłoszenia Gitlab&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <location filename="../qtgui.py" line="463"/>
+        <source>&lt;p&gt;Attach log file: {0}&lt;br/&gt;&lt;br/&gt;</source>
+        <translation>&lt;p&gt;Załącz plik z logami: {0}&lt;br/&gt;&lt;br/&gt;</translation>
+    </message>
 </context>
 <context>
     <name>MohtQtGui</name>
@@ -37,19 +42,9 @@ Hold on item to see cleaning details.</source>
 Zatrzymaj nad, aby zobaczyć szczegóły.</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="185"/>
-        <source>Done. Took: {duration}</source>
-        <translation>Zrobione. Zajęło: {duration}</translation>
-    </message>
-    <message>
         <location filename="../qtgui.py" line="220"/>
         <source>Path of plugin copied to clipboard</source>
         <translation>Ścieżka do pluginu skopiowana do schowka</translation>
-    </message>
-    <message>
-        <location filename="../qtgui.py" line="224"/>
-        <source>ver. {VERSION} - {desc}</source>
-        <translation>wersja {VERSION} - {desc}</translation>
     </message>
     <message>
         <location filename="../qtgui.py" line="97"/>
@@ -115,9 +110,29 @@ Please select a correct binary file.</source>
 Prosze wybierz poprawny plik wykonywalny.</translation>
     </message>
     <message>
+        <location filename="../qtgui.py" line="56"/>
+        <source>ver. {0}</source>
+        <translation>wersja {0}</translation>
+    </message>
+    <message>
         <location filename="../qtgui.py" line="124"/>
-        <source>Plugins to clean: {self.no_of_plugins} - See Report</source>
-        <translation>Pluginów do wyczyszczenia: {self.no_of_plugins} - Zobacz Report</translation>
+        <source>Plugins to clean: {0} - See Report</source>
+        <translation>Pluginy do wyczyszczenia: {0} - Zobacz Raport</translation>
+    </message>
+    <message>
+        <location filename="../qtgui.py" line="185"/>
+        <source>Done. Took: {0}</source>
+        <translation>Zrobione. Zajeło: {0}</translation>
+    </message>
+    <message>
+        <location filename="../qtgui.py" line="224"/>
+        <source>ver. {0} - {1}</source>
+        <translation>wersja {0} - {1}</translation>
+    </message>
+    <message>
+        <location filename="../qtgui.py" line="282"/>
+        <source>Error: {0}</source>
+        <translation>Błąd: {0}</translation>
     </message>
 </context>
 <context>
