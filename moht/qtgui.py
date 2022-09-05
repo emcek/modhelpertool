@@ -53,7 +53,7 @@ class MohtQtGui(QMainWindow):
         self._init_radio_buttons()
         self._init_line_edits()
         self._init_tree_report()
-        self.statusbar.showMessage(f'ver. {VERSION}')
+        self.statusbar.showMessage(self.tr('ver. {0}'.format(VERSION)))
         self._set_icons()
 
     def _init_menu_bar(self) -> None:
@@ -94,16 +94,16 @@ class MohtQtGui(QMainWindow):
 
     def _clear_tree_report(self):
         self.tree_report.clear()
-        self.top_cleaned = QTreeWidgetItem(['Cleaned: 0', '', '', ''])
-        self.top_error = QTreeWidgetItem(['Error: 0', '', '', ''])
-        self.top_clean = QTreeWidgetItem(['Clean: 0', '', '', ''])
+        self.top_cleaned = QTreeWidgetItem([self.tr('Cleaned: 0'), '', '', ''])
+        self.top_error = QTreeWidgetItem([self.tr('Error: 0'), '', '', ''])
+        self.top_clean = QTreeWidgetItem([self.tr('Clean: 0'), '', '', ''])
         self.tree_report.addTopLevelItem(self.top_cleaned)
         self.tree_report.addTopLevelItem(self.top_error)
         self.tree_report.addTopLevelItem(self.top_clean)
         self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
         header = self.tree_report.headerItem()
-        header.setToolTip(REP_COL_PLUGIN, 'Double click on item to copy plugin`s path.')
-        header.setToolTip(REP_COL_TIME, 'Cleaning time in min:sec\nHold on item to see cleaning details.')
+        header.setToolTip(REP_COL_PLUGIN, self.tr('Double click on item to copy plugin`s path.'))
+        header.setToolTip(REP_COL_TIME, self.tr('Cleaning time in min:sec\nHold on item to see cleaning details.'))
 
     def _rb_tes3cmd_toggled(self, version: str, state: bool) -> None:
         if state:
@@ -121,7 +121,7 @@ class MohtQtGui(QMainWindow):
         plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
         self.no_of_plugins = len(plugins_to_clean)
         self.logger.debug(f'to_clean: {self.no_of_plugins}:\n{pformat(plugins_to_clean)}')
-        self.statusbar.showMessage(f'Plugins to clean: {self.no_of_plugins} - See Report tab')
+        self.statusbar.showMessage(self.tr('Plugins to clean: {0} - See Report'.format(self.no_of_plugins)))
         req_esm = utils.get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
         self.missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
@@ -182,7 +182,7 @@ class MohtQtGui(QMainWindow):
             duration = f'{utils.get_string_duration(seconds=cleaning_time, time_format="%S")} [sec]'
         else:
             duration = f'{utils.get_string_duration(seconds=cleaning_time, time_format="%M:%S")} [min:sec]'
-        self.statusbar.showMessage(f'Done. Took: {duration}')
+        self.statusbar.showMessage(self.tr('Done. Took: {0}'.format(duration)))
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
     def _add_report_data(self, plug: Path, result: bool, reason: str, cleaning_time: float, out: str, err: str):
@@ -217,11 +217,11 @@ class MohtQtGui(QMainWindow):
         """
         if item.parent():
             QApplication.clipboard().setText(item.toolTip(REP_COL_PLUGIN))
-            self.statusbar.showMessage('Path of plugin copied to clipboard')
+            self.statusbar.showMessage(self.tr('Path of plugin copied to clipboard'))
 
     def _check_updates(self):
         _, desc = utils.is_latest_ver(package='moht', current_ver=VERSION)
-        self.statusbar.showMessage(f'ver. {VERSION} - {desc}')
+        self.statusbar.showMessage(self.tr('ver. {0} - {1}'.format(VERSION, desc)))
 
     def _set_le_tes3cmd(self, tes3cmd: str) -> None:
         self.tes3cmd = path.join(utils.here(__file__), 'resources', tes3cmd)
@@ -279,10 +279,10 @@ class MohtQtGui(QMainWindow):
         result, reason = utils.parse_cleaning(out, err, '')
         self.logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
-            self.statusbar.showMessage(f'Error: {reason}')
+            self.statusbar.showMessage(self.tr('Error: {0}'.format(reason)))
             msg = ''
             if 'Config::IniFiles' in reason:
-                msg = '''
+                msg = self.tr('''
 Check for `perl-Config-IniFiles` or a similar package.
 Use you package manage:
 
@@ -299,9 +299,9 @@ OpenSUSE:
 zypper install perl-Config-IniFiles
 
 Fedora / CentOS / RHEL:
-dnf install perl-Config-IniFiles.noarch'''
+dnf install perl-Config-IniFiles.noarch''')
             elif 'Not tes3cmd' in reason:
-                msg = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
+                msg = self.tr('Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.')
             self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
         return result
 
@@ -460,7 +460,7 @@ class AboutDialog(QDialog):
         qt_version = f'{QtCore.PYQT_VERSION_STR} / <b>Qt</b>: {QtCore.QT_VERSION_STR}'
         log_path = path.join(gettempdir(), 'moht.log')
         text = self.label.text().rstrip('</body></html>')
-        text += f'<p>Attach log file: {log_path}<br/><br/>'
+        text += self.tr('<p>Attach log file: {0}<br/><br/>'.format(log_path))
         text += f'<b>moht:</b> {VERSION}'
         text += '<br><b>python:</b> {0}.{1}.{2}-{3}.{4}'.format(*version_info)
         text += f'<br><b>PyQt:</b> {qt_version}</p></body></html>'
