@@ -7,4 +7,8 @@
     <file>i18n/qtgui_en.qm</file>
     <file>i18n/qtgui_pl.qm</file>
   </qresource>
+  <qresource prefix="ui">
+    <file>ui/about.ui</file>
+    <file>ui/qtgui.ui</file>
+  </qresource>
 </RCC>
