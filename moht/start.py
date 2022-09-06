@@ -47,11 +47,7 @@ def run_qt():
     if translator.load(QLocale.system(), 'qtbase', '_', QLibraryInfo.location(QLibraryInfo.TranslationsPath)):
         app.installTranslator(translator)
     translator = QTranslator(app)
-    # todo: do we need import qtgui_rc?
-    from moht import qtgui_rc
-    _ = qtgui_rc  # prevent to remove import statement accidentally
-    # todo: try load form resources file
-    if translator.load(QLocale.system(), 'qtgui', '_', path.join(here(__file__), 'i18n')):
+    if translator.load(f':language/i18n/qtgui_{QLocale.system().name()}.qm'):
         app.installTranslator(translator)
 
     try:
