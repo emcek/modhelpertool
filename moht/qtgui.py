@@ -60,7 +60,6 @@ class MohtQtGui(QMainWindow):
         self._find_children()
         self.logger = getLogger(__name__)
         load_ui(':/ui/ui/qtgui.ui', self)
-        # uic.loadUi(f'{utils.here(__file__)}/ui/qtgui.ui', self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
@@ -484,7 +483,6 @@ class AboutDialog(QDialog):
         """Moht about dialog window."""
         super().__init__(parent)
         load_ui(':/ui/ui/about.ui', self)
-        # uic.loadUi(f'{utils.here(__file__)}/ui/about.ui', self)
         self.label = self.findChild(QLabel, 'label')
         self.setup_text()
 
