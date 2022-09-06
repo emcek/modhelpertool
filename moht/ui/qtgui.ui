@@ -26,7 +26,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0">
-     <widget class="QProgressBar" name="pbar_clean">
+     <widget class="QProgressBar" name="progressbar">
       <property name="value">
        <number>0</number>
       </property>
@@ -142,7 +142,7 @@
             <item row="3" column="1" rowspan="3">
              <widget class="QGroupBox" name="groupBox_2">
               <property name="title">
-               <string>Version of tes3cmd</string>
+               <string>Version of tes3cmd:</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
@@ -182,9 +182,9 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout">
                <item>
-                <widget class="QCheckBox" name="cb_rm_bakup">
+                <widget class="QCheckBox" name="cb_rm_backup">
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;During clean-up plugin file is copied to Data Files folder.&lt;/p&gt;&lt;p&gt;Cleaning proces create new plugin file.&lt;/p&gt;&lt;p&gt;When checkbox is checked dirty pkugin file is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;During clean-up plugin file is copied to Data Files folder.&lt;/p&gt;&lt;p&gt;Cleaning proces create new plugin file.&lt;/p&gt;&lt;p&gt;When checkbox is checked dirty plugin file is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Remove backups of plugins</string>

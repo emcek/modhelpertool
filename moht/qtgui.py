@@ -14,31 +14,35 @@ from typing import Optional, Callable, Dict, Tuple, Union, List
 import qtawesome
 from PyQt5 import QtCore, uic
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem, QApplication
+from PyQt5.QtWidgets import (
+    QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem, QApplication, QStatusBar,
+    QProgressBar, QStackedWidget, QTreeWidget, QAction, QPushButton, QCheckBox, QLineEdit, QLabel
+)
 
 from moht import VERSION, TES3CMD, utils, qtgui_rc
 
-resources = qtgui_rc  # prevent to remove import statement accidentally
+_ = qtgui_rc  # prevent to remove import statement accidentally
 REP_COL_PLUGIN = 0
 REP_COL_STATUS = 1
 REP_COL_TIME = 2
 
 
-def tr(text2translate: str):
+def tr(text: str, context='@default'):
     """
     Translate wrapper function.
 
-    :param text2translate: string to translate
+    :param text: string to translate
+    :param context: for translation
     :return:
     """
-    # return QtCore.QCoreApplication.translate('mw_gui', text2translate)
-    return QtCore.QCoreApplication.translate('@default', text2translate)
+    return QtCore.QCoreApplication.translate(context=context, sourceText=text)
 
 
 class MohtQtGui(QMainWindow):
     def __init__(self) -> None:
         """Mod Helper Tool Qt5 GUI."""
         super().__init__()
+        self._find_children()
         self.logger = getLogger(__name__)
         uic.loadUi(f'{utils.here(__file__)}/ui/qtgui.ui', self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
@@ -53,7 +57,7 @@ class MohtQtGui(QMainWindow):
         self._init_radio_buttons()
         self._init_line_edits()
         self._init_tree_report()
-        self.statusbar.showMessage(f'ver. {VERSION}')
+        self.statusbar.showMessage(self.tr('ver. {0}').format(VERSION))
         self._set_icons()
 
     def _init_menu_bar(self) -> None:
@@ -94,23 +98,23 @@ class MohtQtGui(QMainWindow):
 
     def _clear_tree_report(self):
         self.tree_report.clear()
-        self.top_cleaned = QTreeWidgetItem(['Cleaned: 0', '', '', ''])
-        self.top_error = QTreeWidgetItem(['Error: 0', '', '', ''])
-        self.top_clean = QTreeWidgetItem(['Clean: 0', '', '', ''])
+        self.top_cleaned = QTreeWidgetItem([self.tr('Cleaned: 0'), '', '', ''])
+        self.top_error = QTreeWidgetItem([self.tr('Error: 0'), '', '', ''])
+        self.top_clean = QTreeWidgetItem([self.tr('Clean: 0'), '', '', ''])
         self.tree_report.addTopLevelItem(self.top_cleaned)
         self.tree_report.addTopLevelItem(self.top_error)
         self.tree_report.addTopLevelItem(self.top_clean)
         self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
         header = self.tree_report.headerItem()
-        header.setToolTip(REP_COL_PLUGIN, 'Double click on item to copy plugin`s path.')
-        header.setToolTip(REP_COL_TIME, 'Cleaning time in min:sec\nHold on item to see cleaning details.')
+        header.setToolTip(REP_COL_PLUGIN, self.tr('Double click on item to copy plugin`s path.'))
+        header.setToolTip(REP_COL_TIME, self.tr('Cleaning time in min:sec\nHold on item to see cleaning details.'))
 
     def _rb_tes3cmd_toggled(self, version: str, state: bool) -> None:
         if state:
             self._set_le_tes3cmd(TES3CMD[platform][version])
 
     def _pb_clean_clicked(self) -> None:
-        self.pbar_clean.setValue(0)
+        self.progressbar.setValue(0)
         self.progress = 0
         self._clear_tree_report()
         self.pb_report.setEnabled(True)
@@ -121,13 +125,13 @@ class MohtQtGui(QMainWindow):
         plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
         self.no_of_plugins = len(plugins_to_clean)
         self.logger.debug(f'to_clean: {self.no_of_plugins}:\n{pformat(plugins_to_clean)}')
-        self.statusbar.showMessage(f'Plugins to clean: {self.no_of_plugins} - See Report tab')
+        self.statusbar.showMessage(self.tr('Plugins to clean: {0} - See Report').format(self.no_of_plugins))
         req_esm = utils.get_required_esm(plugins=plugins_to_clean)
         self.logger.debug(f'Required esm: {req_esm}')
         self.missing_esm = utils.find_missing_esm(dir_path=self.mods_dir, data_files=self.morrowind_dir, esm_files=req_esm)
         utils.copy_filelist(self.missing_esm, self.morrowind_dir)
         self.duration = time()
-        self.pbar_clean.setValue(int(100 / (self.no_of_plugins * 2)))
+        self.progressbar.setValue(int(100 / (self.no_of_plugins * 2)))
         for idx, plug in enumerate(plugins_to_clean, 1):
             self.logger.debug(f'Start: {idx} / {self.no_of_plugins}')
             self.run_in_background(job=partial(self._clean_start, plug=plug),
@@ -147,7 +151,7 @@ class MohtQtGui(QMainWindow):
             clean_plugin = path.join(self.morrowind_dir, '1', mod_file)
             self.logger.debug(f'Move: {clean_plugin} -> {plug}')
             move(clean_plugin, plug)
-        if self.cb_rm_bakup.isChecked():
+        if self.cb_rm_backup.isChecked():
             mod_path = path.join(self.morrowind_dir, mod_file)
             self.logger.debug(f'Remove: {mod_path}')
             remove(mod_path)
@@ -157,7 +161,7 @@ class MohtQtGui(QMainWindow):
 
     def _error_during_clean(self, exc_tuple: Tuple[Exception, str, str]) -> None:
         exc_type, exc_val, exc_tb = exc_tuple
-        self.logger.warning('{}: {}'.format(exc_type.__class__.__name__, exc_val))
+        self.logger.warning(f'{exc_type.__class__.__name__}: {exc_val}')
         self.logger.debug(exc_tb)
 
     def _clean_finished(self, clean_result: Tuple[Path, bool, str, float, str, str]) -> None:
@@ -165,12 +169,12 @@ class MohtQtGui(QMainWindow):
         self.progress += 1
         percent = self.progress * 100 / self.no_of_plugins
         self.logger.debug(f'Progress: {percent:.2f} %')
-        self.pbar_clean.setValue(int(percent))
+        self.progressbar.setValue(int(percent))
         if self.progress == self.no_of_plugins:
             self._clean_done()
 
     def _clean_done(self) -> None:
-        self.pbar_clean.setValue(100)
+        self.progressbar.setValue(100)
         if self.cb_rm_cache.isChecked():
             cachedir = 'tes3cmd' if platform == 'win32' else '.tes3cmd-3'
             utils.rm_dirs_with_subdirs(dir_path=self.morrowind_dir, subdirs=['1', cachedir])
@@ -182,7 +186,7 @@ class MohtQtGui(QMainWindow):
             duration = f'{utils.get_string_duration(seconds=cleaning_time, time_format="%S")} [sec]'
         else:
             duration = f'{utils.get_string_duration(seconds=cleaning_time, time_format="%M:%S")} [min:sec]'
-        self.statusbar.showMessage(f'Done. Took: {duration}')
+        self.statusbar.showMessage(self.tr('Done. Took: {0}').format(duration))
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
     def _add_report_data(self, plug: Path, result: bool, reason: str, cleaning_time: float, out: str, err: str):
@@ -217,29 +221,14 @@ class MohtQtGui(QMainWindow):
         """
         if item.parent():
             QApplication.clipboard().setText(item.toolTip(REP_COL_PLUGIN))
-            self.statusbar.showMessage('Path of plugin copied to clipboard')
+            self.statusbar.showMessage(self.tr('Path of plugin copied to clipboard'))
 
     def _check_updates(self):
         _, desc = utils.is_latest_ver(package='moht', current_ver=VERSION)
-        self.statusbar.showMessage(f'ver. {VERSION} - {desc}')
+        self.statusbar.showMessage(self.tr('ver. {0} - {1}').format(VERSION, desc))
 
     def _set_le_tes3cmd(self, tes3cmd: str) -> None:
         self.tes3cmd = path.join(utils.here(__file__), 'resources', tes3cmd)
-
-    def _update_stats(self, mod_file: str, plug: Path, reason: str, result: bool) -> None:
-        if result:
-            clean_plugin = path.join(self.morrowind_dir, '1', mod_file)
-            self.logger.debug(f'Move: {clean_plugin} -> {plug}')
-            move(clean_plugin, plug)
-            self.stats['cleaned'] += 1
-        if not result and reason == 'not modified':
-            self.stats['clean'] += 1
-        if not result and 'not found' in reason:
-            for res in reason.split('**'):
-                self.stats['error'] += 1
-                esm = self.stats.get(res, 0)
-                esm += 1
-                self.stats.update({res: esm})
 
     def _is_dir_exists(self, text: str, widget_name: str) -> None:
         dir_exists = path.isdir(text)
@@ -279,10 +268,10 @@ class MohtQtGui(QMainWindow):
         result, reason = utils.parse_cleaning(out, err, '')
         self.logger.debug(f'Result: {result}, Reason: {reason}')
         if not result:
-            self.statusbar.showMessage(f'Error: {reason}')
+            self.statusbar.showMessage(self.tr('Error: {0}').format(reason))
             msg = ''
             if 'Config::IniFiles' in reason:
-                msg = '''
+                msg = self.tr('''
 Check for `perl-Config-IniFiles` or a similar package.
 Use you package manage:
 
@@ -299,9 +288,9 @@ OpenSUSE:
 zypper install perl-Config-IniFiles
 
 Fedora / CentOS / RHEL:
-dnf install perl-Config-IniFiles.noarch'''
+dnf install perl-Config-IniFiles.noarch''')
             elif 'Not tes3cmd' in reason:
-                msg = 'Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.'
+                msg = self.tr('Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.')
             self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
         return result
 
@@ -356,9 +345,9 @@ dnf install perl-Config-IniFiles.noarch'''
             return
         btn = getattr(self, button)  # type: ignore
         if spin and icon_name:
-            icon = qtawesome.icon('{}'.format(icon_name), color=color, animation=qtawesome.Spin(btn, 2, 1))
+            icon = qtawesome.icon(f'{icon_name}', color=color, animation=qtawesome.Spin(btn, 2, 1))
         elif not spin and icon_name:
-            icon = qtawesome.icon('{}'.format(icon_name), color=color)
+            icon = qtawesome.icon(f'{icon_name}', color=color)
         else:
             icon = QIcon()
         btn.setIcon(icon)
@@ -374,18 +363,16 @@ dnf install perl-Config-IniFiles.noarch'''
         """
         result_path = ''
         if file_filter != 'All Files [*.*](*.*)':
-            file_filter = '{};;All Files [*.*](*.*)'.format(file_filter)
+            file_filter = f'{file_filter};;All Files [*.*](*.*)'
         if for_load and for_dir:
             result_path = QFileDialog.getExistingDirectory(QFileDialog(), caption='Open Directory', directory=str(Path.home()),
-                                                           options=QFileDialog.ShowDirsOnly)
+                                                           options=QFileDialog.Option.ShowDirsOnly)
         if for_load and not for_dir:
             result_path = QFileDialog.getOpenFileName(QFileDialog(), caption='Open File', directory=str(Path.home()),
-                                                      filter=file_filter, options=QFileDialog.ReadOnly)
-            result_path = result_path[0]
+                                                      filter=file_filter, options=QFileDialog.Option.ReadOnly)[0]
         if not for_load and not for_dir:
             result_path = QFileDialog.getSaveFileName(QFileDialog(), caption='Save File', directory=str(Path.home()),
-                                                      filter=file_filter, options=QFileDialog.ReadOnly)
-            result_path = result_path[0]
+                                                      filter=file_filter, options=QFileDialog.Option.ReadOnly)[0]
         if widget_name is not None:
             getattr(self, widget_name).setText(result_path)
         return result_path
@@ -447,11 +434,40 @@ dnf install perl-Config-IniFiles.noarch'''
     def tes3cmd(self, value: str) -> None:
         self.le_tes3cmd.setText(value)
 
+    def _find_children(self) -> None:
+        self.actionQuit = self.findChild(QAction, 'actionQuit')
+        self.actionAboutMoht = self.findChild(QAction, 'actionAboutMoht')
+        self.actionAboutQt = self.findChild(QAction, 'actionAboutQt')
+        self.actionReportIssue = self.findChild(QAction, 'actionReportIssue')
+        self.actionCheckUpdates = self.findChild(QAction, 'actionCheckUpdates')
+
+        self.pb_mods_dir = self.findChild(QPushButton, 'pb_mods_dir')
+        self.pb_morrowind_dir = self.findChild(QPushButton, 'pb_morrowind_dir')
+        self.pb_tes3cmd = self.findChild(QPushButton, 'pb_tes3cmd')
+        self.pb_report = self.findChild(QPushButton, 'pb_report')
+        self.pb_back_clean = self.findChild(QPushButton, 'pb_back_clean')
+        self.pb_clean = self.findChild(QPushButton, 'pb_clean')
+        self.pb_chk_updates = self.findChild(QPushButton, 'pb_chk_updates')
+        self.pb_close = self.findChild(QPushButton, 'pb_close')
+
+        self.cb_rm_backup = self.findChild(QCheckBox, 'cb_rm_backup')
+        self.cb_rm_cache = self.findChild(QCheckBox, 'cb_rm_cache')
+
+        self.le_mods_dir = self.findChild(QLineEdit, 'le_mods_dir')
+        self.le_morrowind_dir = self.findChild(QLineEdit, 'le_morrowind_dir')
+        self.le_tes3cmd = self.findChild(QLineEdit, 'le_tes3cmd')
+
+        self.statusbar = self.findChild(QStatusBar, 'statusbar')
+        self.progressbar = self.findChild(QProgressBar, 'progressbar')
+        self.stacked_clean = self.findChild(QStackedWidget, 'stacked_clean')
+        self.tree_report = self.findChild(QTreeWidget, 'tree_report')
+
 
 class AboutDialog(QDialog):
     def __init__(self, parent) -> None:
         """Moht about dialog window."""
         super().__init__(parent)
+        self.label = self.findChild(QLabel, 'label')
         uic.loadUi(f'{utils.here(__file__)}/ui/about.ui', self)
         self.setup_text()
 
@@ -460,7 +476,7 @@ class AboutDialog(QDialog):
         qt_version = f'{QtCore.PYQT_VERSION_STR} / <b>Qt</b>: {QtCore.QT_VERSION_STR}'
         log_path = path.join(gettempdir(), 'moht.log')
         text = self.label.text().rstrip('</body></html>')
-        text += f'<p>Attach log file: {log_path}<br/><br/>'
+        text += self.tr('<p>Attach log file: {0}<br/><br/>').format(log_path)
         text += f'<b>moht:</b> {VERSION}'
         text += '<br><b>python:</b> {0}.{1}.{2}-{3}.{4}'.format(*version_info)
         text += f'<br><b>PyQt:</b> {qt_version}</p></body></html>'
@@ -491,8 +507,6 @@ class Worker(QtCore.QRunnable):
 
         Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
         :param func: The function callback to run on worker thread
-        :param args: Function positional arguments
-        :param kwargs: Function keyword arguments
         """
         super().__init__()
         self.func = func

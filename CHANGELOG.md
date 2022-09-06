@@ -1,3 +1,7 @@
+# v0.8.0
+* make QtGUI translatable vie Qt Linguist
+* support Polish translation - draft
+
 # v0.7.0
 * make `tes3cmd-v0.40` default version (it not require `perl-Config-IniFiles`)
 * QtGUI:
