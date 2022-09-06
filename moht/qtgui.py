@@ -12,7 +12,7 @@ from time import time
 from typing import Optional, Callable, Dict, Tuple, Union, List
 
 import qtawesome
-from PyQt5 import QtCore, uic, QtWidgets
+from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
     QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem, QApplication, QStatusBar,
@@ -40,17 +40,17 @@ def tr(text: str, context='@default'):
 
 def load_ui(ui_path: str, parent: QtWidgets) -> None:
     """
-    Load ui file form resources.
+    Load ui file from resources.
 
     :param ui_path: resources path to ui file
     :param parent: QtWidgets instance
     """
-    stream = QtCore.QFile(ui_path)
-    stream.open(QtCore.QFile.ReadOnly)
+    ui_file = QtCore.QFile(ui_path)
+    ui_file.open(QtCore.QIODevice.ReadOnly)
     try:
-        uic.loadUi(stream, parent)
+        uic.loadUi(ui_file, parent)
     finally:
-        stream.close()
+        ui_file.close()
 
 
 class MohtQtGui(QMainWindow):
