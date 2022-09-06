@@ -34,12 +34,11 @@ def run_tk():
 
 def run_qt():
     """Function to start Mod Helper Tool QtGUI."""
-    from PyQt5 import QtCore
-    from PyQt5.QtCore import QLibraryInfo, QTranslator, QLocale
+    from PyQt5.QtCore import Qt, QCoreApplication, QLibraryInfo, QLocale, QTranslator
     from PyQt5.QtWidgets import QApplication
     from moht.qtgui import MohtQtGui
 
-    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
+    QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
     signal.signal(signal.SIGTERM, signal.SIG_DFL)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     app = QApplication(sys.argv)
