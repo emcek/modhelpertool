@@ -12,7 +12,7 @@ from time import time
 from typing import Optional, Callable, Dict, Tuple, Union, List
 
 import qtawesome
-from PyQt5 import QtCore, uic
+from PyQt5 import QtCore, uic, QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
     QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem, QApplication, QStatusBar,
@@ -38,13 +38,29 @@ def tr(text: str, context='@default'):
     return QtCore.QCoreApplication.translate(context=context, sourceText=text)
 
 
+def load_ui(ui_path: str, parent: QtWidgets) -> None:
+    """
+    Load ui file form resources.
+
+    :param ui_path: resources path to ui file
+    :param parent: QtWidgets instance
+    """
+    stream = QtCore.QFile(ui_path)
+    stream.open(QtCore.QFile.ReadOnly)
+    try:
+        uic.loadUi(stream, parent)
+    finally:
+        stream.close()
+
+
 class MohtQtGui(QMainWindow):
     def __init__(self) -> None:
         """Mod Helper Tool Qt5 GUI."""
         super().__init__()
         self._find_children()
         self.logger = getLogger(__name__)
-        uic.loadUi(f'{utils.here(__file__)}/ui/qtgui.ui', self)
+        load_ui(':/ui/ui/qtgui.ui', self)
+        # uic.loadUi(f'{utils.here(__file__)}/ui/qtgui.ui', self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
@@ -467,8 +483,9 @@ class AboutDialog(QDialog):
     def __init__(self, parent) -> None:
         """Moht about dialog window."""
         super().__init__(parent)
+        load_ui(':/ui/ui/about.ui', self)
+        # uic.loadUi(f'{utils.here(__file__)}/ui/about.ui', self)
         self.label = self.findChild(QLabel, 'label')
-        uic.loadUi(f'{utils.here(__file__)}/ui/about.ui', self)
         self.setup_text()
 
     def setup_text(self) -> None:
