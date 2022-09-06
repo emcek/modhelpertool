@@ -3,7 +3,7 @@
     <file>img/moht.ico</file>
     <file>img/moht.png</file>
   </qresource>
-  <qresource prefix="language">
+  <qresource prefix="translations">
     <file>i18n/qtgui_en.qm</file>
     <file>i18n/qtgui_pl.qm</file>
   </qresource>

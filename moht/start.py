@@ -47,7 +47,7 @@ def run_qt():
     if translator.load(QLocale.system(), 'qtbase', '_', QLibraryInfo.location(QLibraryInfo.TranslationsPath)):
         app.installTranslator(translator)
     translator = QTranslator(app)
-    if translator.load(f':language/i18n/qtgui_{QLocale.system().name()}.qm'):
+    if translator.load(f':translations/i18n/qtgui_{QLocale.system().name()}.qm'):
         app.installTranslator(translator)
 
     try:
