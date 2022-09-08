@@ -64,6 +64,7 @@ class MohtQtGui(QMainWindow):
         self.threadpool = QtCore.QThreadPool.globalInstance()
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
+        self.auto_save = False
         self.progress = 0
         self.no_of_plugins = 0
         self.missing_esm: List[Path] = []
@@ -73,8 +74,11 @@ class MohtQtGui(QMainWindow):
         self._init_menu_bar()
         self._init_buttons()
         self._init_radio_buttons()
+        self._init_check_boxes()
         self._init_line_edits()
         self._init_tree_report()
+        yamlfile = path.join(utils.here(__file__), 'default.yaml')
+        self._apply_gui_configuration(yamlfile)
         self.statusbar.showMessage(self.tr('ver. {0}').format(VERSION))
         self._set_icons()
 
@@ -96,11 +100,16 @@ class MohtQtGui(QMainWindow):
         self.pb_chk_updates.clicked.connect(self._check_updates)
         self.pb_report.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 1))
         self.pb_back_clean.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 0))
+        self.pb_load.clicked.connect(self.load_config)
+        self.pb_save.clicked.connect(self.save_config)
 
     def _init_line_edits(self):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
+        self.le_mods_dir.textChanged.connect(self.trigger_autosave)
+        self.le_morrowind_dir.textChanged.connect(self.trigger_autosave)
+        self.le_tes3cmd.textChanged.connect(self.trigger_autosave)
         self._set_le_tes3cmd(TES3CMD[platform][40])
         # self.mods_dir = str(Path.home())
         # self.morrowind_dir = str(Path.home())
@@ -111,6 +120,11 @@ class MohtQtGui(QMainWindow):
         self.rb_custom.toggled.connect(self._rb_custom_toggled)
         for ver in [37, 40]:
             getattr(self, f'rb_{ver}').toggled.connect(partial(self._rb_tes3cmd_toggled, ver))
+
+    def _init_check_boxes(self):
+        self.cb_auto_save.toggled.connect(self.autosave_toggled)
+        self.cb_rm_backup.toggled.connect(self.trigger_autosave)
+        self.cb_rm_cache.toggled.connect(self.trigger_autosave)
 
     def _init_tree_report(self):
         self.tree_report.setColumnWidth(REP_COL_PLUGIN, 400)
@@ -131,12 +145,14 @@ class MohtQtGui(QMainWindow):
         header.setToolTip(REP_COL_PLUGIN, self.tr('Double click on item to copy plugin`s path.'))
         header.setToolTip(REP_COL_TIME, self.tr('Cleaning time in min:sec\nHold on item to see cleaning details.'))
 
-    def _rb_custom_toggled(self, state: bool) -> None:
-        self.le_tes3cmd.setEnabled(state)
-
     def _rb_tes3cmd_toggled(self, version: int, state: bool) -> None:
         if state:
             self._set_le_tes3cmd(TES3CMD[platform][version])
+        self.trigger_autosave()
+
+    def _rb_custom_toggled(self, state: bool) -> None:
+        self.le_tes3cmd.setEnabled(state)
+        self.trigger_autosave()
 
     def _pb_clean_clicked(self) -> None:
         self.progressbar.setValue(0)
@@ -338,6 +354,7 @@ dnf install perl-Config-IniFiles.noarch''')
             write_config(self.config, self.conf_file)
             self.statusbar.showMessage(f'Configuration saved: {self.conf_file}')
         except IOError:
+            self.cb_auto_save.setChecked(False)
             self.statusbar.showMessage('Configuration not saved')
 
     def save_config_as(self) -> None:
@@ -353,13 +370,21 @@ dnf install perl-Config-IniFiles.noarch''')
         :return: True if success
         """
         self.config = read_config(yamlfile)
+        if self.config.get('moht', {}).get('auto_save', False):
+            self.cb_auto_save.toggled.disconnect()
+            self.auto_save = True
+            self.config['moht']['auto_save'] = False
         for cfg_section in self.config:
-            self.logger.debug(cfg_section)
             getattr(self, '_apply_cfg_{}'.format(cfg_section))(self.config[cfg_section])
+        if self.auto_save:
+            self.config['moht']['auto_save'] = True
+            self.cb_auto_save.setChecked(True)
+            self.cb_auto_save.toggled.connect(self.autosave_toggled)
         return True
 
     def _apply_cfg_moht(self, cfg_dict: dict) -> None:
         self.logger.debug(f'Apply configuration for API ver: {cfg_dict["api_ver"]}')
+        self.cb_auto_save.setChecked(cfg_dict['auto_save'])
 
     def _apply_cfg_tes3cmd_clean(self, cfg_dict: dict) -> None:
         self.mods_dir = cfg_dict['mod_dir']
@@ -375,19 +400,36 @@ dnf install perl-Config-IniFiles.noarch''')
 
         :return: GUI configuration as dict
         """
-        c = {'moht': {'api_ver': VERSION},
-             'tes3cmd_clean': {
-                 'mod_dir': self.mods_dir,
-                 'data_files_dir': self.morrowind_dir,
-                 'tes3cmd_bin': self.tes3cmd,
-                 'tes3cmd_ver': self.tes3cmd_ver,
-                 'clean_backup': self.cb_rm_backup.isChecked(),
-                 'clean_cache': self.cb_rm_cache.isChecked(),
-             },
-             }
+        c = {
+            'moht': {
+                'api_ver': VERSION,
+                'auto_save': self.cb_auto_save.isChecked()
+            },
+            'tes3cmd_clean': {
+                'mod_dir': self.mods_dir,
+                'data_files_dir': self.morrowind_dir,
+                'tes3cmd_bin': self.tes3cmd,
+                'tes3cmd_ver': self.tes3cmd_ver,
+                'clean_backup': self.cb_rm_backup.isChecked(),
+                'clean_cache': self.cb_rm_cache.isChecked(),
+            },
+        }
         return c
 
+    def autosave_toggled(self) -> None:
+        """Action for autosave checkbox toggle"""
+        if self.cb_auto_save.isChecked():
+            self.save_config()
+        else:
+            self.conf_file = ''
+            self.statusbar.clearMessage()
+
     # <=><=><=><=><=><=><=><=><=><=><=> helpers <=><=><=><=><=><=><=><=><=><=><=>
+    def trigger_autosave(self) -> None:
+        """Just trigger save configuration if auto save checkbox is checked."""
+        if self.cb_auto_save.isChecked():
+            self.save_config()
+
     def run_in_background(self, job: Union[partial, Callable], signal_handlers: Dict[str, Callable]) -> None:
         """
         Setup worker with signals callback to schedule GUI job in background.
@@ -565,9 +607,12 @@ dnf install perl-Config-IniFiles.noarch''')
         self.pb_clean = self.findChild(QPushButton, 'pb_clean')
         self.pb_chk_updates = self.findChild(QPushButton, 'pb_chk_updates')
         self.pb_close = self.findChild(QPushButton, 'pb_close')
+        self.pb_load = self.findChild(QPushButton, 'pb_load')
+        self.pb_save = self.findChild(QPushButton, 'pb_save')
 
         self.cb_rm_backup = self.findChild(QCheckBox, 'cb_rm_backup')
         self.cb_rm_cache = self.findChild(QCheckBox, 'cb_rm_cache')
+        self.cb_auto_save = self.findChild(QCheckBox, 'cb_auto_save')
 
         self.le_mods_dir = self.findChild(QLineEdit, 'le_mods_dir')
         self.le_morrowind_dir = self.findChild(QLineEdit, 'le_morrowind_dir')
