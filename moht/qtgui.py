@@ -1,5 +1,6 @@
 import traceback
 import webbrowser
+from argparse import Namespace
 from functools import partial
 from logging import getLogger
 from os import path, chdir, remove
@@ -55,7 +56,7 @@ def load_ui(ui_path: str, parent: QtWidgets) -> None:
 
 
 class MohtQtGui(QMainWindow):
-    def __init__(self) -> None:
+    def __init__(self, cli_args: Namespace) -> None:
         """Mod Helper Tool Qt5 GUI."""
         super().__init__()
         self._find_children()
@@ -78,6 +79,8 @@ class MohtQtGui(QMainWindow):
         self._init_line_edits()
         self._init_tree_report()
         yamlfile = path.join(utils.here(__file__), 'default.yaml')
+        if cli_args.yamlfile:
+            yamlfile = cli_args.yamlfile
         self._apply_gui_configuration(yamlfile)
         self.statusbar.showMessage(self.tr('ver. {0}').format(VERSION))
         self._set_icons()
