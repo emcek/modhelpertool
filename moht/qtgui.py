@@ -76,6 +76,9 @@ class MohtQtGui(QMainWindow):
         self._set_icons()
 
     def _init_menu_bar(self) -> None:
+        self.actionLoad.triggered.connect(self.load_config)
+        self.actionSave.triggered.connect(self.save_config)
+        self.actionSave_as.triggered.connect(self.save_config_as)
         self.actionQuit.triggered.connect(self.close)
         self.actionAboutMoht.triggered.connect(AboutDialog(self).open)
         self.actionAboutQt.triggered.connect(partial(self._show_message_box, kind_of='aboutQt', title='About Qt'))
@@ -454,6 +457,9 @@ dnf install perl-Config-IniFiles.noarch''')
         self.le_tes3cmd.setText(value)
 
     def _find_children(self) -> None:
+        self.actionLoad = self.findChild(QAction, 'actionLoad')
+        self.actionSave = self.findChild(QAction, 'actionSave')
+        self.actionSave_as = self.findChild(QAction, 'actionSave_as')
         self.actionQuit = self.findChild(QAction, 'actionQuit')
         self.actionAboutMoht = self.findChild(QAction, 'actionAboutMoht')
         self.actionAboutQt = self.findChild(QAction, 'actionAboutQt')
