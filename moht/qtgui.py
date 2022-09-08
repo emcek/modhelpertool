@@ -319,6 +319,75 @@ dnf install perl-Config-IniFiles.noarch''')
             self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
         return result
 
+    # <=><=><=><=><=><=><=><=><=><=><=> configuration <=><=><=><=><=><=><=><=><=><=><=>
+    def load_config(self) -> None:
+        """Load GUI configuration."""
+        self.statusbar.showMessage('Choose configuration file')
+        self.conf_file = self._run_file_dialog(for_load=True, for_dir=False, file_filter='Yaml Files [*.yaml *.yml](*.yaml *.yml)')
+        result = self._apply_gui_configuration(yamlfile=self.conf_file)
+        if result:
+            self.statusbar.showMessage(f'Configuration loaded: {self.conf_file}')
+
+    def save_config(self) -> None:
+        """Save GUI configuration."""
+        if not self.conf_file:
+            self.statusbar.showMessage('Choose configuration file')
+            self.conf_file = self._run_file_dialog(for_load=False, for_dir=False, file_filter='Yaml Files [*.yaml *.yml](*.yaml *.yml)')
+        try:
+            self.config = self._dump_gui_configuration()
+            write_config(self.config, self.conf_file)
+            self.statusbar.showMessage(f'Configuration saved: {self.conf_file}')
+        except IOError:
+            self.statusbar.showMessage('Configuration not saved')
+
+    def save_config_as(self) -> None:
+        """Save as GUI configuration"""
+        self.conf_file = ''
+        self.save_config()
+
+    def _apply_gui_configuration(self, yamlfile: str) -> bool:
+        """
+        Apply configuration from internal dict to GUI widgets.
+
+        :param yamlfile: absolute path to configuration yaml
+        :return: True if success
+        """
+        self.config = read_config(yamlfile)
+        for cfg_section in self.config:
+            self.logger.debug(cfg_section)
+            getattr(self, '_apply_cfg_{}'.format(cfg_section))(self.config[cfg_section])
+        return True
+
+    def _apply_cfg_moht(self, cfg_dict: dict) -> None:
+        self.logger.debug(f'Apply configuration for API ver: {cfg_dict["api_ver"]}')
+
+    def _apply_cfg_tes3cmd_clean(self, cfg_dict: dict) -> None:
+        self.mods_dir = cfg_dict['mod_dir']
+        self.morrowind_dir = cfg_dict['data_files_dir']
+        self.tes3cmd = cfg_dict['tes3cmd_bin']
+        self.tes3cmd_ver = cfg_dict['tes3cmd_ver']
+        self.cb_rm_backup.setChecked(cfg_dict['clean_backup'])
+        self.cb_rm_cache.setChecked(cfg_dict['clean_cache'])
+
+    def _dump_gui_configuration(self) -> dict:
+        """
+        Dump GUI configuration to python dict.
+
+        :return: GUI configuration as dict
+        """
+        c = {'moht': {'api_ver': VERSION},
+             'tes3cmd_clean': {
+                 'mod_dir': self.mods_dir,
+                 'data_files_dir': self.morrowind_dir,
+                 'tes3cmd_bin': self.tes3cmd,
+                 'tes3cmd_ver': self.tes3cmd_ver,
+                 'clean_backup': self.cb_rm_backup.isChecked(),
+                 'clean_cache': self.cb_rm_cache.isChecked(),
+             },
+             }
+        return c
+
+    # <=><=><=><=><=><=><=><=><=><=><=> helpers <=><=><=><=><=><=><=><=><=><=><=>
     def run_in_background(self, job: Union[partial, Callable], signal_handlers: Dict[str, Callable]) -> None:
         """
         Setup worker with signals callback to schedule GUI job in background.
@@ -458,6 +527,25 @@ dnf install perl-Config-IniFiles.noarch''')
     @tes3cmd.setter
     def tes3cmd(self, value: str) -> None:
         self.le_tes3cmd.setText(value)
+
+    @property
+    def tes3cmd_ver(self) -> str:
+        """
+        Get tes3cmd version RadioButton.
+
+        :return: tes3cmd version as string
+        """
+        for ver in [37, 40, 'custom']:
+            rb = getattr(self, f'rb_{ver}')
+            if rb.isChecked():
+                return ver
+
+    @tes3cmd_ver.setter
+    def tes3cmd_ver(self, value: str) -> None:
+        try:
+            getattr(self, f'rb_{value}').setChecked(True)
+        except AttributeError:
+            self.logger.debug(f'Can not change select: rb_{value}')
 
     def _find_children(self) -> None:
         self.actionLoad = self.findChild(QAction, 'actionLoad')
