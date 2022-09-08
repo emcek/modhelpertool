@@ -50,10 +50,10 @@ PLUGINS2CLEAN = {
     "Windows Glow.esp": ['Morrowind.esm'],
 }
 TES3CMD = {
-    'win32': {'0_37': 'tes3cmd-0.37v.exe',
-              '0_40': 'tes3cmd-0.40-pre_rel2.exe'},
-    'linux': {'0_37': 'tes3cmd-0.37w',
-              '0_40': 'tes3cmd-0.40-pre_rel2'},
-    'darwin': {'0_37': 'tes3cmd-0.37w',
-               '0_40': 'tes3cmd-0.40-pre_rel2'},
+    'win32': {37: 'tes3cmd-0.37v.exe',
+              40: 'tes3cmd-0.40-pre_rel2.exe'},
+    'linux': {37: 'tes3cmd-0.37w',
+              40: 'tes3cmd-0.40-pre_rel2'},
+    'darwin': {37: 'tes3cmd-0.37w',
+               40: 'tes3cmd-0.40-pre_rel2'},
 }
