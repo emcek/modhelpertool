@@ -113,11 +113,6 @@ class MohtQtGui(QMainWindow):
         self.le_mods_dir.textChanged.connect(self.trigger_autosave)
         self.le_morrowind_dir.textChanged.connect(self.trigger_autosave)
         self.le_tes3cmd.textChanged.connect(self.trigger_autosave)
-        self._set_le_tes3cmd(TES3CMD[platform][40])
-        # self.mods_dir = str(Path.home())
-        # self.morrowind_dir = str(Path.home())
-        self.mods_dir = '/home/emc/clean/CitiesTowns/'
-        self.morrowind_dir = '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'
 
     def _init_radio_buttons(self):
         self.rb_custom.toggled.connect(self._rb_custom_toggled)
