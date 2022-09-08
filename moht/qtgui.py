@@ -20,6 +20,7 @@ from PyQt5.QtWidgets import (
 )
 
 from moht import VERSION, TES3CMD, utils, qtgui_rc
+from moht.utils import write_config, read_config
 
 _ = qtgui_rc  # prevent to remove import statement accidentally
 REP_COL_PLUGIN = 0
@@ -67,6 +68,8 @@ class MohtQtGui(QMainWindow):
         self.no_of_plugins = 0
         self.missing_esm: List[Path] = []
         self.duration = 0.0
+        self.conf_file = ''
+        self.config = {}
         self._init_menu_bar()
         self._init_buttons()
         self._init_radio_buttons()
@@ -98,7 +101,7 @@ class MohtQtGui(QMainWindow):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
-        self._set_le_tes3cmd(TES3CMD[platform]['0_40'])
+        self._set_le_tes3cmd(TES3CMD[platform][40])
         # self.mods_dir = str(Path.home())
         # self.morrowind_dir = str(Path.home())
         self.mods_dir = '/home/emc/clean/CitiesTowns/'
@@ -106,7 +109,7 @@ class MohtQtGui(QMainWindow):
 
     def _init_radio_buttons(self):
         self.rb_custom.toggled.connect(self._rb_custom_toggled)
-        for ver in ['0_37', '0_40']:
+        for ver in [37, 40]:
             getattr(self, f'rb_{ver}').toggled.connect(partial(self._rb_tes3cmd_toggled, ver))
 
     def _init_tree_report(self):
@@ -131,7 +134,7 @@ class MohtQtGui(QMainWindow):
     def _rb_custom_toggled(self, state: bool) -> None:
         self.le_tes3cmd.setEnabled(state)
 
-    def _rb_tes3cmd_toggled(self, version: str, state: bool) -> None:
+    def _rb_tes3cmd_toggled(self, version: int, state: bool) -> None:
         if state:
             self._set_le_tes3cmd(TES3CMD[platform][version])
 
