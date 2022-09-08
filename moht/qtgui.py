@@ -358,7 +358,7 @@ dnf install perl-Config-IniFiles.noarch''')
             self.statusbar.showMessage('Configuration not saved')
 
     def save_config_as(self) -> None:
-        """Save as GUI configuration"""
+        """Save as GUI configuration."""
         self.conf_file = ''
         self.save_config()
 
@@ -382,11 +382,11 @@ dnf install perl-Config-IniFiles.noarch''')
             self.cb_auto_save.toggled.connect(self.autosave_toggled)
         return True
 
-    def _apply_cfg_moht(self, cfg_dict: dict) -> None:
+    def _apply_cfg_moht(self, cfg_dict: Dict[str, Union[str, int, bool]]) -> None:
         self.logger.debug(f'Apply configuration for API ver: {cfg_dict["api_ver"]}')
         self.cb_auto_save.setChecked(cfg_dict['auto_save'])
 
-    def _apply_cfg_tes3cmd_clean(self, cfg_dict: dict) -> None:
+    def _apply_cfg_tes3cmd_clean(self, cfg_dict: Dict[str, Union[str, int, bool]]) -> None:
         self.mods_dir = cfg_dict['mod_dir']
         self.morrowind_dir = cfg_dict['data_files_dir']
         self.tes3cmd = cfg_dict['tes3cmd_bin']
@@ -394,7 +394,7 @@ dnf install perl-Config-IniFiles.noarch''')
         self.cb_rm_backup.setChecked(cfg_dict['clean_backup'])
         self.cb_rm_cache.setChecked(cfg_dict['clean_cache'])
 
-    def _dump_gui_configuration(self) -> dict:
+    def _dump_gui_configuration(self) -> Dict[str, Dict[str, Union[str, int, bool]]]:
         """
         Dump GUI configuration to python dict.
 
@@ -417,7 +417,7 @@ dnf install perl-Config-IniFiles.noarch''')
         return c
 
     def autosave_toggled(self) -> None:
-        """Action for autosave checkbox toggle"""
+        """Action for autosave checkbox toggle."""
         if self.cb_auto_save.isChecked():
             self.save_config()
         else:

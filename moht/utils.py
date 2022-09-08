@@ -9,7 +9,7 @@ from shlex import split
 from shutil import rmtree, copy2
 from subprocess import Popen, PIPE
 from sys import platform
-from typing import Tuple, Union, List, Set
+from typing import Tuple, Union, List, Set, Dict
 
 from packaging import version
 from yaml import FullLoader, load, safe_dump, YAMLError
@@ -247,7 +247,7 @@ def get_string_duration(seconds: float, time_format='%M:%S') -> str:
     return now.strftime(time_format)
 
 
-def read_config(yaml_file: str) -> dict:
+def read_config(yaml_file: str) -> Dict[str, Dict[str, Union[str, int, bool]]]:
     """
     Read configuration from yaml file and return dict.
 
@@ -263,7 +263,7 @@ def read_config(yaml_file: str) -> dict:
     return data
 
 
-def write_config(data: dict, yaml_file: str, mode='w') -> None:
+def write_config(data: Dict[str, Dict[str, Union[str, int, bool]]], yaml_file: str, mode='w') -> None:
     """
     Write python dict as yaml file.
 
