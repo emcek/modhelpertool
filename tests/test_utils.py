@@ -267,3 +267,19 @@ def test_rm_copied_extra_esm_exception_handling():
 ])
 def test_get_string_duration(args, result):
     assert utils.get_string_duration(*args) == result
+
+
+def test_read_write_yaml_cfg_file():
+    from os import remove, path
+    from tempfile import gettempdir
+
+    test_tmp_yaml = path.join(gettempdir(), 'c.yaml')
+    cfg = {'setting_1': {'setting_2': 2}}
+    utils.write_config(cfg, test_tmp_yaml)
+    d_cfg = utils.read_config(test_tmp_yaml)
+    assert d_cfg == cfg
+    with open(test_tmp_yaml, 'w+') as f:
+        f.write(',')
+    d_cfg = utils.read_config(test_tmp_yaml)
+    assert len(d_cfg) == 0
+    remove(test_tmp_yaml)

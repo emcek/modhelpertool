@@ -1,5 +1,6 @@
 import traceback
 import webbrowser
+from argparse import Namespace
 from functools import partial
 from logging import getLogger
 from os import path, chdir, remove
@@ -16,10 +17,11 @@ from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
     QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem, QApplication, QStatusBar,
-    QProgressBar, QStackedWidget, QTreeWidget, QAction, QPushButton, QCheckBox, QLineEdit, QLabel
+    QProgressBar, QStackedWidget, QTreeWidget, QAction, QPushButton, QCheckBox, QLineEdit, QLabel, QRadioButton
 )
 
 from moht import VERSION, TES3CMD, utils, qtgui_rc
+from moht.utils import write_config, read_config
 
 _ = qtgui_rc  # prevent to remove import statement accidentally
 REP_COL_PLUGIN = 0
@@ -54,8 +56,12 @@ def load_ui(ui_path: str, parent: QtWidgets) -> None:
 
 
 class MohtQtGui(QMainWindow):
-    def __init__(self) -> None:
-        """Mod Helper Tool Qt5 GUI."""
+    def __init__(self, cli_args: Namespace) -> None:
+        """
+        Mod Helper Tool Qt5 GUI.
+
+        :param cli_args: Parameters from CLI
+        """
         super().__init__()
         self._find_children()
         self.logger = getLogger(__name__)
@@ -63,19 +69,30 @@ class MohtQtGui(QMainWindow):
         self.threadpool = QtCore.QThreadPool.globalInstance()
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
         self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
+        self.auto_save = False
         self.progress = 0
         self.no_of_plugins = 0
         self.missing_esm: List[Path] = []
         self.duration = 0.0
+        self.conf_file = ''
+        self.config = {}
         self._init_menu_bar()
         self._init_buttons()
         self._init_radio_buttons()
+        self._init_check_boxes()
         self._init_line_edits()
         self._init_tree_report()
+        yamlfile = path.join(utils.here(__file__), 'default.yaml')
+        if cli_args.yamlfile:
+            yamlfile = cli_args.yamlfile
+        self._apply_gui_configuration(yamlfile)
         self.statusbar.showMessage(self.tr('ver. {0}').format(VERSION))
         self._set_icons()
 
     def _init_menu_bar(self) -> None:
+        self.actionLoad.triggered.connect(self.load_config)
+        self.actionSave.triggered.connect(self.save_config)
+        self.actionSave_as.triggered.connect(self.save_config_as)
         self.actionQuit.triggered.connect(self.close)
         self.actionAboutMoht.triggered.connect(AboutDialog(self).open)
         self.actionAboutQt.triggered.connect(partial(self._show_message_box, kind_of='aboutQt', title='About Qt'))
@@ -90,20 +107,26 @@ class MohtQtGui(QMainWindow):
         self.pb_chk_updates.clicked.connect(self._check_updates)
         self.pb_report.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 1))
         self.pb_back_clean.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 0))
+        self.pb_load.clicked.connect(self.load_config)
+        self.pb_save.clicked.connect(self.save_config)
 
     def _init_line_edits(self):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
         self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
         self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
-        self._set_le_tes3cmd(TES3CMD[platform]['0_40'])
-        # self.mods_dir = str(Path.home())
-        # self.morrowind_dir = str(Path.home())
-        self.mods_dir = '/home/emc/clean/CitiesTowns/'
-        self.morrowind_dir = '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'
+        self.le_mods_dir.textChanged.connect(self.trigger_autosave)
+        self.le_morrowind_dir.textChanged.connect(self.trigger_autosave)
+        self.le_tes3cmd.textChanged.connect(self.trigger_autosave)
 
     def _init_radio_buttons(self):
-        for ver in ['0_37', '0_40']:
+        self.rb_custom.toggled.connect(self._rb_custom_toggled)
+        for ver in [37, 40]:
             getattr(self, f'rb_{ver}').toggled.connect(partial(self._rb_tes3cmd_toggled, ver))
+
+    def _init_check_boxes(self):
+        self.cb_auto_save.toggled.connect(self.autosave_toggled)
+        self.cb_rm_backup.toggled.connect(self.trigger_autosave)
+        self.cb_rm_cache.toggled.connect(self.trigger_autosave)
 
     def _init_tree_report(self):
         self.tree_report.setColumnWidth(REP_COL_PLUGIN, 400)
@@ -124,9 +147,14 @@ class MohtQtGui(QMainWindow):
         header.setToolTip(REP_COL_PLUGIN, self.tr('Double click on item to copy plugin`s path.'))
         header.setToolTip(REP_COL_TIME, self.tr('Cleaning time in min:sec\nHold on item to see cleaning details.'))
 
-    def _rb_tes3cmd_toggled(self, version: str, state: bool) -> None:
+    def _rb_tes3cmd_toggled(self, version: int, state: bool) -> None:
         if state:
             self._set_le_tes3cmd(TES3CMD[platform][version])
+        self.trigger_autosave()
+
+    def _rb_custom_toggled(self, state: bool) -> None:
+        self.le_tes3cmd.setEnabled(state)
+        self.trigger_autosave()
 
     def _pb_clean_clicked(self) -> None:
         self.progressbar.setValue(0)
@@ -309,6 +337,101 @@ dnf install perl-Config-IniFiles.noarch''')
             self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
         return result
 
+    # <=><=><=><=><=><=><=><=><=><=><=> configuration <=><=><=><=><=><=><=><=><=><=><=>
+    def load_config(self) -> None:
+        """Load GUI configuration."""
+        self.statusbar.showMessage('Choose configuration file')
+        self.conf_file = self._run_file_dialog(for_load=True, for_dir=False, file_filter='Yaml Files [*.yaml *.yml](*.yaml *.yml)')
+        result = self._apply_gui_configuration(yamlfile=self.conf_file)
+        if result:
+            self.statusbar.showMessage(f'Configuration loaded: {self.conf_file}')
+
+    def save_config(self) -> None:
+        """Save GUI configuration."""
+        if not self.conf_file:
+            self.statusbar.showMessage('Choose configuration file')
+            self.conf_file = self._run_file_dialog(for_load=False, for_dir=False, file_filter='Yaml Files [*.yaml *.yml](*.yaml *.yml)')
+        try:
+            self.config = self._dump_gui_configuration()
+            write_config(self.config, self.conf_file)
+            self.statusbar.showMessage(f'Configuration saved: {self.conf_file}')
+        except IOError:
+            self.cb_auto_save.setChecked(False)
+            self.statusbar.showMessage('Configuration not saved')
+
+    def save_config_as(self) -> None:
+        """Save as GUI configuration."""
+        self.conf_file = ''
+        self.save_config()
+
+    def _apply_gui_configuration(self, yamlfile: str) -> bool:
+        """
+        Apply configuration from internal dict to GUI widgets.
+
+        :param yamlfile: absolute path to configuration yaml
+        :return: True if success
+        """
+        self.config = read_config(yamlfile)
+        if self.config.get('moht', {}).get('auto_save', False):
+            self.cb_auto_save.toggled.disconnect()
+            self.auto_save = True
+            self.config['moht']['auto_save'] = False
+        for cfg_section in self.config:
+            getattr(self, '_apply_cfg_{}'.format(cfg_section))(self.config[cfg_section])
+        if self.auto_save:
+            self.config['moht']['auto_save'] = True
+            self.cb_auto_save.setChecked(True)
+            self.cb_auto_save.toggled.connect(self.autosave_toggled)
+        return True
+
+    def _apply_cfg_moht(self, cfg_dict: Dict[str, Union[str, int, bool]]) -> None:
+        self.logger.debug(f'Apply configuration for API ver: {cfg_dict["api_ver"]}')
+        self.cb_auto_save.setChecked(cfg_dict['auto_save'])
+
+    def _apply_cfg_tes3cmd_clean(self, cfg_dict: Dict[str, Union[str, int, bool]]) -> None:
+        self.mods_dir = cfg_dict['mod_dir'] if cfg_dict['mod_dir'] else str(Path.home())
+        self.morrowind_dir = cfg_dict['data_files_dir'] if cfg_dict['data_files_dir'] else str(Path.home())
+        self.tes3cmd = cfg_dict['tes3cmd_bin']
+        self.tes3cmd_ver = cfg_dict['tes3cmd_ver']
+        self.cb_rm_backup.setChecked(cfg_dict['clean_backup'])
+        self.cb_rm_cache.setChecked(cfg_dict['clean_cache'])
+
+    def _dump_gui_configuration(self) -> Dict[str, Dict[str, Union[str, int, bool]]]:
+        """
+        Dump GUI configuration to python dict.
+
+        :return: GUI configuration as dict
+        """
+        c = {
+            'moht': {
+                'api_ver': VERSION,
+                'auto_save': self.cb_auto_save.isChecked()
+            },
+            'tes3cmd_clean': {
+                'mod_dir': self.mods_dir,
+                'data_files_dir': self.morrowind_dir,
+                'tes3cmd_bin': self.tes3cmd,
+                'tes3cmd_ver': self.tes3cmd_ver,
+                'clean_backup': self.cb_rm_backup.isChecked(),
+                'clean_cache': self.cb_rm_cache.isChecked(),
+            },
+        }
+        return c
+
+    def autosave_toggled(self) -> None:
+        """Action for autosave checkbox toggle."""
+        if self.cb_auto_save.isChecked():
+            self.save_config()
+        else:
+            self.conf_file = ''
+            self.statusbar.clearMessage()
+
+    # <=><=><=><=><=><=><=><=><=><=><=> helpers <=><=><=><=><=><=><=><=><=><=><=>
+    def trigger_autosave(self) -> None:
+        """Just trigger save configuration if auto save checkbox is checked."""
+        if self.cb_auto_save.isChecked():
+            self.save_config()
+
     def run_in_background(self, job: Union[partial, Callable], signal_handlers: Dict[str, Callable]) -> None:
         """
         Setup worker with signals callback to schedule GUI job in background.
@@ -449,7 +572,29 @@ dnf install perl-Config-IniFiles.noarch''')
     def tes3cmd(self, value: str) -> None:
         self.le_tes3cmd.setText(value)
 
+    @property
+    def tes3cmd_ver(self) -> str:
+        """
+        Get tes3cmd version RadioButton.
+
+        :return: tes3cmd version as string
+        """
+        for ver in [37, 40, 'custom']:
+            rb = getattr(self, f'rb_{ver}')
+            if rb.isChecked():
+                return ver
+
+    @tes3cmd_ver.setter
+    def tes3cmd_ver(self, value: str) -> None:
+        try:
+            getattr(self, f'rb_{value}').setChecked(True)
+        except AttributeError:
+            self.logger.debug(f'Can not change select: rb_{value}')
+
     def _find_children(self) -> None:
+        self.actionLoad = self.findChild(QAction, 'actionLoad')
+        self.actionSave = self.findChild(QAction, 'actionSave')
+        self.actionSave_as = self.findChild(QAction, 'actionSave_as')
         self.actionQuit = self.findChild(QAction, 'actionQuit')
         self.actionAboutMoht = self.findChild(QAction, 'actionAboutMoht')
         self.actionAboutQt = self.findChild(QAction, 'actionAboutQt')
@@ -464,14 +609,18 @@ dnf install perl-Config-IniFiles.noarch''')
         self.pb_clean = self.findChild(QPushButton, 'pb_clean')
         self.pb_chk_updates = self.findChild(QPushButton, 'pb_chk_updates')
         self.pb_close = self.findChild(QPushButton, 'pb_close')
+        self.pb_load = self.findChild(QPushButton, 'pb_load')
+        self.pb_save = self.findChild(QPushButton, 'pb_save')
 
         self.cb_rm_backup = self.findChild(QCheckBox, 'cb_rm_backup')
         self.cb_rm_cache = self.findChild(QCheckBox, 'cb_rm_cache')
+        self.cb_auto_save = self.findChild(QCheckBox, 'cb_auto_save')
 
         self.le_mods_dir = self.findChild(QLineEdit, 'le_mods_dir')
         self.le_morrowind_dir = self.findChild(QLineEdit, 'le_morrowind_dir')
         self.le_tes3cmd = self.findChild(QLineEdit, 'le_tes3cmd')
 
+        self.rb_custom = self.findChild(QRadioButton, 'rb_custom')
         self.statusbar = self.findChild(QStatusBar, 'statusbar')
         self.progressbar = self.findChild(QProgressBar, 'progressbar')
         self.stacked_clean = self.findChild(QStackedWidget, 'stacked_clean')

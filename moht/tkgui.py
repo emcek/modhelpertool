@@ -9,7 +9,16 @@ from sys import platform
 from time import time
 from tkinter import filedialog, messagebox
 
-from moht import VERSION, TES3CMD, utils
+from moht import VERSION, utils
+
+TES3CMD = {
+    'win32': {'0_37': 'tes3cmd-0.37v.exe',
+              '0_40': 'tes3cmd-0.40-pre_rel2.exe'},
+    'linux': {'0_37': 'tes3cmd-0.37w',
+              '0_40': 'tes3cmd-0.40-pre_rel2'},
+    'darwin': {'0_37': 'tes3cmd-0.37w',
+               '0_40': 'tes3cmd-0.40-pre_rel2'},
+}
 
 
 class MohtTkGui(tk.Frame):

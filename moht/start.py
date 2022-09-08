@@ -14,7 +14,7 @@ from moht.utils import here
 logger = getLogger(f'moht.{__name__}')
 
 
-def run_tk():
+def run_tk(cli_opts: Namespace) -> None:
     """Function to start Mod Helper Tool TkGUI."""
     import tkinter
     from moht.tkgui import MohtTkGui
@@ -32,7 +32,7 @@ def run_tk():
         logger.exception(f'Critical error: {exp}')
 
 
-def run_qt():
+def run_qt(cli_opts: Namespace) -> None:
     """Function to start Mod Helper Tool QtGUI."""
     from PyQt5.QtCore import Qt, QCoreApplication, QLibraryInfo, QLocale, QTranslator
     from PyQt5.QtWidgets import QApplication
@@ -51,7 +51,7 @@ def run_qt():
         app.installTranslator(translator)
 
     try:
-        window = MohtQtGui()
+        window = MohtQtGui(cli_opts)
         window.show()
     except Exception as exp:
         logger.exception(f'Critical error: {exp}')
@@ -65,7 +65,7 @@ def _run_gui(cli_opts: Namespace) -> None:
     logger.debug(f'Arch: {name} / {sys.platform} / {" / ".join(architecture())}')
     logger.debug(f'Python: {python_implementation()}-{python_version()}')
     logger.debug(f'{uname()}')
-    globals()[f'run_{cli_opts.gui}']()
+    globals()[f'run_{cli_opts.gui}'](cli_opts)
 
 
 def run() -> None:
@@ -77,6 +77,7 @@ def run() -> None:
     gui = parser.add_subparsers(title='gui', dest='gui', description='Available subcommands', help='choose one of GUI')
     gui_qt = gui.add_parser(name='qt', help='starting Qt5 GUI interface for Moht', formatter_class=RawTextHelpFormatter)
     gui_qt.add_argument('-style', dest='style', help='style for QtGUI: "fusion" (default) or "windows".', default='fusion')
+    gui_qt.add_argument('-y', '--yamlfile', dest='yamlfile', help='Path to configuration YAML file.\nYou can specify relative or absolute path to configuration\nYAML file.')
     gui_tk = gui.add_parser(name='tk', help='starting Tk GUI interface for Moht', formatter_class=RawTextHelpFormatter)
     args = parser.parse_args()
     if args.gui:
