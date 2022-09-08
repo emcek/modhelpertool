@@ -12,6 +12,7 @@ from sys import platform
 from typing import Tuple, Union, List, Set
 
 from packaging import version
+from yaml import FullLoader, load, safe_dump, YAMLError
 
 from moht import PLUGINS2CLEAN
 
@@ -244,3 +245,32 @@ def get_string_duration(seconds: float, time_format='%M:%S') -> str:
     """
     now = datetime.combine(date.today(), time()) + timedelta(seconds=seconds)
     return now.strftime(time_format)
+
+
+def read_config(yaml_file: str) -> dict:
+    """
+    Read configuration from yaml file and return dict.
+
+    :raise OSError: when yaml_file do not exist or is not a file
+    :param yaml_file: absolute path to configuration yaml
+    :return: configuration as dict
+    """
+    try:
+        with open(yaml_file, 'r') as ymlfile:
+            data = load(ymlfile, Loader=FullLoader)
+    except (YAMLError, TypeError):
+        data = {}
+    return data
+
+
+def write_config(data: dict, yaml_file: str, mode='w') -> None:
+    """
+    Write python dict as yaml file.
+
+    :raise OSError: when yaml_file do not exist or is not a file
+    :param data: dict of configuration
+    :param yaml_file: absolute path to configuration yaml
+    :param mode: writing mode
+    """
+    with open(yaml_file, mode) as ymlfile:
+        safe_dump(data, ymlfile, default_flow_style=False)
