@@ -16,7 +16,7 @@ from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
     QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem, QApplication, QStatusBar,
-    QProgressBar, QStackedWidget, QTreeWidget, QAction, QPushButton, QCheckBox, QLineEdit, QLabel
+    QProgressBar, QStackedWidget, QTreeWidget, QAction, QPushButton, QCheckBox, QLineEdit, QLabel, QRadioButton
 )
 
 from moht import VERSION, TES3CMD, utils, qtgui_rc
@@ -102,6 +102,7 @@ class MohtQtGui(QMainWindow):
         self.morrowind_dir = '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'
 
     def _init_radio_buttons(self):
+        self.rb_custom.toggled.connect(self._rb_custom_toggled)
         for ver in ['0_37', '0_40']:
             getattr(self, f'rb_{ver}').toggled.connect(partial(self._rb_tes3cmd_toggled, ver))
 
@@ -123,6 +124,9 @@ class MohtQtGui(QMainWindow):
         header = self.tree_report.headerItem()
         header.setToolTip(REP_COL_PLUGIN, self.tr('Double click on item to copy plugin`s path.'))
         header.setToolTip(REP_COL_TIME, self.tr('Cleaning time in min:sec\nHold on item to see cleaning details.'))
+
+    def _rb_custom_toggled(self, state: bool) -> None:
+        self.le_tes3cmd.setEnabled(state)
 
     def _rb_tes3cmd_toggled(self, version: str, state: bool) -> None:
         if state:
@@ -472,6 +476,7 @@ dnf install perl-Config-IniFiles.noarch''')
         self.le_morrowind_dir = self.findChild(QLineEdit, 'le_morrowind_dir')
         self.le_tes3cmd = self.findChild(QLineEdit, 'le_tes3cmd')
 
+        self.rb_custom = self.findChild(QRadioButton, 'rb_custom')
         self.statusbar = self.findChild(QStatusBar, 'statusbar')
         self.progressbar = self.findChild(QProgressBar, 'progressbar')
         self.stacked_clean = self.findChild(QStackedWidget, 'stacked_clean')
