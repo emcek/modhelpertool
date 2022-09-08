@@ -57,7 +57,11 @@ def load_ui(ui_path: str, parent: QtWidgets) -> None:
 
 class MohtQtGui(QMainWindow):
     def __init__(self, cli_args: Namespace) -> None:
-        """Mod Helper Tool Qt5 GUI."""
+        """
+        Mod Helper Tool Qt5 GUI.
+
+        :param cli_args: Parameters from CLI
+        """
         super().__init__()
         self._find_children()
         self.logger = getLogger(__name__)
