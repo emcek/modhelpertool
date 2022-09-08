@@ -390,8 +390,8 @@ dnf install perl-Config-IniFiles.noarch''')
         self.cb_auto_save.setChecked(cfg_dict['auto_save'])
 
     def _apply_cfg_tes3cmd_clean(self, cfg_dict: Dict[str, Union[str, int, bool]]) -> None:
-        self.mods_dir = cfg_dict['mod_dir']
-        self.morrowind_dir = cfg_dict['data_files_dir']
+        self.mods_dir = cfg_dict['mod_dir'] if cfg_dict['mod_dir'] else str(Path.home())
+        self.morrowind_dir = cfg_dict['data_files_dir'] if cfg_dict['data_files_dir'] else str(Path.home())
         self.tes3cmd = cfg_dict['tes3cmd_bin']
         self.tes3cmd_ver = cfg_dict['tes3cmd_ver']
         self.cb_rm_backup.setChecked(cfg_dict['clean_backup'])
