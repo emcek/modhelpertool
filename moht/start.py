@@ -14,7 +14,7 @@ from moht.utils import here
 logger = getLogger(f'moht.{__name__}')
 
 
-def run_tk(cli_opts: Namespace):
+def run_tk(cli_opts: Namespace) -> None:
     """Function to start Mod Helper Tool TkGUI."""
     import tkinter
     from moht.tkgui import MohtTkGui
@@ -32,7 +32,7 @@ def run_tk(cli_opts: Namespace):
         logger.exception(f'Critical error: {exp}')
 
 
-def run_qt(cli_opts: Namespace):
+def run_qt(cli_opts: Namespace) -> None:
     """Function to start Mod Helper Tool QtGUI."""
     from PyQt5.QtCore import Qt, QCoreApplication, QLibraryInfo, QLocale, QTranslator
     from PyQt5.QtWidgets import QApplication
