@@ -285,7 +285,7 @@ def parent_dir(full_path: Union[str, Path]) -> str:
     """
     result = ''
     if path.isdir(full_path):
-        result = full_path
+        result = str(full_path)
     elif path.isfile(full_path):
-        result = path.dirname(full_path)
-    return str(result).rstrip(sep)
+        result = str(path.dirname(full_path))
+    return result.rstrip(sep)
