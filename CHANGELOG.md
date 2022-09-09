@@ -4,6 +4,9 @@
 * Settings can be saved/loaded to/from configuration file
 * Auto-save checkbox
 * Load yaml configuration from command line
+* Fix crash when selected custom `tes3cmd` report `PermissionErorr`
+* When something is wrong with `tes3cmd` text is set to red
+* Every text field and button remember last selected directory
 
 # v0.7.0
 * make `tes3cmd-v0.40` default version (it not require `perl-Config-IniFiles`)
