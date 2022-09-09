@@ -288,28 +288,48 @@ def test_read_write_yaml_cfg_file():
 
 
 @mark.parametrize('args, result', [
-    ('/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files', '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'),
-    ('/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files/', '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'),
-    (Path('/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'), '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'),
-    ('/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files/Morrowind.esm', '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'),
-    (Path('/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files/Morrowind.esm'), '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'),
-    ('/home/emc/clean/Abandoned_Flatv2-37854-V2/Abandoned_Flat_2_readme.rtf', '/home/emc/clean/Abandoned_Flatv2-37854-V2'),
-    (Path('/home/emc/clean/Abandoned_Flatv2-37854-V2/Abandoned_Flat_2_readme.rtf'), '/home/emc/clean/Abandoned_Flatv2-37854-V2'),
+    ('/home/emcek/.wine/drive_c/GOG Games/Morrowind/Data Files', '/home/emcek/.wine/drive_c/GOG Games/Morrowind/Data Files'),
+    ('/home/emcek/.wine/drive_c/GOG Games/Morrowind/Data Files/', '/home/emcek/.wine/drive_c/GOG Games/Morrowind/Data Files'),
+    (Path('/home/emcek/.wine/drive_c/GOG Games/Morrowind/Data Files'), '/home/emcek/.wine/drive_c/GOG Games/Morrowind/Data Files'),
 ])
 @mark.skipif(condition=platform != 'linux', reason='Run only on Linux')
-def test_parent_dir_linux(args, result):
-    assert utils.parent_dir(args) == result
+def test_parent_dir_linux_dir(args, result):
+    with patch('moht.utils.path.isdir', return_value=True):
+        assert utils.parent_dir(args) == result
+
+
+@mark.parametrize('args, result', [
+    ('/home/emcek/.wine/drive_c/GOG Games/Morrowind/Data Files/Morrowind.esm', '/home/emcek/.wine/drive_c/GOG Games/Morrowind/Data Files'),
+    (Path('/home/emcek/.wine/drive_c/GOG Games/Morrowind/Data Files/Morrowind.esm'), '/home/emcek/.wine/drive_c/GOG Games/Morrowind/Data Files'),
+    ('/home/emcek/clean/Abandoned_Flatv2-37854-V2/Abandoned_Flat_2_readme.rtf', '/home/emcek/clean/Abandoned_Flatv2-37854-V2'),
+    (Path('/home/emcek/clean/Abandoned_Flatv2-37854-V2/Abandoned_Flat_2_readme.rtf'), '/home/emcek/clean/Abandoned_Flatv2-37854-V2'),
+])
+@mark.skipif(condition=platform != 'linux', reason='Run only on Linux')
+def test_parent_dir_linux_files(args, result):
+    with patch('moht.utils.path.isdir', return_value=False):
+        with patch('moht.utils.path.isfile', return_value=True):
+            assert utils.parent_dir(args) == result
 
 
 @mark.parametrize('args, result', [
     ('S:\Program Files\Morrowind\Data Files', 'S:\Program Files\Morrowind\Data Files'),
     ('S:\Program Files\Morrowind\Data Files\\', 'S:\Program Files\Morrowind\Data Files'),
     (Path('S:\Program Files\Morrowind\Data Files'), 'S:\Program Files\Morrowind\Data Files'),
+])
+@mark.skipif(condition=platform != 'win32', reason='Run only on Windows')
+def test_parent_dir_windows_dir(args, result):
+    with patch('moht.utils.pathisdir', return_value=True):
+        assert utils.parent_dir(args) == result
+
+
+@mark.parametrize('args, result', [
     ('S:\Program Files\Morrowind\Data Files\Morrowind.esm', 'S:\Program Files\Morrowind\Data Files'),
     (Path('S:\Program Files\Morrowind\Data Files\Morrowind.esm'), 'S:\Program Files\Morrowind\Data Files'),
     ('S:\OpenMWMods\Architecture\OAABDwemerPavements\\00 Core\OAAB Dwemer Pavements.ESP', 'S:\OpenMWMods\Architecture\OAABDwemerPavements\\00 Core'),
     (Path('S:\OpenMWMods\Architecture\OAABDwemerPavements\\00 Core\OAAB Dwemer Pavements.ESP'), 'S:\OpenMWMods\Architecture\OAABDwemerPavements\\00 Core'),
 ])
 @mark.skipif(condition=platform != 'win32', reason='Run only on Windows')
-def test_parent_dir_windows(args, result):
-    assert utils.parent_dir(args) == result
+def test_parent_dir_windows_files(args, result):
+    with patch('moht.utils.path.isdir', return_value=False):
+        with patch('moht.utils.path.isfile', return_value=True):
+            assert utils.parent_dir(args) == result
