@@ -22,7 +22,7 @@ Discord: &lt;a href=&quot;https://discord.gg/sKyZwumQuU&quot;&gt;&lt;span style=
 Report isssue: &lt;a href=&quot;https://gitlab.com/modding-openmw/modhelpertool/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Gitlab issues&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="643"/>
+        <location filename="../qtgui.py" line="678"/>
         <source>&lt;p&gt;Attach log file: {0}&lt;br/&gt;&lt;br/&gt;</source>
         <translation>&lt;p&gt;Attach log file: {0}&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
@@ -30,39 +30,39 @@ Report isssue: &lt;a href=&quot;https://gitlab.com/modding-openmw/modhelpertool/
 <context>
     <name>MohtQtGui</name>
     <message>
-        <location filename="../qtgui.py" line="147"/>
+        <location filename="../qtgui.py" line="155"/>
         <source>Double click on item to copy plugin`s path.</source>
         <translation>Double click on item to copy plugin`s path.</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="148"/>
+        <location filename="../qtgui.py" line="156"/>
         <source>Cleaning time in min:sec
 Hold on item to see cleaning details.</source>
         <translation>Cleaning time in min:sec
 Hold on item to see cleaning details.</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="267"/>
+        <location filename="../qtgui.py" line="276"/>
         <source>Path of plugin copied to clipboard</source>
         <translation>Path of plugin copied to clipboard</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="139"/>
+        <location filename="../qtgui.py" line="147"/>
         <source>Cleaned: 0</source>
         <translation>Cleaned: 0</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="140"/>
+        <location filename="../qtgui.py" line="148"/>
         <source>Error: 0</source>
         <translation>Error: 0</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="141"/>
+        <location filename="../qtgui.py" line="149"/>
         <source>Clean: 0</source>
         <translation>Clean: 0</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="317"/>
+        <location filename="../qtgui.py" line="340"/>
         <source>
 Check for `perl-Config-IniFiles` or a similar package.
 Use you package manage:
@@ -101,7 +101,7 @@ Fedora / CentOS / RHEL:
 dnf install perl-Config-IniFiles.noarch</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="336"/>
+        <location filename="../qtgui.py" line="359"/>
         <source>Selected file is not a valid tes3cmd executable.
 
 Please select a correct binary file.</source>
@@ -110,27 +110,27 @@ Please select a correct binary file.</source>
 Please select a correct binary file.</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="171"/>
+        <location filename="../qtgui.py" line="180"/>
         <source>Plugins to clean: {0} - See Report</source>
         <translation>Plugins to clean: {0} - See Report</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="232"/>
+        <location filename="../qtgui.py" line="241"/>
         <source>Done. Took: {0}</source>
         <translation>Done. Took: {0}</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="271"/>
+        <location filename="../qtgui.py" line="280"/>
         <source>ver. {0} - {1}</source>
         <translation>ver. {0} - {1}</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="314"/>
+        <location filename="../qtgui.py" line="338"/>
         <source>Error: {0}</source>
         <translation>Error: {0}</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="89"/>
+        <location filename="../qtgui.py" line="94"/>
         <source>ver. {0}</source>
         <translation>ver. {0}</translation>
     </message>
