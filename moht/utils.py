@@ -279,7 +279,7 @@ def write_config(data: Dict[str, Dict[str, Union[str, int, bool]]], yaml_file: s
 def parent_dir(full_path: Union[str, Path]) -> str:
     """
     Returns full path to parent directory.
-    
+
     :param full_path: path as string or Path-like object
     :return: parent dir path as string
     """
