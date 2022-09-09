@@ -274,3 +274,18 @@ def write_config(data: Dict[str, Dict[str, Union[str, int, bool]]], yaml_file: s
     """
     with open(yaml_file, mode) as ymlfile:
         safe_dump(data, ymlfile, default_flow_style=False)
+
+
+def parent_dir(full_path: Union[str, Path]) -> str:
+    """
+    Returns full path to parent directory.
+
+    :param full_path: path as string or Path-like object
+    :return: parent dir path as string
+    """
+    result = ''
+    if path.isdir(full_path):
+        result = str(full_path)
+    elif path.isfile(full_path):
+        result = str(path.dirname(full_path))
+    return result.rstrip(sep)
