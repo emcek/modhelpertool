@@ -302,13 +302,13 @@ def test_parent_dir_linux(args, result):
 
 
 @mark.parametrize('args, result', [
-    ('C:\Program Files\GOG Games\Morrowind\Data Files', 'C:\\Program Files\\GOG Games\\Morrowind\\Data Files'),
-    ('C:\Program Files\GOG Games\Morrowind\Data Files\\', 'C:\\Program Files\\GOG Games\\Morrowind\\Data Files'),
-    (Path('C:\Program Files\GOG Games\Morrowind\Data Files'), 'C:\\Program Files\\GOG Games\\Morrowind\\Data Files'),
-    ('C:\Program Files\GOG Games\Morrowind\Data Files\Morrowind.esm', 'C:\\Program Files\\GOG Games\\Morrowind\\Data Files'),
-    (Path('C:\Program Files\GOG Games\Morrowind\Data Files\Morrowind.esm'), 'C:\\Program Files\\GOG Games\\Morrowind\\Data Files'),
-    ('D:\Mods\openmw\data\Architecture\Abandoned_Flatv2-37854-V2\Abandoned_Flat_2_readme.rtf', 'D:\Mods\openmw\data\Architecture\Abandoned_Flatv2-37854-V2'),
-    (Path('D:\Mods\openmw\data\Architecture\Abandoned_Flatv2-37854-V2\Abandoned_Flat_2_readme.rtf'), 'D:\Mods\openmw\data\Architecture\Abandoned_Flatv2-37854-V2'),
+    ('S:\Program Files\Morrowind\Data Files', 'S:\Program Files\Morrowind\Data Files'),
+    ('S:\Program Files\Morrowind\Data Files\\', 'S:\Program Files\Morrowind\Data Files'),
+    (Path('S:\Program Files\Morrowind\Data Files'), 'S:\Program Files\Morrowind\Data Files'),
+    ('S:\Program Files\Morrowind\Data Files\Morrowind.esm', 'S:\Program Files\Morrowind\Data Files'),
+    (Path('S:\Program Files\Morrowind\Data Files\Morrowind.esm'), 'S:\Program Files\Morrowind\Data Files'),
+    ('S:\OpenMWMods\Architecture\OAABDwemerPavements\\00 Core\OAAB Dwemer Pavements.ESP', 'S:\OpenMWMods\Architecture\OAABDwemerPavements\\00 Core'),
+    (Path('S:\OpenMWMods\Architecture\OAABDwemerPavements\\00 Core\OAAB Dwemer Pavements.ESP'), 'S:\OpenMWMods\Architecture\OAABDwemerPavements\\00 Core'),
 ])
 @mark.skipif(condition=platform != 'win32', reason='Run only on Windows')
 def test_parent_dir_windows(args, result):
