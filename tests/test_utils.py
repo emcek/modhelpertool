@@ -1,3 +1,5 @@
+from pathlib import Path
+from sys import platform
 from unittest.mock import call, patch
 
 from pytest import mark
@@ -283,3 +285,31 @@ def test_read_write_yaml_cfg_file():
     d_cfg = utils.read_config(test_tmp_yaml)
     assert len(d_cfg) == 0
     remove(test_tmp_yaml)
+
+
+@mark.parametrize('args, result', [
+    ('/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files', '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'),
+    ('/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files/', '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'),
+    (Path('/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'), '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'),
+    ('/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files/Morrowind.esm', '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'),
+    (Path('/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files/Morrowind.esm'), '/home/emc/.wine/drive_c/GOG Games/Morrowind/Data Files'),
+    ('/home/emc/clean/Abandoned_Flatv2-37854-V2/Abandoned_Flat_2_readme.rtf', '/home/emc/clean/Abandoned_Flatv2-37854-V2'),
+    (Path('/home/emc/clean/Abandoned_Flatv2-37854-V2/Abandoned_Flat_2_readme.rtf'), '/home/emc/clean/Abandoned_Flatv2-37854-V2'),
+])
+@mark.skipif(condition=platform != 'linux', reason='Run only on Linux')
+def test_parent_dir_linux(args, result):
+    assert utils.parent_dir(args) == result
+
+
+@mark.parametrize('args, result', [
+    ('C:\Program Files\GOG Games\Morrowind\Data Files', 'C:\\Program Files\\GOG Games\\Morrowind\\Data Files'),
+    ('C:\Program Files\GOG Games\Morrowind\Data Files\\', 'C:\\Program Files\\GOG Games\\Morrowind\\Data Files'),
+    (Path('C:\Program Files\GOG Games\Morrowind\Data Files'), 'C:\\Program Files\\GOG Games\\Morrowind\\Data Files'),
+    ('C:\Program Files\GOG Games\Morrowind\Data Files\Morrowind.esm', 'C:\\Program Files\\GOG Games\\Morrowind\\Data Files'),
+    (Path('C:\Program Files\GOG Games\Morrowind\Data Files\Morrowind.esm'), 'C:\\Program Files\\GOG Games\\Morrowind\\Data Files'),
+    ('D:\Mods\openmw\data\Architecture\Abandoned_Flatv2-37854-V2\Abandoned_Flat_2_readme.rtf', 'D:\Mods\openmw\data\Architecture\Abandoned_Flatv2-37854-V2'),
+    (Path('D:\Mods\openmw\data\Architecture\Abandoned_Flatv2-37854-V2\Abandoned_Flat_2_readme.rtf'), 'D:\Mods\openmw\data\Architecture\Abandoned_Flatv2-37854-V2'),
+])
+@mark.skipif(condition=platform != 'win32', reason='Run only on Windows')
+def test_parent_dir_windows(args, result):
+    assert utils.parent_dir(args) == result
