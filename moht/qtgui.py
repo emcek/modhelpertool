@@ -154,6 +154,7 @@ class MohtQtGui(QMainWindow):
 
     def _rb_custom_toggled(self, state: bool) -> None:
         self.le_tes3cmd.setEnabled(state)
+        self.pb_tes3cmd.setEnabled(state)
         self.trigger_autosave()
 
     def _pb_clean_clicked(self) -> None:
