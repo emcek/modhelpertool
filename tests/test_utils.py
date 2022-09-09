@@ -320,7 +320,7 @@ def test_parent_dir_linux_file(args, result):
 ])
 @mark.skipif(condition=platform != 'win32', reason='Run only on Windows')
 def test_parent_dir_windows_dir(args, result):
-    with patch('moht.utils.pathisdir', return_value=True):
+    with patch('moht.utils.path.isdir', return_value=True):
         assert utils.parent_dir(args) == result
 
 
