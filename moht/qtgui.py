@@ -302,6 +302,7 @@ class MohtQtGui(QMainWindow):
         self._le_status[f'le_{widget_name}'] = path_exists
         if path_exists and widget_name == 'tes3cmd':
             getattr(self, f'le_{widget_name}').setStyleSheet('')
+            # todo: Write own: os.path.dirname() implementation.
             setattr(self, f'{widget_name}_last', path.dirname(path_name))
             self._le_status[f'le_{widget_name}'] = self._check_clean_bin()
         elif path_exists and widget_name != 'tes3cmd':
