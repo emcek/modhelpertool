@@ -1,2 +1,11 @@
 -r requirements.txt
 tox
+pytest
+pytest-mccabe
+pytest-random
+mypy
+lxml
+types-PyYAML
+flake8
+pycodestyle
+pydocstyle
