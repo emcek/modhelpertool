@@ -8,6 +8,7 @@
 * When something is wrong with `tes3cmd` text is set to red
 * Every text field and button remember last selected directory
 * Allow run cleaning process for all found plugins
+* Update default user setting base of Operating System
 
 # v0.7.0
 * make `tes3cmd-v0.40` default version (it not require `perl-Config-IniFiles`)
