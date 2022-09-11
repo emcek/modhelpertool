@@ -7,5 +7,5 @@ tes3cmd_clean:
   clean_cache: true
   data_files_dir: ''
   mod_dir: ''
-  tes3cmd_bin: /home/emc/git/Modding-OpenMW/modhelpertool/moht/resources/tes3cmd-0.40-pre_rel2
+  tes3cmd_bin: ''
   tes3cmd_ver: 40
