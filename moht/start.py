@@ -55,7 +55,8 @@ def run_qt(cli_opts: Namespace) -> None:
         window.show()
     except Exception as exp:
         logger.exception(f'Critical error: {exp}')
-    sys.exit(app.exec())
+    finally:
+        sys.exit(app.exec())
 
 
 def _run_gui(cli_opts: Namespace) -> None:

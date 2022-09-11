@@ -2,9 +2,10 @@ moht:
   api_ver: 0.7.0
   auto_save: false
 tes3cmd_clean:
+  clean_all: false
   clean_backup: true
   clean_cache: true
   data_files_dir: ''
   mod_dir: ''
-  tes3cmd_bin: /home/emc/git/Modding-OpenMW/modhelpertool/moht/resources/tes3cmd-0.40-pre_rel2
+  tes3cmd_bin: ''
   tes3cmd_ver: 40
