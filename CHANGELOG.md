@@ -1,3 +1,6 @@
+# v0.8.1
+* Hotfix - add missing `default.yaml` into package
+
 # v0.8.0
 * make QtGUI translatable vie Qt Linguist
 * support Polish translation - draft
