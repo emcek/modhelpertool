@@ -174,7 +174,7 @@ class MohtQtGui(QMainWindow):
         self.pb_clean.disconnect()
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
         self.logger.debug(f'all_plugins: {len(all_plugins)}:\n{pformat(all_plugins)}')
-        if self.cb_clean_all:
+        if self.cb_clean_all.isChecked():
             plugins_to_clean = all_plugins
         else:
             plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
