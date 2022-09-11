@@ -2,6 +2,7 @@ moht:
   api_ver: 0.7.0
   auto_save: false
 tes3cmd_clean:
+  clean_all: false
   clean_backup: true
   clean_cache: true
   data_files_dir: ''
