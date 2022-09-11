@@ -203,6 +203,13 @@ def test_get_required_esm():
     assert get_required_esm(plugins) == {'Morrowind.esm'}
 
 
+def test_get_required_esm_not_on_plugin_list():
+    from pathlib import Path
+    from moht.utils import get_required_esm
+    plugins = [Path('/home/user/Aldruhn/Ald-ruhn.esp')]
+    assert get_required_esm(plugins) == set()
+
+
 def test_rm_dirs_with_subdirs():
     from moht.utils import rm_dirs_with_subdirs
     with patch.object(utils, 'rmtree') as rmtree_mock:
