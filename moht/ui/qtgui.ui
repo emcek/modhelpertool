@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Michal Plichta</author>
  <class>QtGui</class>
  <widget class="QMainWindow" name="QtGui">
   <property name="geometry">
@@ -392,6 +393,7 @@
    </property>
   </action>
  </widget>
+ <layoutdefault spacing="6" margin="4"/>
  <tabstops>
   <tabstop>tw_main</tabstop>
  </tabstops>
