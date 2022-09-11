@@ -430,6 +430,7 @@ dnf install perl-Config-IniFiles.noarch''')
         self.tes3cmd_ver = cfg_dict['tes3cmd_ver']
         self.cb_rm_backup.setChecked(cfg_dict['clean_backup'])
         self.cb_rm_cache.setChecked(cfg_dict['clean_cache'])
+        self.cb_clean_all.setChecked(cfg_dict['clean_all'])
 
     def _dump_gui_configuration(self) -> Dict[str, Dict[str, Union[str, int, bool]]]:
         """
@@ -449,6 +450,7 @@ dnf install perl-Config-IniFiles.noarch''')
                 'tes3cmd_ver': self.tes3cmd_ver,
                 'clean_backup': self.cb_rm_backup.isChecked(),
                 'clean_cache': self.cb_rm_cache.isChecked(),
+                'clean_all': self.cb_clean_all.isChecked(),
             },
         }
         return c
