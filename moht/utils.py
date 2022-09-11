@@ -166,7 +166,8 @@ def get_required_esm(plugins: List[Path]) -> Set[str]:
     :param plugins:
     :return:
     """
-    return set(chain.from_iterable([PLUGINS2CLEAN[extract_filename(plugin)] for plugin in plugins]))
+    # todo: detect required esm with tes3cmd, now just skip it
+    return set(chain.from_iterable([PLUGINS2CLEAN.get(extract_filename(plugin), '') for plugin in plugins]))
 
 
 def rm_dirs_with_subdirs(dir_path: str, subdirs: List[str]) -> None:

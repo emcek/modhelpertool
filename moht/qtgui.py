@@ -174,7 +174,10 @@ class MohtQtGui(QMainWindow):
         self.pb_clean.disconnect()
         all_plugins = utils.get_all_plugins(mods_dir=self.mods_dir)
         self.logger.debug(f'all_plugins: {len(all_plugins)}:\n{pformat(all_plugins)}')
-        plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
+        if self.cb_clean_all:
+            plugins_to_clean = all_plugins
+        else:
+            plugins_to_clean = utils.get_plugins_to_clean(plugins=all_plugins)
         self.no_of_plugins = len(plugins_to_clean)
         self.logger.debug(f'to_clean: {self.no_of_plugins}:\n{pformat(plugins_to_clean)}')
         self.statusbar.showMessage(self.tr('Plugins to clean: {0} - See Report').format(self.no_of_plugins))
@@ -650,6 +653,7 @@ dnf install perl-Config-IniFiles.noarch''')
         self.cb_rm_backup = self.findChild(QCheckBox, 'cb_rm_backup')
         self.cb_rm_cache = self.findChild(QCheckBox, 'cb_rm_cache')
         self.cb_auto_save = self.findChild(QCheckBox, 'cb_auto_save')
+        self.cb_clean_all = self.findChild(QCheckBox, 'cb_clean_all')
 
         self.le_mods_dir = self.findChild(QLineEdit, 'le_mods_dir')
         self.le_morrowind_dir = self.findChild(QLineEdit, 'le_morrowind_dir')
