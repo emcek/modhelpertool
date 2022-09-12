@@ -611,7 +611,10 @@ dnf install perl-Config-IniFiles.noarch''')
         self.le_morrowind_dir = self.findChild(QLineEdit, 'le_morrowind_dir')
         self.le_tes3cmd = self.findChild(QLineEdit, 'le_tes3cmd')
 
+        self.rb_40 = self.findChild(QRadioButton, 'rb_40')
+        self.rb_37 = self.findChild(QRadioButton, 'rb_37')
         self.rb_custom = self.findChild(QRadioButton, 'rb_custom')
+
         self.statusbar = self.findChild(QStatusBar, 'statusbar')
         self.progressbar = self.findChild(QProgressBar, 'progressbar')
         self.stacked_clean = self.findChild(QStackedWidget, 'stacked_clean')
@@ -731,7 +734,7 @@ class Worker(QtCore.QRunnable):
 
     @QtCore.pyqtSlot()
     def run(self):
-        """Initialise the runner function with passed args, kwargs."""
+        """Initialise the runner function with passed additional kwargs."""
         try:
             result = self.func(**self.kwargs)
         except Exception:
