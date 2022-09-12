@@ -104,6 +104,7 @@ class MohtQtGui(QMainWindow):
         self.actionReportIssue.triggered.connect(self._report_issue)
         self.actionCheckUpdates.triggered.connect(self._check_updates)
 
+    # <=><=><=><=><=><=><=><=><=><=><=> init clean <=><=><=><=><=><=><=><=><=><=><=>
     def _init_buttons(self) -> None:
         self.pb_mods_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True,
                                                  last_dir=lambda: self._mods_dir_last, widget_name='le_mods_dir'))
@@ -111,12 +112,11 @@ class MohtQtGui(QMainWindow):
                                                       last_dir=lambda: self._morrowind_dir_last, widget_name='le_morrowind_dir'))
         self.pb_tes3cmd.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False,
                                                 last_dir=lambda: self._tes3cmd_last, widget_name='le_tes3cmd'))
-        self.pb_clean.clicked.connect(self._pb_clean_clicked)
-        self.pb_chk_updates.clicked.connect(self._check_updates)
         self.pb_report.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 1))
-        self.pb_back_clean.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 0))
         self.pb_load.clicked.connect(self.load_config)
         self.pb_save.clicked.connect(self.save_config)
+        self.pb_chk_updates.clicked.connect(self._check_updates)
+        self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
     def _init_line_edits(self):
         self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='mods_dir'))
@@ -136,28 +136,9 @@ class MohtQtGui(QMainWindow):
         self.cb_rm_backup.toggled.connect(self.trigger_autosave)
         self.cb_rm_cache.toggled.connect(self.trigger_autosave)
 
-    def _init_tree_report(self):
-        self.tree_report.setColumnWidth(REP_COL_PLUGIN, 400)
-        self.tree_report.setColumnWidth(REP_COL_STATUS, 140)
-        self.tree_report.setColumnWidth(REP_COL_TIME, 60)
-        self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
-
-    def _clear_tree_report(self):
-        self.tree_report.clear()
-        self.top_cleaned = QTreeWidgetItem([self.tr('Cleaned: 0'), '', '', ''])
-        self.top_error = QTreeWidgetItem([self.tr('Error: 0'), '', '', ''])
-        self.top_clean = QTreeWidgetItem([self.tr('Clean: 0'), '', '', ''])
-        self.tree_report.addTopLevelItem(self.top_cleaned)
-        self.tree_report.addTopLevelItem(self.top_error)
-        self.tree_report.addTopLevelItem(self.top_clean)
-        self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
-        header = self.tree_report.headerItem()
-        header.setToolTip(REP_COL_PLUGIN, self.tr('Double click on item to copy plugin`s path.'))
-        header.setToolTip(REP_COL_TIME, self.tr('Cleaning time in min:sec\nHold on item to see cleaning details.'))
-
     def _rb_tes3cmd_toggled(self, version: int, state: bool) -> None:
         if state:
-            self._set_le_tes3cmd(TES3CMD[platform][version])
+            self.tes3cmd = MohtQtGui._set_tes3cmd_path(TES3CMD[platform][version])
         self.trigger_autosave()
 
     def _rb_custom_toggled(self, state: bool) -> None:
@@ -165,6 +146,95 @@ class MohtQtGui(QMainWindow):
         self.pb_tes3cmd.setEnabled(state)
         self.trigger_autosave()
 
+    def autosave_toggled(self) -> None:
+        """Action for autosave checkbox toggle."""
+        if self.cb_auto_save.isChecked():
+            self.save_config()
+        else:
+            self.conf_file = ''
+            self.statusbar.clearMessage()
+
+    def _is_dir_exists(self, text: str, widget_name: str) -> None:
+        dir_exists = path.isdir(text)
+        self.logger.debug(f'Path: {text} for le_{widget_name} exists: {dir_exists}')
+        self._line_edit_handling_and_last_directory(widget_name, dir_exists, text)
+
+    def _is_file_exists(self, text: str, widget_name) -> None:
+        file_exists = path.isfile(text)
+        self.logger.debug(f'Path: {text} for le_{widget_name} exists: {file_exists}')
+        self._line_edit_handling_and_last_directory(widget_name, file_exists, text)
+
+    def _line_edit_handling_and_last_directory(self, widget_name: str, path_exists: bool, path_name: str) -> None:
+        """
+        Mark text of LineEdit as red if path does not exist.
+
+        Save last visited path (starting directory for QFileWidget) base of path_name.
+
+        :param widget_name: widget name
+        :param path_exists: bool for path existence
+        :param path_name: full path name
+        """
+        self._le_status[f'le_{widget_name}'] = path_exists
+        if path_exists and widget_name == 'tes3cmd':
+            getattr(self, f'le_{widget_name}').setStyleSheet('')
+            setattr(self, f'_{widget_name}_last', utils.parent_dir(path_name))
+            result = self._check_clean_bin()
+            if not result:
+                self._le_status[f'le_{widget_name}'] = result
+                getattr(self, f'le_{widget_name}').setStyleSheet('color: red;')
+        elif path_exists and widget_name != 'tes3cmd':
+            getattr(self, f'le_{widget_name}').setStyleSheet('')
+            setattr(self, f'_{widget_name}_last', utils.parent_dir(path_name))
+        else:
+            getattr(self, f'le_{widget_name}').setStyleSheet('color: red;')
+        self._handle_clean_button()
+
+    def _check_clean_bin(self) -> bool:
+        self.logger.debug('Checking tes3cmd')
+        try:
+            out, err = utils.run_cmd(f'{self.tes3cmd} help')
+            result, reason = utils.parse_cleaning(out, err, '')
+        except OSError as exp:
+            self.logger.debug('Checking selected tes3cmd file', exc_info=True)
+            result = False
+            reason = str(exp)
+        self.logger.debug(f'Result: {result}, Reason: {reason}')
+        if not result:
+            self.statusbar.showMessage(self.tr('Error: {0}').format(reason))
+            if 'Config::IniFiles' in reason:
+                msg = self.tr('''
+Check for `perl-Config-IniFiles` or a similar package.
+Use you package manage:
+
+Arch / Manjaro (AUR):
+yay -S perl-config-inifiles
+
+Gentoo:
+emerge dev-perl/Config-IniFiles
+
+Debian / Ubuntu / Mint:
+apt install libconfig-inifiles-perl
+
+OpenSUSE:
+zypper install perl-Config-IniFiles
+
+Fedora / CentOS / RHEL:
+dnf install perl-Config-IniFiles.noarch''')
+            elif 'Not tes3cmd' in reason:
+                msg = self.tr('Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.')
+            else:
+                msg = reason
+            self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
+        return result
+
+    def _handle_clean_button(self) -> None:
+        """Enable /disable Clean button base on status of LineEdits."""
+        if all(self._le_status.values()):
+            self.pb_clean.setEnabled(True)
+        else:
+            self.pb_clean.setEnabled(False)
+
+    # <=><=><=><=><=><=><=><=><=><=><=> clean <=><=><=><=><=><=><=><=><=><=><=>
     def _pb_clean_clicked(self) -> None:
         self.progressbar.setValue(0)
         self.progress = 0
@@ -244,6 +314,27 @@ class MohtQtGui(QMainWindow):
         self.statusbar.showMessage(self.tr('Done. Took: {0}').format(duration))
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
+    # <=><=><=><=><=><=><=><=><=><=><=> report <=><=><=><=><=><=><=><=><=><=><=>
+    def _init_tree_report(self):
+        self.tree_report.setColumnWidth(REP_COL_PLUGIN, 400)
+        self.tree_report.setColumnWidth(REP_COL_STATUS, 140)
+        self.tree_report.setColumnWidth(REP_COL_TIME, 60)
+        self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
+        self.pb_back_clean.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 0))
+
+    def _clear_tree_report(self):
+        self.tree_report.clear()
+        self.top_cleaned = QTreeWidgetItem([self.tr('Cleaned: 0'), '', '', ''])
+        self.top_error = QTreeWidgetItem([self.tr('Error: 0'), '', '', ''])
+        self.top_clean = QTreeWidgetItem([self.tr('Clean: 0'), '', '', ''])
+        self.tree_report.addTopLevelItem(self.top_cleaned)
+        self.tree_report.addTopLevelItem(self.top_error)
+        self.tree_report.addTopLevelItem(self.top_clean)
+        self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
+        header = self.tree_report.headerItem()
+        header.setToolTip(REP_COL_PLUGIN, self.tr('Double click on item to copy plugin`s path.'))
+        header.setToolTip(REP_COL_TIME, self.tr('Cleaning time in min:sec\nHold on item to see cleaning details.'))
+
     def _add_report_data(self, plug: Path, result: bool, reason: str, cleaning_time: float, out: str, err: str):
         error_txt = '\n'.join(reason.split('**'))
         if 'not found' in reason:
@@ -277,93 +368,6 @@ class MohtQtGui(QMainWindow):
         if item.parent():
             QApplication.clipboard().setText(item.toolTip(REP_COL_PLUGIN))
             self.statusbar.showMessage(self.tr('Path of plugin copied to clipboard'))
-
-    def _check_updates(self):
-        _, desc = utils.is_latest_ver(package='moht', current_ver=VERSION)
-        self.statusbar.showMessage(self.tr('ver. {0} - {1}').format(VERSION, desc))
-
-    def _set_le_tes3cmd(self, tes3cmd: str) -> None:
-        self.tes3cmd = path.join(utils.here(__file__), 'resources', tes3cmd)
-
-    def _is_dir_exists(self, text: str, widget_name: str) -> None:
-        dir_exists = path.isdir(text)
-        self.logger.debug(f'Path: {text} for le_{widget_name} exists: {dir_exists}')
-        self._line_edit_handling_and_last_directory(widget_name, dir_exists, text)
-
-    def _is_file_exists(self, text: str, widget_name) -> None:
-        file_exists = path.isfile(text)
-        self.logger.debug(f'Path: {text} for le_{widget_name} exists: {file_exists}')
-        self._line_edit_handling_and_last_directory(widget_name, file_exists, text)
-
-    def _line_edit_handling_and_last_directory(self, widget_name: str, path_exists: bool, path_name: str) -> None:
-        """
-        Mark text of LineEdit as red if path does not exist.
-
-        Save last visited path (starting directory for QFileWidget) base of path_name.
-
-        :param widget_name: widget name
-        :param path_exists: bool for path existence
-        :param path_name: full path name
-        """
-        self._le_status[f'le_{widget_name}'] = path_exists
-        if path_exists and widget_name == 'tes3cmd':
-            getattr(self, f'le_{widget_name}').setStyleSheet('')
-            setattr(self, f'_{widget_name}_last', utils.parent_dir(path_name))
-            result = self._check_clean_bin()
-            if not result:
-                self._le_status[f'le_{widget_name}'] = result
-                getattr(self, f'le_{widget_name}').setStyleSheet('color: red;')
-        elif path_exists and widget_name != 'tes3cmd':
-            getattr(self, f'le_{widget_name}').setStyleSheet('')
-            setattr(self, f'_{widget_name}_last', utils.parent_dir(path_name))
-        else:
-            getattr(self, f'le_{widget_name}').setStyleSheet('color: red;')
-        self._handle_clean_button()
-
-    def _handle_clean_button(self) -> None:
-        """Enable /disable Clean button base on status of LineEdits."""
-        if all(self._le_status.values()):
-            self.pb_clean.setEnabled(True)
-        else:
-            self.pb_clean.setEnabled(False)
-
-    def _check_clean_bin(self) -> bool:
-        self.logger.debug('Checking tes3cmd')
-        try:
-            out, err = utils.run_cmd(f'{self.tes3cmd} help')
-            result, reason = utils.parse_cleaning(out, err, '')
-        except OSError as exp:
-            self.logger.debug('Checking selected tes3cmd file', exc_info=True)
-            result = False
-            reason = str(exp)
-        self.logger.debug(f'Result: {result}, Reason: {reason}')
-        if not result:
-            self.statusbar.showMessage(self.tr('Error: {0}').format(reason))
-            if 'Config::IniFiles' in reason:
-                msg = self.tr('''
-Check for `perl-Config-IniFiles` or a similar package.
-Use you package manage:
-
-Arch / Manjaro (AUR):
-yay -S perl-config-inifiles
-
-Gentoo:
-emerge dev-perl/Config-IniFiles
-
-Debian / Ubuntu / Mint:
-apt install libconfig-inifiles-perl
-
-OpenSUSE:
-zypper install perl-Config-IniFiles
-
-Fedora / CentOS / RHEL:
-dnf install perl-Config-IniFiles.noarch''')
-            elif 'Not tes3cmd' in reason:
-                msg = self.tr('Selected file is not a valid tes3cmd executable.\n\nPlease select a correct binary file.')
-            else:
-                msg = reason
-            self._show_message_box(kind_of='warning', title='Not tes3cmd', message=msg)
-        return result
 
     # <=><=><=><=><=><=><=><=><=><=><=> configuration <=><=><=><=><=><=><=><=><=><=><=>
     def load_config(self) -> None:
@@ -430,7 +434,7 @@ dnf install perl-Config-IniFiles.noarch''')
         tes_ver = cfg_dict['tes3cmd_ver']
         self.mods_dir = mod_dir if mod_dir else str(Path.home())
         self.morrowind_dir = data_files if data_files else str(Path.home())
-        self.tes3cmd = tes3bin if tes3bin else path.join(utils.here(__file__), 'resources', TES3CMD[platform][tes_ver])
+        self.tes3cmd = tes3bin if tes3bin else MohtQtGui._set_tes3cmd_path(TES3CMD[platform][tes_ver])
         self.tes3cmd_ver = tes_ver
         self.cb_rm_backup.setChecked(cfg_dict['clean_backup'])
         self.cb_rm_cache.setChecked(cfg_dict['clean_cache'])
@@ -459,19 +463,19 @@ dnf install perl-Config-IniFiles.noarch''')
         }
         return c
 
-    def autosave_toggled(self) -> None:
-        """Action for autosave checkbox toggle."""
-        if self.cb_auto_save.isChecked():
-            self.save_config()
-        else:
-            self.conf_file = ''
-            self.statusbar.clearMessage()
-
     # <=><=><=><=><=><=><=><=><=><=><=> helpers <=><=><=><=><=><=><=><=><=><=><=>
     def trigger_autosave(self) -> None:
         """Just trigger save configuration if auto save checkbox is checked."""
         if self.cb_auto_save.isChecked():
             self.save_config()
+
+    @staticmethod
+    def _set_tes3cmd_path(tes3cmd: str) -> str:
+        return path.join(utils.here(__file__), 'resources', tes3cmd)
+
+    def _check_updates(self):
+        _, desc = utils.is_latest_ver(package='moht', current_ver=VERSION)
+        self.statusbar.showMessage(self.tr('ver. {0} - {1}').format(VERSION, desc))
 
     def run_in_background(self, job: Union[partial, Callable], signal_handlers: Dict[str, Callable]) -> None:
         """
@@ -577,6 +581,43 @@ dnf install perl-Config-IniFiles.noarch''')
     def _report_issue():
         webbrowser.open('https://gitlab.com/modding-openmw/modhelpertool/issues', new=2)
 
+    def _find_children(self) -> None:
+        self.actionLoad = self.findChild(QAction, 'actionLoad')
+        self.actionSave = self.findChild(QAction, 'actionSave')
+        self.actionSave_as = self.findChild(QAction, 'actionSave_as')
+        self.actionQuit = self.findChild(QAction, 'actionQuit')
+        self.actionAboutMoht = self.findChild(QAction, 'actionAboutMoht')
+        self.actionAboutQt = self.findChild(QAction, 'actionAboutQt')
+        self.actionReportIssue = self.findChild(QAction, 'actionReportIssue')
+        self.actionCheckUpdates = self.findChild(QAction, 'actionCheckUpdates')
+
+        self.pb_mods_dir = self.findChild(QPushButton, 'pb_mods_dir')
+        self.pb_morrowind_dir = self.findChild(QPushButton, 'pb_morrowind_dir')
+        self.pb_tes3cmd = self.findChild(QPushButton, 'pb_tes3cmd')
+        self.pb_report = self.findChild(QPushButton, 'pb_report')
+        self.pb_back_clean = self.findChild(QPushButton, 'pb_back_clean')
+        self.pb_clean = self.findChild(QPushButton, 'pb_clean')
+        self.pb_chk_updates = self.findChild(QPushButton, 'pb_chk_updates')
+        self.pb_close = self.findChild(QPushButton, 'pb_close')
+        self.pb_load = self.findChild(QPushButton, 'pb_load')
+        self.pb_save = self.findChild(QPushButton, 'pb_save')
+
+        self.cb_rm_backup = self.findChild(QCheckBox, 'cb_rm_backup')
+        self.cb_rm_cache = self.findChild(QCheckBox, 'cb_rm_cache')
+        self.cb_auto_save = self.findChild(QCheckBox, 'cb_auto_save')
+        self.cb_clean_all = self.findChild(QCheckBox, 'cb_clean_all')
+
+        self.le_mods_dir = self.findChild(QLineEdit, 'le_mods_dir')
+        self.le_morrowind_dir = self.findChild(QLineEdit, 'le_morrowind_dir')
+        self.le_tes3cmd = self.findChild(QLineEdit, 'le_tes3cmd')
+
+        self.rb_custom = self.findChild(QRadioButton, 'rb_custom')
+        self.statusbar = self.findChild(QStatusBar, 'statusbar')
+        self.progressbar = self.findChild(QProgressBar, 'progressbar')
+        self.stacked_clean = self.findChild(QStackedWidget, 'stacked_clean')
+        self.tree_report = self.findChild(QTreeWidget, 'tree_report')
+
+    # <=><=><=><=><=><=><=><=><=><=><=> property <=><=><=><=><=><=><=><=><=><=><=>
     @property
     def mods_dir(self) -> str:
         """
@@ -634,42 +675,6 @@ dnf install perl-Config-IniFiles.noarch''')
             getattr(self, f'rb_{value}').setChecked(True)
         except AttributeError:
             self.logger.debug(f'Can not change select: rb_{value}')
-
-    def _find_children(self) -> None:
-        self.actionLoad = self.findChild(QAction, 'actionLoad')
-        self.actionSave = self.findChild(QAction, 'actionSave')
-        self.actionSave_as = self.findChild(QAction, 'actionSave_as')
-        self.actionQuit = self.findChild(QAction, 'actionQuit')
-        self.actionAboutMoht = self.findChild(QAction, 'actionAboutMoht')
-        self.actionAboutQt = self.findChild(QAction, 'actionAboutQt')
-        self.actionReportIssue = self.findChild(QAction, 'actionReportIssue')
-        self.actionCheckUpdates = self.findChild(QAction, 'actionCheckUpdates')
-
-        self.pb_mods_dir = self.findChild(QPushButton, 'pb_mods_dir')
-        self.pb_morrowind_dir = self.findChild(QPushButton, 'pb_morrowind_dir')
-        self.pb_tes3cmd = self.findChild(QPushButton, 'pb_tes3cmd')
-        self.pb_report = self.findChild(QPushButton, 'pb_report')
-        self.pb_back_clean = self.findChild(QPushButton, 'pb_back_clean')
-        self.pb_clean = self.findChild(QPushButton, 'pb_clean')
-        self.pb_chk_updates = self.findChild(QPushButton, 'pb_chk_updates')
-        self.pb_close = self.findChild(QPushButton, 'pb_close')
-        self.pb_load = self.findChild(QPushButton, 'pb_load')
-        self.pb_save = self.findChild(QPushButton, 'pb_save')
-
-        self.cb_rm_backup = self.findChild(QCheckBox, 'cb_rm_backup')
-        self.cb_rm_cache = self.findChild(QCheckBox, 'cb_rm_cache')
-        self.cb_auto_save = self.findChild(QCheckBox, 'cb_auto_save')
-        self.cb_clean_all = self.findChild(QCheckBox, 'cb_clean_all')
-
-        self.le_mods_dir = self.findChild(QLineEdit, 'le_mods_dir')
-        self.le_morrowind_dir = self.findChild(QLineEdit, 'le_morrowind_dir')
-        self.le_tes3cmd = self.findChild(QLineEdit, 'le_tes3cmd')
-
-        self.rb_custom = self.findChild(QRadioButton, 'rb_custom')
-        self.statusbar = self.findChild(QStatusBar, 'statusbar')
-        self.progressbar = self.findChild(QProgressBar, 'progressbar')
-        self.stacked_clean = self.findChild(QStackedWidget, 'stacked_clean')
-        self.tree_report = self.findChild(QTreeWidget, 'tree_report')
 
 
 class AboutDialog(QDialog):
