@@ -12,6 +12,7 @@ from moht.log import config_logger
 from moht.utils import here
 
 logger = getLogger(f'moht.{__name__}')
+moht_icon = path.join(here(__file__), 'img', 'moht.png')
 
 
 def run_tk(cli_opts: Namespace) -> None:
@@ -24,7 +25,7 @@ def run_tk(cli_opts: Namespace) -> None:
     root.title('Mod Helper Tool')
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
-    root.iconphoto(False, tkinter.PhotoImage(file=path.join(here(__file__), 'img', 'moht.png')))
+    root.iconphoto(False, tkinter.PhotoImage(file=moht_icon))
     try:
         window = MohtTkGui(master=root)
         window.mainloop()
@@ -35,7 +36,8 @@ def run_tk(cli_opts: Namespace) -> None:
 def run_qt(cli_opts: Namespace) -> None:
     """Function to start Mod Helper Tool QtGUI."""
     from PyQt5.QtCore import Qt, QCoreApplication, QLibraryInfo, QLocale, QTranslator
-    from PyQt5.QtWidgets import QApplication
+    from PyQt5.QtGui import QIcon
+    from PyQt5.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QAction
     from moht.qtgui import MohtQtGui
 
     QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
@@ -51,8 +53,25 @@ def run_qt(cli_opts: Namespace) -> None:
         app.installTranslator(translator)
 
     try:
+        tray = QSystemTrayIcon()
+        tray.setIcon(QIcon(moht_icon))
+        tray.setVisible(True)
+        tray.setToolTip(f'Moht {VERSION}')
+        menu = QMenu()
+
         window = MohtQtGui(cli_opts)
         window.show()
+
+        check_updates = QAction('Check updates')
+        check_updates.triggered.connect(window.check_updates)
+        menu.addAction(check_updates)
+        action_quit = QAction('Quit')
+        action_quit.triggered.connect(app.quit)
+        menu.addAction(action_quit)
+
+        tray.setContextMenu(menu)
+        tray.activated.connect(window.activated)
+        app.aboutToQuit.connect(window.trigger_autosave)
     except Exception as exp:
         logger.exception(f'Critical error: {exp}')
     finally:

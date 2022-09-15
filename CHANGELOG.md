@@ -1,5 +1,7 @@
 # v0.9.0
 * Add toolbar with common actions
+* Add SystemTry icon (for Windows and Linux)
+* Add Manu bar apps icon (for Mac)
 
 # v0.8.1
 * Hotfix - add missing `default.yaml` into package

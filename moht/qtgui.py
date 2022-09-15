@@ -16,8 +16,8 @@ import qtawesome
 from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
-    QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem, QApplication, QStatusBar,
-    QProgressBar, QStackedWidget, QTreeWidget, QAction, QPushButton, QCheckBox, QLineEdit, QLabel, QRadioButton
+    QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem, QApplication, QStatusBar, QProgressBar,
+    QStackedWidget, QTreeWidget, QAction, QPushButton, QCheckBox, QLineEdit, QLabel, QRadioButton, QSystemTrayIcon
 )
 
 from moht import VERSION, TES3CMD, utils, qtgui_rc
@@ -102,7 +102,7 @@ class MohtQtGui(QMainWindow):
         self.actionAboutMoht.triggered.connect(AboutDialog(self).open)
         self.actionAboutQt.triggered.connect(partial(self._show_message_box, kind_of='aboutQt', title='About Qt'))
         self.actionReportIssue.triggered.connect(self._report_issue)
-        self.actionCheckUpdates.triggered.connect(self._check_updates)
+        self.actionCheckUpdates.triggered.connect(self.check_updates)
 
     # <=><=><=><=><=><=><=><=><=><=><=> init clean <=><=><=><=><=><=><=><=><=><=><=>
     def _init_buttons(self) -> None:
@@ -461,6 +461,18 @@ dnf install perl-Config-IniFiles.noarch''')
         return c
 
     # <=><=><=><=><=><=><=><=><=><=><=> helpers <=><=><=><=><=><=><=><=><=><=><=>
+    def activated(self, reason: QSystemTrayIcon.ActivationReason) -> None:
+        """
+        Handling of activate signal.
+
+        :param reason: reason of activation
+        """
+        if reason == QSystemTrayIcon.Trigger:
+            if self.isVisible():
+                self.hide()
+            else:
+                self.show()
+
     def trigger_autosave(self) -> None:
         """Just trigger save configuration if auto save checkbox is checked."""
         if self.cb_auto_save.isChecked():
@@ -470,7 +482,8 @@ dnf install perl-Config-IniFiles.noarch''')
     def _set_tes3cmd_path(tes3cmd: str) -> str:
         return path.join(utils.here(__file__), 'resources', tes3cmd)
 
-    def _check_updates(self):
+    def check_updates(self) -> None:
+        """Check for updates and show result."""
         _, desc = utils.is_latest_ver(package='moht', current_ver=VERSION)
         self.statusbar.showMessage(self.tr('ver. {0} - {1}').format(VERSION, desc))
 
