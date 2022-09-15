@@ -69,8 +69,8 @@ def run_qt(cli_opts: Namespace) -> None:
         menu.addAction(action_quit)
 
         tray.setContextMenu(menu)
-        tray.activated.connect(window.activate)
-        app.aboutToQuit.connect(window.save_config_as)
+        tray.activated.connect(window.activated)
+        app.aboutToQuit.connect(window.trigger_autosave)
     except Exception as exp:
         logger.exception(f'Critical error: {exp}')
     finally:
