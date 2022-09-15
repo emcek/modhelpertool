@@ -56,6 +56,7 @@ def run_qt(cli_opts: Namespace) -> None:
         tray = QSystemTrayIcon()
         tray.setIcon(QIcon(moht_icon))
         tray.setVisible(True)
+        tray.setToolTip(f'Moht {VERSION}')
         menu = QMenu()
 
         window = MohtQtGui(cli_opts)
