@@ -16,8 +16,8 @@ import qtawesome
 from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
-    QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem, QApplication, QStatusBar,
-    QProgressBar, QStackedWidget, QTreeWidget, QAction, QPushButton, QCheckBox, QLineEdit, QLabel, QRadioButton
+    QMainWindow, QMessageBox, QDialog, QFileDialog, QTreeWidgetItem, QApplication, QStatusBar, QProgressBar,
+    QStackedWidget, QTreeWidget, QAction, QPushButton, QCheckBox, QLineEdit, QLabel, QRadioButton, QSystemTrayIcon
 )
 
 from moht import VERSION, TES3CMD, utils, qtgui_rc
@@ -461,6 +461,13 @@ dnf install perl-Config-IniFiles.noarch''')
         return c
 
     # <=><=><=><=><=><=><=><=><=><=><=> helpers <=><=><=><=><=><=><=><=><=><=><=>
+    def activate(self, reason):
+        if reason == QSystemTrayIcon.Trigger:
+            if self.isVisible():
+                self.hide()
+            else:
+                self.show()
+
     def trigger_autosave(self) -> None:
         """Just trigger save configuration if auto save checkbox is checked."""
         if self.cb_auto_save.isChecked():

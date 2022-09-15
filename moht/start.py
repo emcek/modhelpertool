@@ -35,7 +35,8 @@ def run_tk(cli_opts: Namespace) -> None:
 def run_qt(cli_opts: Namespace) -> None:
     """Function to start Mod Helper Tool QtGUI."""
     from PyQt5.QtCore import Qt, QCoreApplication, QLibraryInfo, QLocale, QTranslator
-    from PyQt5.QtWidgets import QApplication
+    from PyQt5.QtGui import QIcon
+    from PyQt5.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QAction
     from moht.qtgui import MohtQtGui
 
     QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
@@ -51,8 +52,27 @@ def run_qt(cli_opts: Namespace) -> None:
         app.installTranslator(translator)
 
     try:
+        tray = QSystemTrayIcon()
+        tray.setIcon(QIcon(path.join(path.dirname(__file__), 'img', 'moht.png')))
+        tray.setVisible(True)
+        menu = QMenu()
+
         window = MohtQtGui(cli_opts)
         window.show()
+
+        action_save = QAction('Save')
+        action_save.triggered.connect(window.save_config)
+        menu.addAction(action_save)
+        action_load = QAction('Load')
+        action_load.triggered.connect(window.load_config)
+        menu.addAction(action_load)
+        action_quit = QAction('Quit')
+        action_quit.triggered.connect(app.quit)
+        menu.addAction(action_quit)
+
+        tray.setContextMenu(menu)
+        tray.activated.connect(window.activate)
+        app.aboutToQuit.connect(window.save_config_as)
     except Exception as exp:
         logger.exception(f'Critical error: {exp}')
     finally:
