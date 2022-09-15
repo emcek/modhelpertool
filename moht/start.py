@@ -12,6 +12,7 @@ from moht.log import config_logger
 from moht.utils import here
 
 logger = getLogger(f'moht.{__name__}')
+moht_icon = path.join(here(__file__), 'img', 'moht.png')
 
 
 def run_tk(cli_opts: Namespace) -> None:
@@ -24,7 +25,7 @@ def run_tk(cli_opts: Namespace) -> None:
     root.title('Mod Helper Tool')
     root.geometry(f'{width}x{height}')
     root.minsize(width=width, height=height)
-    root.iconphoto(False, tkinter.PhotoImage(file=path.join(here(__file__), 'img', 'moht.png')))
+    root.iconphoto(False, tkinter.PhotoImage(file=moht_icon))
     try:
         window = MohtTkGui(master=root)
         window.mainloop()
@@ -53,7 +54,7 @@ def run_qt(cli_opts: Namespace) -> None:
 
     try:
         tray = QSystemTrayIcon()
-        tray.setIcon(QIcon(path.join(path.dirname(__file__), 'img', 'moht.png')))
+        tray.setIcon(QIcon(moht_icon))
         tray.setVisible(True)
         menu = QMenu()
 
