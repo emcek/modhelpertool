@@ -3,6 +3,14 @@
     <file>img/moht.ico</file>
     <file>img/moht.png</file>
   </qresource>
+  <qresource prefix="icons">
+    <file>img/media-floppy.svg</file>
+    <file>img/system-software-update.svg</file>
+    <file>img/folder-breeze-download.svg</file>
+    <file>img/backdoor-factory.svg</file>
+    <file>img/gitlab.svg</file>
+    <file>img/qt.svg</file>
+  </qresource>
   <qresource prefix="translations">
     <file>i18n/qtgui_en.qm</file>
     <file>i18n/qtgui_pl.qm</file>

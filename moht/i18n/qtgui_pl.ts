@@ -22,7 +22,7 @@ Discord: &lt;a href=&quot;https://discord.gg/sKyZwumQuU&quot;&gt;&lt;span style=
 Załaszanie problemów: &lt;a href=&quot;https://gitlab.com/modding-openmw/modhelpertool/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Zgłoszenia Gitlab&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="682"/>
+        <location filename="../qtgui.py" line="687"/>
         <source>&lt;p&gt;Attach log file: {0}&lt;br/&gt;&lt;br/&gt;</source>
         <translation>&lt;p&gt;Załącz plik z logami: {0}&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
@@ -30,39 +30,39 @@ Załaszanie problemów: &lt;a href=&quot;https://gitlab.com/modding-openmw/modhe
 <context>
     <name>MohtQtGui</name>
     <message>
-        <location filename="../qtgui.py" line="155"/>
+        <location filename="../qtgui.py" line="332"/>
         <source>Double click on item to copy plugin`s path.</source>
         <translation>Podwójne kliknięcie kopijuje ścieżkę do pluginu.</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="156"/>
+        <location filename="../qtgui.py" line="333"/>
         <source>Cleaning time in min:sec
 Hold on item to see cleaning details.</source>
         <translation>Czas czyszczenia w in min:sek
 Zatrzymaj nad, aby zobaczyć szczegóły.</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="279"/>
+        <location filename="../qtgui.py" line="367"/>
         <source>Path of plugin copied to clipboard</source>
         <translation>Ścieżka do pluginu skopiowana do schowka</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="147"/>
+        <location filename="../qtgui.py" line="324"/>
         <source>Cleaned: 0</source>
         <translation>Wyszyszczone: 0</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="148"/>
+        <location filename="../qtgui.py" line="325"/>
         <source>Error: 0</source>
         <translation>Błąd: 0</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="149"/>
+        <location filename="../qtgui.py" line="326"/>
         <source>Clean: 0</source>
         <translation>Czyste: 0</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="343"/>
+        <location filename="../qtgui.py" line="202"/>
         <source>
 Check for `perl-Config-IniFiles` or a similar package.
 Use you package manage:
@@ -101,7 +101,7 @@ Fedora / CentOS / RHEL:
 dnf install perl-Config-IniFiles.noarch</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="362"/>
+        <location filename="../qtgui.py" line="221"/>
         <source>Selected file is not a valid tes3cmd executable.
 
 Please select a correct binary file.</source>
@@ -110,22 +110,22 @@ Please select a correct binary file.</source>
 Prosze wybierz poprawny plik wykonywalny.</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="183"/>
+        <location filename="../qtgui.py" line="250"/>
         <source>Plugins to clean: {0} - See Report</source>
         <translation>Pluginy do wyczyszczenia: {0} - Zobacz Raport</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="244"/>
+        <location filename="../qtgui.py" line="311"/>
         <source>Done. Took: {0}</source>
         <translation>Zrobione. Zajeło: {0}</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="283"/>
+        <location filename="../qtgui.py" line="475"/>
         <source>ver. {0} - {1}</source>
         <translation>wersja {0} - {1}</translation>
     </message>
     <message>
-        <location filename="../qtgui.py" line="341"/>
+        <location filename="../qtgui.py" line="200"/>
         <source>Error: {0}</source>
         <translation>Błąd: {0}</translation>
     </message>
@@ -138,137 +138,127 @@ Prosze wybierz poprawny plik wykonywalny.</translation>
 <context>
     <name>QtGui</name>
     <message>
-        <location filename="../ui/qtgui.ui" line="20"/>
+        <location filename="../ui/qtgui.ui" line="27"/>
         <source>Mod Helper Tool</source>
         <translation>Mod Helper Tool</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="38"/>
-        <source>Close</source>
-        <translation>Zamknij</translation>
-    </message>
-    <message>
-        <location filename="../ui/qtgui.ui" line="45"/>
-        <source>Check Updates</source>
-        <translation>Sprawdź aktualizacje</translation>
-    </message>
-    <message>
-        <location filename="../ui/qtgui.ui" line="56"/>
+        <location filename="../ui/qtgui.ui" line="49"/>
         <source>Cleaner</source>
         <translation>Wyczyść</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="104"/>
+        <location filename="../ui/qtgui.ui" line="209"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;Data Files &lt;/span&gt;folder of Morrowind installation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wybierz &lt;span style=&quot; font-weight:600;&quot;&gt;Data Files &lt;/span&gt;folder z  instalacją Morrowind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="107"/>
+        <location filename="../ui/qtgui.ui" line="212"/>
         <source>Select Data Files</source>
         <translation>Wybierz Data Files</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="153"/>
+        <location filename="../ui/qtgui.ui" line="105"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select root folder with Mods to clean.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wybierz folder z Modami do wyczyszczenia.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="156"/>
+        <location filename="../ui/qtgui.ui" line="108"/>
         <source>Select Mods</source>
         <translation>Wybierz Mody</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="123"/>
+        <location filename="../ui/qtgui.ui" line="85"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wybierz własny &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; plik wykonywalny, albo używaj wybudowanego&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="126"/>
+        <location filename="../ui/qtgui.ui" line="88"/>
         <source>Select tes3cmd</source>
         <translation>Wybierz tes3cmd</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="203"/>
+        <location filename="../ui/qtgui.ui" line="98"/>
         <source>Clean</source>
         <translation>Wyczyść</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="196"/>
+        <location filename="../ui/qtgui.ui" line="118"/>
         <source>Report</source>
         <translation>Raport</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="226"/>
+        <location filename="../ui/qtgui.ui" line="131"/>
         <source>built-in v0.40</source>
         <translation>wbudowana v0.40</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="236"/>
+        <location filename="../ui/qtgui.ui" line="141"/>
         <source>built-in v0.37</source>
         <translation>wbudiwana v0.37</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="246"/>
+        <location filename="../ui/qtgui.ui" line="151"/>
         <source>custom</source>
         <translation>własna</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="69"/>
+        <location filename="../ui/qtgui.ui" line="161"/>
         <source>After successful clean-up:</source>
         <translation>Po pomyślnym wyczyszczeniu:</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="78"/>
+        <location filename="../ui/qtgui.ui" line="170"/>
         <source>Remove backups of plugins</source>
         <translation>Usuń kopie zapasową pluginów</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="88"/>
+        <location filename="../ui/qtgui.ui" line="180"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clean-up proccess create cache of master files in Data FIles folder.&lt;/p&gt;&lt;p&gt;It speed up cleaning a bit, but it takes some disk space as well.&lt;/p&gt;&lt;p&gt;When checkbox is checked, this cache is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Proces czyszczenia tworzy cache plików master e folderze Data FIles.&lt;/p&gt;&lt;p&gt;To przyspiesza trochę czyszczeniaIt, ale zabiera również przestrzeń na dysku.&lt;/p&gt;&lt;p&gt;Gdy wybrane ten cache jest usuwany.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="91"/>
+        <location filename="../ui/qtgui.ui" line="183"/>
         <source>Remove cache of master files</source>
         <translation>Usuń cache plików master</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="261"/>
+        <location filename="../ui/qtgui.ui" line="247"/>
         <source>Plugin</source>
         <translation>Plugin</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="266"/>
+        <location filename="../ui/qtgui.ui" line="252"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="271"/>
+        <location filename="../ui/qtgui.ui" line="257"/>
         <source>Time</source>
         <translation>Czas</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="279"/>
+        <location filename="../ui/qtgui.ui" line="265"/>
         <source>Back</source>
         <translation>Cofnij</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="317"/>
+        <location filename="../ui/qtgui.ui" line="290"/>
         <source>File</source>
         <translation>Plik</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="326"/>
+        <location filename="../ui/qtgui.ui" line="299"/>
         <source>Help</source>
         <translation>Pomoc</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="341"/>
+        <location filename="../ui/qtgui.ui" line="337"/>
         <source>&amp;Quit</source>
         <translation>&amp;Zakończ</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="344"/>
+        <location filename="../ui/qtgui.ui" line="340"/>
         <source>Ctrl+Q</source>
         <translation>Ctrl+Q</translation>
     </message>
@@ -278,74 +268,79 @@ Prosze wybierz poprawny plik wykonywalny.</translation>
         <translation>Zgłoś problem</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="354"/>
+        <location filename="../ui/qtgui.ui" line="358"/>
         <source>About Moht</source>
         <translation>O Moht</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="359"/>
+        <location filename="../ui/qtgui.ui" line="367"/>
         <source>About Qt</source>
         <translation>O Qt</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="364"/>
+        <location filename="../ui/qtgui.ui" line="376"/>
         <source>Check updates</source>
         <translation>Splawdź aktualizację</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="75"/>
+        <location filename="../ui/qtgui.ui" line="167"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;During clean-up plugin file is copied to Data Files folder.&lt;/p&gt;&lt;p&gt;Cleaning proces create new plugin file.&lt;/p&gt;&lt;p&gt;When checkbox is checked dirty plugin file is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Podczas czyszczenia plugin jest kopiowany do folderu Data Files.&lt;/p&gt;&lt;p&gt;Proces czyszczenia tworzy nowy plik pluginu.&lt;/p&gt;&lt;p&gt;Gdy wybrany brufny plugin jest usuwany.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="220"/>
+        <location filename="../ui/qtgui.ui" line="125"/>
         <source>Version of tes3cmd:</source>
         <translation>Wersja tes3cmd:</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="369"/>
+        <location filename="../ui/qtgui.ui" line="385"/>
         <source>Load</source>
         <translation>Odczytaj</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="372"/>
+        <location filename="../ui/qtgui.ui" line="388"/>
         <source>Ctrl+L</source>
         <translation>Ctrl+L</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="377"/>
+        <location filename="../ui/qtgui.ui" line="397"/>
         <source>Save</source>
         <translation>Zapisz</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="380"/>
+        <location filename="../ui/qtgui.ui" line="400"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="385"/>
+        <location filename="../ui/qtgui.ui" line="405"/>
         <source>Save as...</source>
         <translation>Zapisz jako...</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="163"/>
-        <source>Config file:</source>
-        <translation>Konfiguracja:</translation>
-    </message>
-    <message>
-        <location filename="../ui/qtgui.ui" line="183"/>
+        <location filename="../ui/qtgui.ui" line="202"/>
         <source>Auto save</source>
         <translation>Auto zapis</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="210"/>
+        <location filename="../ui/qtgui.ui" line="219"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Try clean all found plugins.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Spróbuj wyczyścić wszystkie znalezione pluginy.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/qtgui.ui" line="213"/>
+        <location filename="../ui/qtgui.ui" line="222"/>
         <source>Clean all plugins</source>
         <translation>Wyczyść wszystkie pluginy</translation>
+    </message>
+    <message>
+        <location filename="../ui/qtgui.ui" line="199"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auto save all GUI configuration.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auto zapis konfiguracji GUI.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../ui/qtgui.ui" line="314"/>
+        <source>Tools</source>
+        <translation>Narzędzia</translation>
     </message>
 </context>
 </TS>
