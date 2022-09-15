@@ -1,3 +1,6 @@
+# v0.9.0
+* Add toolbar with common actions
+
 # v0.8.1
 * Hotfix - add missing `default.yaml` into package
 

@@ -113,9 +113,6 @@ class MohtQtGui(QMainWindow):
         self.pb_tes3cmd.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False,
                                                 last_dir=lambda: self._tes3cmd_last, widget_name='le_tes3cmd'))
         self.pb_report.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 1))
-        self.pb_load.clicked.connect(self.load_config)
-        self.pb_save.clicked.connect(self.save_config)
-        self.pb_chk_updates.clicked.connect(self._check_updates)
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
     def _init_line_edits(self):
@@ -523,8 +520,6 @@ dnf install perl-Config-IniFiles.noarch''')
             self.pb_clean.setIcon(qtawesome.icon('fa5s.hand-sparkles', color='brown'))
             self.pb_report.setIcon(qtawesome.icon('fa5s.file-contract', color='brown'))
             self.pb_back_clean.setIcon(qtawesome.icon('fa5s.arrow-left', color='brown'))
-            self.pb_chk_updates.setIcon(qtawesome.icon('fa5s.arrow-down', color='brown'))
-            self.pb_close.setIcon(qtawesome.icon('fa5s.sign-out-alt', color='brown'))
             return
         btn = getattr(self, button)  # type: ignore
         if spin and icon_name:
@@ -597,10 +592,6 @@ dnf install perl-Config-IniFiles.noarch''')
         self.pb_report = self.findChild(QPushButton, 'pb_report')
         self.pb_back_clean = self.findChild(QPushButton, 'pb_back_clean')
         self.pb_clean = self.findChild(QPushButton, 'pb_clean')
-        self.pb_chk_updates = self.findChild(QPushButton, 'pb_chk_updates')
-        self.pb_close = self.findChild(QPushButton, 'pb_close')
-        self.pb_load = self.findChild(QPushButton, 'pb_load')
-        self.pb_save = self.findChild(QPushButton, 'pb_save')
 
         self.cb_rm_backup = self.findChild(QCheckBox, 'cb_rm_backup')
         self.cb_rm_cache = self.findChild(QCheckBox, 'cb_rm_cache')
