@@ -78,10 +78,7 @@ class MohtQtGui(QMainWindow):
         self.config = {}
         self.last_dir: Dict[str, str] = {d: '' for d in ['le_mods_dir', 'le_morrowind_dir', 'le_tes3cmd', 'cfg_dir', 'le_masters_plugin']}
         self._init_menu_bar()
-        self._init_radio_buttons()
-        self._init_check_boxes()
-        self._init_line_edits()
-        self._init_tree_report()
+        self._init_tes3cmd_clean()
         self._init_omwcmd_masters()
         self.omwcmd = MohtQtGui._set_executable_path(OMWCMD[platform])
         yamlfile = path.join(utils.here(__file__), 'default.yaml')
@@ -89,7 +86,7 @@ class MohtQtGui(QMainWindow):
             yamlfile = cli_args.yamlfile
         self._apply_gui_configuration(yamlfile)
         # need read configuration first
-        self._init_buttons()
+        self._init_test3cmd_buttons()
         self.statusbar.showMessage(self.tr('ver. {0}').format(VERSION))
         self._set_icons()
 
@@ -104,7 +101,23 @@ class MohtQtGui(QMainWindow):
         self.actionCheckUpdates.triggered.connect(self.check_updates)
 
     # <=><=><=><=><=><=><=><=><=><=><=> tes3cmd init clean <=><=><=><=><=><=><=><=><=><=><=>
-    def _init_buttons(self) -> None:
+    def _init_tes3cmd_clean(self) -> None:
+        self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
+        self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
+        self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
+        self.le_mods_dir.textChanged.connect(self.trigger_autosave)
+        self.le_morrowind_dir.textChanged.connect(self.trigger_autosave)
+        self.le_tes3cmd.textChanged.connect(self.trigger_autosave)
+
+        self.rb_custom.toggled.connect(self._rb_custom_toggled)
+        for ver in [37, 40]:
+            getattr(self, f'rb_{ver}').toggled.connect(partial(self._rb_tes3cmd_toggled, ver))
+
+        self.cb_auto_save.toggled.connect(self.autosave_toggled)
+        self.cb_rm_backup.toggled.connect(self.trigger_autosave)
+        self.cb_rm_cache.toggled.connect(self.trigger_autosave)
+
+    def _init_test3cmd_buttons(self) -> None:
         self.pb_mods_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True,
                                                  last_dir=lambda: self.last_dir['le_mods_dir'], widget_name='le_mods_dir'))
         self.pb_morrowind_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True,
@@ -113,24 +126,6 @@ class MohtQtGui(QMainWindow):
                                                 last_dir=lambda: self.last_dir['le_tes3cmd'], widget_name='le_tes3cmd'))
         self.pb_report.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 1))
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
-
-    def _init_line_edits(self):
-        self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
-        self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
-        self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
-        self.le_mods_dir.textChanged.connect(self.trigger_autosave)
-        self.le_morrowind_dir.textChanged.connect(self.trigger_autosave)
-        self.le_tes3cmd.textChanged.connect(self.trigger_autosave)
-
-    def _init_radio_buttons(self):
-        self.rb_custom.toggled.connect(self._rb_custom_toggled)
-        for ver in [37, 40]:
-            getattr(self, f'rb_{ver}').toggled.connect(partial(self._rb_tes3cmd_toggled, ver))
-
-    def _init_check_boxes(self):
-        self.cb_auto_save.toggled.connect(self.autosave_toggled)
-        self.cb_rm_backup.toggled.connect(self.trigger_autosave)
-        self.cb_rm_cache.toggled.connect(self.trigger_autosave)
 
     def _rb_tes3cmd_toggled(self, version: int, state: bool) -> None:
         if state:
@@ -366,12 +361,12 @@ dnf install perl-Config-IniFiles.noarch''')
             self.statusbar.showMessage(self.tr('Path of plugin copied to clipboard'))
 
     # <=><=><=><=><=><=><=><=><=><=><=> omwcmd masters <=><=><=><=><=><=><=><=><=><=><=>
-
     def _init_omwcmd_masters(self):
         self.le_masters_plugin.textChanged.connect(partial(self._is_plugin_exists, widget_name='le_masters_plugin'))
         self.pb_masters_run.clicked.connect(self._masters_run)
         self.pb_masters_select.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False,
                                                last_dir=lambda: self.last_dir['le_masters_plugin'], widget_name='le_masters_plugin'))
+        self.le_masters_plugin.textChanged.connect(self.trigger_autosave)
 
     def _is_plugin_exists(self, text: str, widget_name: str = None) -> None:
         file_exists = path.isfile(text)
