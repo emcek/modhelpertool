@@ -88,6 +88,7 @@ class MohtQtGui(QMainWindow):
         self._apply_gui_configuration(yamlfile)
         # need read configuration first
         self._init_buttons()
+        self._init_omwcmd_masters()
         self.statusbar.showMessage(self.tr('ver. {0}').format(VERSION))
         self._set_icons()
 
@@ -363,6 +364,28 @@ dnf install perl-Config-IniFiles.noarch''')
             QApplication.clipboard().setText(item.toolTip(REP_COL_PLUGIN))
             self.statusbar.showMessage(self.tr('Path of plugin copied to clipboard'))
 
+    # <=><=><=><=><=><=><=><=><=><=><=> omwcmd masters <=><=><=><=><=><=><=><=><=><=><=>
+
+    def _init_omwcmd_masters(self):
+        self.le_masters_plugin.textChanged.connect(partial(self._is_plugin_exists, widget_name='le_masters_plugin'))
+        self.pb_masters_run.clicked.connect(self._masters_run)
+        self.pb_masters_select.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False,
+                                               last_dir=lambda: self.last_dir['le_masters_plugin'], widget_name='le_masters_plugin'))
+
+    def _is_plugin_exists(self, text: str, widget_name: str = None) -> None:
+        file_exists = path.isfile(text)
+        self.logger.debug(f'Path: {text} for {widget_name} exists: {file_exists}')
+        if file_exists:
+            getattr(self, widget_name).setStyleSheet('')
+            self.last_dir[widget_name] = utils.parent_dir(text)
+            self.pb_masters_run.setEnabled(True)
+        else:
+            getattr(self, widget_name).setStyleSheet('color: red;')
+            self.pb_masters_run.setEnabled(False)
+
+    def _masters_run(self):
+        pass
+
     # <=><=><=><=><=><=><=><=><=><=><=> configuration <=><=><=><=><=><=><=><=><=><=><=>
     def load_config(self) -> None:
         """Load GUI configuration."""
@@ -622,6 +645,12 @@ dnf install perl-Config-IniFiles.noarch''')
 
         self.stacked_clean = self.findChild(QStackedWidget, 'stacked_clean')
         self.tree_report = self.findChild(QTreeWidget, 'tree_report')
+
+        # <=><=><=><=><=><=><=><=><=><=><=> omwcmd <=><=><=><=><=><=><=><=><=><=><=>
+        self.pb_masters_select = self.findChild(QPushButton, 'pb_masters_select')
+        self.pb_masters_run = self.findChild(QPushButton, 'pb_masters_run')
+        self.le_masters_plugin = self.findChild(QLineEdit, 'le_masters_plugin')
+        self.l_masters_result = self.findChild(QLineEdit, 'l_masters_result')
 
     # <=><=><=><=><=><=><=><=><=><=><=> property <=><=><=><=><=><=><=><=><=><=><=>
     @property
