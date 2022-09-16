@@ -694,13 +694,12 @@ class AboutDialog(QDialog):
 
     def setup_text(self) -> None:
         """Prepare text information about Moht application."""
-        qt_version = f'{QtCore.PYQT_VERSION_STR} / <b>Qt</b>: {QtCore.QT_VERSION_STR}'
         log_path = path.join(gettempdir(), 'moht.log')
         text = self.label.text().rstrip('</body></html>')
-        text += self.tr('<p>Attach log file: {0}<br/><br/>').format(log_path)
-        text += f'<b>moht:</b> {VERSION}'
-        text += '<br><b>python:</b> {0}.{1}.{2}-{3}.{4}'.format(*version_info)
-        text += f'<br><b>PyQt:</b> {qt_version}</p></body></html>'
+        text += self.tr('<p>When report an issue please attach log: {0}<br/><br/>').format(log_path)
+        text += f'<b>moht</b>: {VERSION}'
+        text += '<br><b>Python</b>: {0}.{1}.{2}-{3}.{4}'.format(*version_info)
+        text += f'<br><b>PyQt</b>: {QtCore.PYQT_VERSION_STR} / <b>Qt</b>: {QtCore.QT_VERSION_STR}</p></body></html>'
         self.label.setText(text)
 
 
