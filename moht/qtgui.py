@@ -459,6 +459,11 @@ dnf install perl-Config-IniFiles.noarch''')
         self.cb_rm_cache.setChecked(cfg_dict['clean_cache'])
         self.cb_clean_all.setChecked(cfg_dict['clean_all'])
 
+    def _apply_cfg_omwcmd_masters(self, cfg_dict: Dict[str, Union[str, int, bool]]) -> None:
+        omwcmd = cfg_dict['omwcmd_bin']
+        self.omwcmd = omwcmd if omwcmd else MohtQtGui._set_executable_path(OMWCMD[platform])
+        self.le_masters_plugin.setText(cfg_dict['plugin'])
+
     def _dump_gui_configuration(self) -> Dict[str, Dict[str, Union[str, int, bool]]]:
         """
         Dump GUI configuration to python dict.
@@ -478,6 +483,10 @@ dnf install perl-Config-IniFiles.noarch''')
                 'clean_backup': self.cb_rm_backup.isChecked(),
                 'clean_cache': self.cb_rm_cache.isChecked(),
                 'clean_all': self.cb_clean_all.isChecked(),
+            },
+            'omwcmd_masters': {
+                'omwcmd_bin': self.omwcmd,
+                'plugin': self.le_masters_plugin.text(),
             },
         }
         return c
