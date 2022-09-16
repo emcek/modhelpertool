@@ -231,7 +231,7 @@ dnf install perl-Config-IniFiles.noarch''')
         else:
             self.pb_clean.setEnabled(False)
 
-    # <=><=><=><=><=><=><=><=><=><=><=> clean <=><=><=><=><=><=><=><=><=><=><=>
+    # <=><=><=><=><=><=><=><=><=><=><=> tes3cmd clean <=><=><=><=><=><=><=><=><=><=><=>
     def _pb_clean_clicked(self) -> None:
         self.progressbar.setValue(0)
         self.progress = 0
@@ -311,7 +311,7 @@ dnf install perl-Config-IniFiles.noarch''')
         self.statusbar.showMessage(self.tr('Done. Took: {0}').format(duration))
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
-    # <=><=><=><=><=><=><=><=><=><=><=> report <=><=><=><=><=><=><=><=><=><=><=>
+    # <=><=><=><=><=><=><=><=><=><=><=> tes3cmd report <=><=><=><=><=><=><=><=><=><=><=>
     def _init_tree_report(self):
         self.tree_report.setColumnWidth(REP_COL_PLUGIN, 400)
         self.tree_report.setColumnWidth(REP_COL_STATUS, 140)
@@ -590,6 +590,10 @@ dnf install perl-Config-IniFiles.noarch''')
         webbrowser.open('https://gitlab.com/modding-openmw/modhelpertool/issues', new=2)
 
     def _find_children(self) -> None:
+        self.statusbar = self.findChild(QStatusBar, 'statusbar')
+        self.progressbar = self.findChild(QProgressBar, 'progressbar')
+
+        # <=><=><=><=><=><=><=><=><=><=><=> tes3cmd <=><=><=><=><=><=><=><=><=><=><=>
         self.actionLoad = self.findChild(QAction, 'actionLoad')
         self.actionSave = self.findChild(QAction, 'actionSave')
         self.actionSave_as = self.findChild(QAction, 'actionSave_as')
