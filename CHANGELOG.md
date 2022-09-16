@@ -2,6 +2,7 @@
 * Add toolbar with common actions
 * Add SystemTry icon (for Windows and Linux)
 * Add Manu bar apps icon (for Mac)
+* Support of `omwcmd masters` (Windows and Linux, Mac not tested) 
 * Add info about external files used within Moht
 
 # v0.8.1
