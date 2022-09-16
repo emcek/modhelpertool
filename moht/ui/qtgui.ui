@@ -303,6 +303,22 @@
             <item row="0" column="0">
              <widget class="QLineEdit" name="le_masters_plugin"/>
             </item>
+            <item row="2" column="0">
+             <widget class="QGroupBox" name="groupBox_3">
+              <property name="title">
+               <string>Required masters files:</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_8">
+               <item row="0" column="0">
+                <widget class="QLabel" name="l_masters_result">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
             <item row="1" column="1">
              <widget class="QPushButton" name="pb_masters_run">
               <property name="enabled">
@@ -317,13 +333,6 @@
              <widget class="QPushButton" name="pb_masters_select">
               <property name="text">
                <string>Select Plugin</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" colspan="2">
-             <widget class="QLabel" name="l_masters_result">
-              <property name="text">
-               <string/>
               </property>
              </widget>
             </item>
