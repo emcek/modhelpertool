@@ -552,9 +552,11 @@ dnf install perl-Config-IniFiles.noarch''')
             self.pb_mods_dir.setIcon(qtawesome.icon('fa5s.folder', color='brown'))
             self.pb_morrowind_dir.setIcon(qtawesome.icon('fa5s.folder', color='brown'))
             self.pb_tes3cmd.setIcon(qtawesome.icon('fa5s.file', color='brown'))
-            self.pb_clean.setIcon(qtawesome.icon('fa5s.hand-sparkles', color='brown'))
+            self.pb_clean.setIcon(qtawesome.icon('fa5s.snowplow', color='brown'))
             self.pb_report.setIcon(qtawesome.icon('fa5s.file-contract', color='brown'))
             self.pb_back_clean.setIcon(qtawesome.icon('fa5s.arrow-left', color='brown'))
+            self.pb_masters_select.setIcon(qtawesome.icon('fa5s.folder', color='brown'))
+            self.pb_masters_run.setIcon(qtawesome.icon('fa5s.play', color='brown'))
             return
         btn = getattr(self, button)  # type: ignore
         if spin and icon_name:
