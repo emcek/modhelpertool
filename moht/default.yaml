@@ -1,6 +1,9 @@
 moht:
   api_ver: 0.8.1
   auto_save: false
+omwcmd_masters:
+  omwcmd_bin: ''
+  plugin: ''
 tes3cmd_clean:
   clean_all: false
   clean_backup: true

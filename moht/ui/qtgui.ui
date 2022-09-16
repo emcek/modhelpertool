@@ -32,237 +32,307 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
-     <widget class="QProgressBar" name="progressbar">
-      <property name="value">
-       <number>0</number>
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tm_main">
+      <property name="tabPosition">
+       <enum>QTabWidget::West</enum>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="0" colspan="2">
-     <widget class="QTabWidget" name="tw_main">
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab_clean">
+      <widget class="QWidget" name="tab_tes3cmd">
        <attribute name="title">
-        <string>Cleaner</string>
+        <string>tes3cmd</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_2">
+       <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
-         <widget class="QStackedWidget" name="stacked_clean">
+         <widget class="QTabWidget" name="tw_tes3cmd">
+          <property name="tabPosition">
+           <enum>QTabWidget::North</enum>
+          </property>
           <property name="currentIndex">
            <number>0</number>
           </property>
-          <widget class="QWidget" name="page_clean">
-           <layout class="QGridLayout" name="gridLayout_4">
-            <item row="2" column="0" colspan="3">
-             <widget class="QLineEdit" name="le_tes3cmd">
-              <property name="enabled">
-               <bool>false</bool>
+          <widget class="QWidget" name="tab_clean">
+           <attribute name="title">
+            <string>Clean</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="0" column="0">
+             <widget class="QStackedWidget" name="stacked_clean">
+              <property name="currentIndex">
+               <number>0</number>
               </property>
+              <widget class="QWidget" name="page_clean">
+               <layout class="QGridLayout" name="gridLayout_4">
+                <item row="2" column="0" colspan="3">
+                 <widget class="QLineEdit" name="le_tes3cmd">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="10" column="0" colspan="4">
+                 <spacer name="verticalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item row="2" column="3">
+                 <widget class="QPushButton" name="pb_tes3cmd">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="text">
+                   <string>Select tes3cmd</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0" colspan="3">
+                 <widget class="QLineEdit" name="le_mods_dir"/>
+                </item>
+                <item row="6" column="3">
+                 <widget class="QPushButton" name="pb_clean">
+                  <property name="text">
+                   <string>Clean</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="3">
+                 <widget class="QPushButton" name="pb_mods_dir">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select root folder with Mods to clean.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="text">
+                   <string>Select Mods</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="3">
+                 <widget class="QPushButton" name="pb_report">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string>Report</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="1" rowspan="4">
+                 <widget class="QGroupBox" name="groupBox_2">
+                  <property name="title">
+                   <string>Version of tes3cmd:</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_2">
+                   <item>
+                    <widget class="QRadioButton" name="rb_40">
+                     <property name="text">
+                      <string>built-in v0.40</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QRadioButton" name="rb_37">
+                     <property name="text">
+                      <string>built-in v0.37</string>
+                     </property>
+                     <property name="checked">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QRadioButton" name="rb_custom">
+                     <property name="text">
+                      <string>custom</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item row="5" column="0" rowspan="3">
+                 <widget class="QGroupBox" name="groupBox">
+                  <property name="title">
+                   <string>After successful clean-up:</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout">
+                   <item>
+                    <widget class="QCheckBox" name="cb_rm_backup">
+                     <property name="toolTip">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;During clean-up plugin file is copied to Data Files folder.&lt;/p&gt;&lt;p&gt;Cleaning proces create new plugin file.&lt;/p&gt;&lt;p&gt;When checkbox is checked dirty plugin file is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                     <property name="text">
+                      <string>Remove backups of plugins</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="cb_rm_cache">
+                     <property name="toolTip">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clean-up proccess create cache of master files in Data FIles folder.&lt;/p&gt;&lt;p&gt;It speed up cleaning a bit, but it takes some disk space as well.&lt;/p&gt;&lt;p&gt;When checkbox is checked, this cache is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                     <property name="text">
+                      <string>Remove cache of master files</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item row="1" column="0" colspan="3">
+                 <widget class="QLineEdit" name="le_morrowind_dir"/>
+                </item>
+                <item row="9" column="0">
+                 <widget class="QCheckBox" name="cb_auto_save">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auto save all GUI configuration.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="text">
+                   <string>Auto save</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3">
+                 <widget class="QPushButton" name="pb_morrowind_dir">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;Data Files &lt;/span&gt;folder of Morrowind installation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="text">
+                   <string>Select Data Files</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="0">
+                 <widget class="QCheckBox" name="cb_clean_all">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Try clean all found plugins.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="text">
+                   <string>Clean all plugins</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="2" colspan="2">
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>235</width>
+                    <height>38</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="page_report">
+               <layout class="QGridLayout" name="gridLayout_5">
+                <item row="0" column="0">
+                 <widget class="QTreeWidget" name="tree_report">
+                  <column>
+                   <property name="text">
+                    <string>Plugin</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Status</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Time</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="pb_back_clean">
+                  <property name="text">
+                   <string>Back</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
              </widget>
-            </item>
-            <item row="10" column="0" colspan="4">
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="2" column="3">
-             <widget class="QPushButton" name="pb_tes3cmd">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select custom &lt;span style=&quot; font-weight:600;&quot;&gt;tes3cmd&lt;/span&gt; executable file, or keep using built-in one&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>Select tes3cmd</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" colspan="3">
-             <widget class="QLineEdit" name="le_mods_dir"/>
-            </item>
-            <item row="6" column="3">
-             <widget class="QPushButton" name="pb_clean">
-              <property name="text">
-               <string>Clean</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3">
-             <widget class="QPushButton" name="pb_mods_dir">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select root folder with Mods to clean.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>Select Mods</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="3">
-             <widget class="QPushButton" name="pb_report">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>Report</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1" rowspan="4">
-             <widget class="QGroupBox" name="groupBox_2">
-              <property name="title">
-               <string>Version of tes3cmd:</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_2">
-               <item>
-                <widget class="QRadioButton" name="rb_40">
-                 <property name="text">
-                  <string>built-in v0.40</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="rb_37">
-                 <property name="text">
-                  <string>built-in v0.37</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="rb_custom">
-                 <property name="text">
-                  <string>custom</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item row="5" column="0" rowspan="3">
-             <widget class="QGroupBox" name="groupBox">
-              <property name="title">
-               <string>After successful clean-up:</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout">
-               <item>
-                <widget class="QCheckBox" name="cb_rm_backup">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;During clean-up plugin file is copied to Data Files folder.&lt;/p&gt;&lt;p&gt;Cleaning proces create new plugin file.&lt;/p&gt;&lt;p&gt;When checkbox is checked dirty plugin file is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>Remove backups of plugins</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="cb_rm_cache">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clean-up proccess create cache of master files in Data FIles folder.&lt;/p&gt;&lt;p&gt;It speed up cleaning a bit, but it takes some disk space as well.&lt;/p&gt;&lt;p&gt;When checkbox is checked, this cache is removed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>Remove cache of master files</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item row="1" column="0" colspan="3">
-             <widget class="QLineEdit" name="le_morrowind_dir"/>
-            </item>
-            <item row="9" column="0">
-             <widget class="QCheckBox" name="cb_auto_save">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auto save all GUI configuration.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>Auto save</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QPushButton" name="pb_morrowind_dir">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;Data Files &lt;/span&gt;folder of Morrowind installation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>Select Data Files</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0">
-             <widget class="QCheckBox" name="cb_clean_all">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Try clean all found plugins.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>Clean all plugins</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="2" colspan="2">
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>235</width>
-                <height>38</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="page_report">
-           <layout class="QGridLayout" name="gridLayout_5">
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_omwcmd">
+       <attribute name="title">
+        <string>omwcmd</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <widget class="QTabWidget" name="tw_omwcmd">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="tab_masters">
+           <attribute name="title">
+            <string>Masters</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
-             <widget class="QTreeWidget" name="tree_report">
-              <column>
-               <property name="text">
-                <string>Plugin</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Status</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Time</string>
-               </property>
-              </column>
+             <widget class="QLineEdit" name="le_masters_plugin"/>
+            </item>
+            <item row="2" column="0">
+             <widget class="QGroupBox" name="groupBox_3">
+              <property name="title">
+               <string>Required masters files:</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_8">
+               <item row="0" column="0">
+                <widget class="QLabel" name="l_masters_result">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QPushButton" name="pb_back_clean">
+            <item row="1" column="1">
+             <widget class="QPushButton" name="pb_masters_run">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
-               <string>Back</string>
+               <string>Run</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="pb_masters_select">
+              <property name="text">
+               <string>Select Plugin</string>
               </property>
              </widget>
             </item>
@@ -272,6 +342,13 @@
         </item>
        </layout>
       </widget>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QProgressBar" name="progressbar">
+      <property name="value">
+       <number>0</number>
+      </property>
      </widget>
     </item>
    </layout>
@@ -407,9 +484,6 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="4"/>
- <tabstops>
-  <tabstop>tw_main</tabstop>
- </tabstops>
  <resources>
   <include location="../qtgui.qrc"/>
  </resources>
