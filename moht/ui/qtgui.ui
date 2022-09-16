@@ -297,7 +297,7 @@
           </property>
           <widget class="QWidget" name="tab_masters">
            <attribute name="title">
-            <string>masters</string>
+            <string>Masters</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
