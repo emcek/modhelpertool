@@ -68,7 +68,7 @@ class MohtQtGui(QMainWindow):
         load_ui(':/ui/ui/qtgui.ui', self)
         self.threadpool = QtCore.QThreadPool.globalInstance()
         self.logger.debug(f'QThreadPool with {self.threadpool.maxThreadCount()} thread(s)')
-        self._le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
+        self.tes3cmd_le_status = {'le_mods_dir': False, 'le_morrowind_dir': False, 'le_tes3cmd': False}
         self.auto_save = False
         self.progress = 0
         self.no_of_plugins = 0
@@ -76,10 +76,7 @@ class MohtQtGui(QMainWindow):
         self.duration = 0.0
         self.conf_file = ''
         self.config = {}
-        self._cfg_dir_last = ''
-        self._mods_dir_last = ''
-        self._morrowind_dir_last = ''
-        self._tes3cmd_last = ''
+        self.last_dir: Dict[str, str] = {d: '' for d in ['le_mods_dir', 'le_morrowind_dir', 'le_tes3cmd', 'cfg_dir', 'le_masters_plugin']}
         self._init_menu_bar()
         self._init_radio_buttons()
         self._init_check_boxes()
@@ -104,21 +101,21 @@ class MohtQtGui(QMainWindow):
         self.actionReportIssue.triggered.connect(self._report_issue)
         self.actionCheckUpdates.triggered.connect(self.check_updates)
 
-    # <=><=><=><=><=><=><=><=><=><=><=> init clean <=><=><=><=><=><=><=><=><=><=><=>
+    # <=><=><=><=><=><=><=><=><=><=><=> tes3cmd init clean <=><=><=><=><=><=><=><=><=><=><=>
     def _init_buttons(self) -> None:
         self.pb_mods_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True,
-                                                 last_dir=lambda: self._mods_dir_last, widget_name='le_mods_dir'))
+                                                 last_dir=lambda: self.last_dir['le_mods_dir'], widget_name='le_mods_dir'))
         self.pb_morrowind_dir.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=True,
-                                                      last_dir=lambda: self._morrowind_dir_last, widget_name='le_morrowind_dir'))
+                                                      last_dir=lambda: self.last_dir['le_morrowind_dir'], widget_name='le_morrowind_dir'))
         self.pb_tes3cmd.clicked.connect(partial(self._run_file_dialog, for_load=True, for_dir=False,
-                                                last_dir=lambda: self._tes3cmd_last, widget_name='le_tes3cmd'))
+                                                last_dir=lambda: self.last_dir['le_tes3cmd'], widget_name='le_tes3cmd'))
         self.pb_report.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 1))
         self.pb_clean.clicked.connect(self._pb_clean_clicked)
 
     def _init_line_edits(self):
-        self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='mods_dir'))
-        self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='morrowind_dir'))
-        self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='tes3cmd'))
+        self.le_mods_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_mods_dir'))
+        self.le_morrowind_dir.textChanged.connect(partial(self._is_dir_exists, widget_name='le_morrowind_dir'))
+        self.le_tes3cmd.textChanged.connect(partial(self._is_file_exists, widget_name='le_tes3cmd'))
         self.le_mods_dir.textChanged.connect(self.trigger_autosave)
         self.le_morrowind_dir.textChanged.connect(self.trigger_autosave)
         self.le_tes3cmd.textChanged.connect(self.trigger_autosave)
@@ -153,12 +150,12 @@ class MohtQtGui(QMainWindow):
 
     def _is_dir_exists(self, text: str, widget_name: str) -> None:
         dir_exists = path.isdir(text)
-        self.logger.debug(f'Path: {text} for le_{widget_name} exists: {dir_exists}')
+        self.logger.debug(f'Path: {text} for {widget_name} exists: {dir_exists}')
         self._line_edit_handling_and_last_directory(widget_name, dir_exists, text)
 
     def _is_file_exists(self, text: str, widget_name) -> None:
         file_exists = path.isfile(text)
-        self.logger.debug(f'Path: {text} for le_{widget_name} exists: {file_exists}')
+        self.logger.debug(f'Path: {text} for {widget_name} exists: {file_exists}')
         self._line_edit_handling_and_last_directory(widget_name, file_exists, text)
 
     def _line_edit_handling_and_last_directory(self, widget_name: str, path_exists: bool, path_name: str) -> None:
@@ -171,19 +168,19 @@ class MohtQtGui(QMainWindow):
         :param path_exists: bool for path existence
         :param path_name: full path name
         """
-        self._le_status[f'le_{widget_name}'] = path_exists
+        self.tes3cmd_le_status[widget_name] = path_exists
         if path_exists and widget_name == 'tes3cmd':
-            getattr(self, f'le_{widget_name}').setStyleSheet('')
-            setattr(self, f'_{widget_name}_last', utils.parent_dir(path_name))
+            getattr(self, widget_name).setStyleSheet('')
+            self.last_dir[widget_name] = utils.parent_dir(path_name)
             result = self._check_clean_bin()
             if not result:
-                self._le_status[f'le_{widget_name}'] = result
-                getattr(self, f'le_{widget_name}').setStyleSheet('color: red;')
+                self.tes3cmd_le_status[widget_name] = result
+                getattr(self, widget_name).setStyleSheet('color: red;')
         elif path_exists and widget_name != 'tes3cmd':
-            getattr(self, f'le_{widget_name}').setStyleSheet('')
-            setattr(self, f'_{widget_name}_last', utils.parent_dir(path_name))
+            getattr(self, widget_name).setStyleSheet('')
+            self.last_dir[widget_name] = utils.parent_dir(path_name)
         else:
-            getattr(self, f'le_{widget_name}').setStyleSheet('color: red;')
+            getattr(self, widget_name).setStyleSheet('color: red;')
         self._handle_clean_button()
 
     def _check_clean_bin(self) -> bool:
@@ -226,7 +223,7 @@ dnf install perl-Config-IniFiles.noarch''')
 
     def _handle_clean_button(self) -> None:
         """Enable /disable Clean button base on status of LineEdits."""
-        if all(self._le_status.values()):
+        if all(self.tes3cmd_le_status.values()):
             self.pb_clean.setEnabled(True)
         else:
             self.pb_clean.setEnabled(False)
@@ -370,10 +367,10 @@ dnf install perl-Config-IniFiles.noarch''')
     def load_config(self) -> None:
         """Load GUI configuration."""
         self.statusbar.showMessage('Choose configuration file')
-        self._cfg_dir_last = self._cfg_dir_last if self._cfg_dir_last else str(Path.home())
+        self.last_dir['cfg_dir'] = self.last_dir['cfg_dir'] if self.last_dir['cfg_dir'] else str(Path.home())
         conf_file = self._run_file_dialog(for_load=True, for_dir=False,
-                                          last_dir=lambda: self._cfg_dir_last, file_filter='Yaml Files [*.yaml *.yml](*.yaml *.yml)')
-        self._cfg_dir_last = utils.parent_dir(conf_file)
+                                          last_dir=lambda: self.last_dir['cfg_dir'], file_filter='Yaml Files [*.yaml *.yml](*.yaml *.yml)')
+        self.last_dir['cfg_dir'] = utils.parent_dir(conf_file)
         if conf_file:
             self.conf_file = conf_file
             self._apply_gui_configuration(yamlfile=self.conf_file)
@@ -383,10 +380,10 @@ dnf install perl-Config-IniFiles.noarch''')
         """Save GUI configuration."""
         if not self.conf_file:
             self.statusbar.showMessage('Choose configuration file')
-            self._cfg_dir_last = self._cfg_dir_last if self._cfg_dir_last else str(Path.home())
+            self.last_dir['cfg_dir'] = self.last_dir['cfg_dir'] if self.last_dir['cfg_dir'] else str(Path.home())
             self.conf_file = self._run_file_dialog(for_load=False, for_dir=False,
-                                                   last_dir=lambda: self._cfg_dir_last, file_filter='Yaml Files [*.yaml *.yml](*.yaml *.yml)')
-            self._cfg_dir_last = utils.parent_dir(self.conf_file)
+                                                   last_dir=lambda: self.last_dir['cfg_dir'], file_filter='Yaml Files [*.yaml *.yml](*.yaml *.yml)')
+            self.last_dir['cfg_dir'] = utils.parent_dir(self.conf_file)
         try:
             self.config = self._dump_gui_configuration()
             write_config(self.config, self.conf_file)
@@ -623,8 +620,6 @@ dnf install perl-Config-IniFiles.noarch''')
         self.rb_37 = self.findChild(QRadioButton, 'rb_37')
         self.rb_custom = self.findChild(QRadioButton, 'rb_custom')
 
-        self.statusbar = self.findChild(QStatusBar, 'statusbar')
-        self.progressbar = self.findChild(QProgressBar, 'progressbar')
         self.stacked_clean = self.findChild(QStackedWidget, 'stacked_clean')
         self.tree_report = self.findChild(QTreeWidget, 'tree_report')
 
