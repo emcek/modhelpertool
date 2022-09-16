@@ -20,7 +20,7 @@ from PyQt5.QtWidgets import (
     QStackedWidget, QTreeWidget, QAction, QPushButton, QCheckBox, QLineEdit, QLabel, QRadioButton, QSystemTrayIcon
 )
 
-from moht import VERSION, TES3CMD, utils, qtgui_rc
+from moht import VERSION, TES3CMD, OMWCMD, utils, qtgui_rc
 from moht.utils import write_config, read_config
 
 _ = qtgui_rc  # prevent to remove import statement accidentally
@@ -82,13 +82,14 @@ class MohtQtGui(QMainWindow):
         self._init_check_boxes()
         self._init_line_edits()
         self._init_tree_report()
+        self._init_omwcmd_masters()
+        self.omwcmd = MohtQtGui._set_executable_path(OMWCMD[platform])
         yamlfile = path.join(utils.here(__file__), 'default.yaml')
         if cli_args.yamlfile:
             yamlfile = cli_args.yamlfile
         self._apply_gui_configuration(yamlfile)
         # need read configuration first
         self._init_buttons()
-        self._init_omwcmd_masters()
         self.statusbar.showMessage(self.tr('ver. {0}').format(VERSION))
         self._set_icons()
 
@@ -133,7 +134,7 @@ class MohtQtGui(QMainWindow):
 
     def _rb_tes3cmd_toggled(self, version: int, state: bool) -> None:
         if state:
-            self.tes3cmd = MohtQtGui._set_tes3cmd_path(TES3CMD[platform][version])
+            self.tes3cmd = MohtQtGui._set_executable_path(TES3CMD[platform][version])
         self.trigger_autosave()
 
     def _rb_custom_toggled(self, state: bool) -> None:
@@ -384,7 +385,8 @@ dnf install perl-Config-IniFiles.noarch''')
             self.pb_masters_run.setEnabled(False)
 
     def _masters_run(self):
-        pass
+        out, _ = utils.run_cmd(f'{self.omwcmd} masters "{self.le_masters_plugin.text()}"')
+        self.l_masters_result.setText(out)
 
     # <=><=><=><=><=><=><=><=><=><=><=> configuration <=><=><=><=><=><=><=><=><=><=><=>
     def load_config(self) -> None:
@@ -451,7 +453,7 @@ dnf install perl-Config-IniFiles.noarch''')
         tes_ver = cfg_dict['tes3cmd_ver']
         self.mods_dir = mod_dir if mod_dir else str(Path.home())
         self.morrowind_dir = data_files if data_files else str(Path.home())
-        self.tes3cmd = tes3bin if tes3bin else MohtQtGui._set_tes3cmd_path(TES3CMD[platform][tes_ver])
+        self.tes3cmd = tes3bin if tes3bin else MohtQtGui._set_executable_path(TES3CMD[platform][tes_ver])
         self.tes3cmd_ver = tes_ver
         self.cb_rm_backup.setChecked(cfg_dict['clean_backup'])
         self.cb_rm_cache.setChecked(cfg_dict['clean_cache'])
@@ -499,8 +501,8 @@ dnf install perl-Config-IniFiles.noarch''')
             self.save_config()
 
     @staticmethod
-    def _set_tes3cmd_path(tes3cmd: str) -> str:
-        return path.join(utils.here(__file__), 'resources', tes3cmd)
+    def _set_executable_path(bin_file: str) -> str:
+        return path.join(utils.here(__file__), 'resources', bin_file)
 
     def check_updates(self) -> None:
         """Check for updates and show result."""
