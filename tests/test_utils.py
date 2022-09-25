@@ -351,7 +351,7 @@ def test_set_path_hidden_windows():
     hidden_file = path.join(gettempdir(), '.hidden.file')
     with open(hidden_file, 'w+') as f:
         f.write(',')
+    assert not bool(os.stat(hidden_file).st_file_attributes & stat.FILE_ATTRIBUTE_HIDDEN)
     assert set_path_hidden(hidden_file)
-    hidden_stats = os.stat(hidden_file)
-    assert bool(hidden_stats.st_file_attributes & stat.FILE_ATTRIBUTE_HIDDEN)
+    assert bool(os.stat(hidden_file).st_file_attributes & stat.FILE_ATTRIBUTE_HIDDEN)
     remove(hidden_file)
