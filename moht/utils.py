@@ -295,7 +295,7 @@ def parent_dir(full_path: Union[str, Path]) -> str:
 def set_path_hidden(full_path: Union[Path, str]) -> bool:
     """
     Set path as hidden.
-    
+
     On Linux/Mac always True, real change only on Windows.
     :param full_path: path as string or Path-like object
     :return: operation result
