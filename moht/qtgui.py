@@ -442,12 +442,11 @@ dnf install perl-Config-IniFiles.noarch''')
         self.conf_file = ''
         self.save_config()
 
-    def _apply_gui_configuration(self, yamlfile: str) -> bool:
+    def _apply_gui_configuration(self, yamlfile: str) -> None:
         """
         Apply configuration from internal dict to GUI widgets.
 
         :param yamlfile: absolute path to configuration yaml
-        :return: True if success
         """
         self.config = read_config(yamlfile)
         if self.config.get('moht', {}).get('auto_save', False):
@@ -464,7 +463,6 @@ dnf install perl-Config-IniFiles.noarch''')
             self.config['moht']['auto_save'] = True
             self.cb_auto_save.setChecked(True)
             self.cb_auto_save.toggled.connect(self.autosave_toggled)
-        return True
 
     def _apply_cfg_section(self) -> None:
         for cfg_section in self.config:
