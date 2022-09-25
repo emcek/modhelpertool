@@ -1,5 +1,8 @@
+import os
+from tempfile import gettempdir
 from pathlib import Path
 from sys import platform
+from os import remove, path
 from unittest.mock import call, patch
 
 from pytest import mark
@@ -279,9 +282,6 @@ def test_get_string_duration(args, result):
 
 
 def test_read_write_yaml_cfg_file():
-    from os import remove, path
-    from tempfile import gettempdir
-
     test_tmp_yaml = path.join(gettempdir(), 'c.yaml')
     cfg = {'setting_1': {'setting_2': 2}}
     utils.write_config(cfg, test_tmp_yaml)
@@ -342,3 +342,16 @@ def test_parent_dir_windows_file(args, result):
     with patch('moht.utils.path.isdir', return_value=False):
         with patch('moht.utils.path.isfile', return_value=True):
             assert utils.parent_dir(args) == result
+
+
+@mark.skipif(condition=platform != 'win32', reason='Run only on Windows')
+def test_set_path_hidden_windows():
+    from moht.utils import set_path_hidden
+    import stat
+    hidden_file = path.join(gettempdir(), '.hidden.file')
+    with open(hidden_file, 'w+') as f:
+        f.write(',')
+    assert set_path_hidden(hidden_file)
+    hidden_stats = os.stat(hidden_file)
+    assert bool(hidden_stats.st_file_attributes & stat.FILE_ATTRIBUTE_HIDDEN)
+    remove(hidden_file)

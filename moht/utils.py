@@ -290,3 +290,18 @@ def parent_dir(full_path: Union[str, Path]) -> str:
     elif path.isfile(full_path):
         result = str(path.dirname(full_path))
     return result.rstrip(sep)
+
+
+def set_path_hidden(full_path: Union[Path, str]) -> bool:
+    """
+    Set path as hidden.
+    
+    On Linux/Mac always True, real change only on Windows.
+    :param full_path: path as string or Path-like object
+    :return: operation result
+    """
+    ret = True
+    if platform == 'win32':
+        from ctypes import windll
+        ret = windll.kernel32.SetFileAttributesW(full_path, 0x02)
+    return bool(ret)
