@@ -1,4 +1,6 @@
-from os import remove, path
+import os
+import stat
+from os import remove, path, sep
 from pathlib import Path
 from sys import platform
 from tempfile import gettempdir
@@ -100,8 +102,6 @@ COMMANDS
 
 
 def test_run_cmd():
-    from sys import platform
-    from os import path, sep
     tes3cmd = 'tes3cmd-0.37v.exe' if platform == 'win32' else 'tes3cmd-0.37w'
     up_res = f'..{sep}moht{sep}resources{sep}'
     plugin = 'some_plugin.esp'
@@ -167,62 +167,47 @@ def test_is_latest_ver_check_failed(local_ver, effect, result):
 
 
 def test_here():
-    from os import path
     assert utils.here(__file__) == path.abspath(path.dirname(__file__))
     assert utils.here('../log.py') == path.abspath(path.dirname('../log.py'))
 
 
 def test_extract_filename():
-    from pathlib import Path
-    from moht.utils import extract_filename
-
-    assert extract_filename('/home/user/file.txt') == 'file.txt'
-    assert extract_filename(Path('/home/user/file.txt')) == 'file.txt'
+    assert utils.extract_filename('/home/user/file.txt') == 'file.txt'
+    assert utils.extract_filename(Path('/home/user/file.txt')) == 'file.txt'
 
 
 def test_get_all_plugins():
-    from pathlib import Path
-    from moht.utils import get_all_plugins
     return_val = ('/home', ('user',), ('user2',)), ('/home/user', (), ('plugin1.esp', 'plugin2.esm')),
     with patch.object(utils, 'walk', return_value=return_val):
-        assert get_all_plugins(mods_dir='/home') == [Path('/home/user/plugin1.esp'), Path('/home/user/plugin2.esm')]
+        assert utils.get_all_plugins(mods_dir='/home') == [Path('/home/user/plugin1.esp'), Path('/home/user/plugin2.esm')]
 
 
 def test_get_plugins_to_clean():
-    from pathlib import Path
-    from moht.utils import get_plugins_to_clean
     plugins = [Path('/home/user/OAAB - Foyada Mamaea.ESP'), Path('/home/user/noplugin.esp')]
-    assert get_plugins_to_clean(plugins) == [plugins[0]]
+    assert utils.get_plugins_to_clean(plugins) == [plugins[0]]
 
 
 def test_get_required_esm():
-    from pathlib import Path
-    from moht.utils import get_required_esm
     plugins = [Path('/home/user/OAAB - Foyada Mamaea.ESP'), Path("/home/user/Building Up Uvirith's Legacy1.1.ESP")]
-    assert get_required_esm(plugins) == {'Morrowind.esm', 'Tribunal.esm', 'Bloodmoon.esm', 'OAAB_Data.esm'}
+    assert utils.get_required_esm(plugins) == {'Morrowind.esm', 'Tribunal.esm', 'Bloodmoon.esm', 'OAAB_Data.esm'}
 
     plugins = [Path("/home/user/Building Up Uvirith's Legacy1.1.ESP")]
-    assert get_required_esm(plugins) == {'Morrowind.esm'}
+    assert utils.get_required_esm(plugins) == {'Morrowind.esm'}
 
 
 def test_get_required_esm_not_on_plugin_list():
-    from pathlib import Path
-    from moht.utils import get_required_esm
     plugins = [Path('/home/user/Aldruhn/Ald-ruhn.esp')]
-    assert get_required_esm(plugins) == set()
+    assert utils.get_required_esm(plugins) == set()
 
 
 def test_rm_dirs_with_subdirs():
-    from moht.utils import rm_dirs_with_subdirs
     with patch.object(utils, 'rmtree') as rmtree_mock:
-        rm_dirs_with_subdirs('/home/user/mods', ['plugin1', 'plugin2'])
+        utils.rm_dirs_with_subdirs('/home/user/mods', ['plugin1', 'plugin2'])
         rmtree_mock.assert_has_calls([call('/home/user/mods/plugin1', ignore_errors=True),
                                       call('/home/user/mods/plugin2', ignore_errors=True)])
 
 
 def test_find_missing_esm():
-    from pathlib import Path
-    from moht.utils import find_missing_esm
     side_effect = [
         [
             ('/home', ('user1', 'user2'), ()),
@@ -235,35 +220,29 @@ def test_find_missing_esm():
             ('/home/user1/mods', (), ('plugin1.esm', 'plugin2.esm', 'plugin3.esp', 'plugin5.esm'))]
     ]
     with patch.object(utils, 'walk', side_effect=side_effect):
-        result = find_missing_esm(dir_path='/home/user1/mods',
-                                  data_files='/home/user1/datafiles',
-                                  esm_files={'plugin1.esm', 'plugin2.esm', 'plugin3.esm', 'plugin4.esm'})
+        result = utils.find_missing_esm(dir_path='/home/user1/mods',
+                                        data_files='/home/user1/datafiles',
+                                        esm_files={'plugin1.esm', 'plugin2.esm', 'plugin3.esm', 'plugin4.esm'})
         assert result == [Path('/home/user1/mods/plugin1.esm'),
                           Path('/home/user1/mods/plugin2.esm')]
 
 
 def test_copy_filelist():
-    from pathlib import Path
-    from moht.utils import copy_filelist
     with patch.object(utils, 'copy2') as copy2_mock:
-        copy_filelist(file_list=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], dest_dir='/home/user/datafiles')
+        utils.copy_filelist(file_list=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], dest_dir='/home/user/datafiles')
         copy2_mock.assert_has_calls([call(Path('/home/user/mods/plugin1.esm'), '/home/user/datafiles'),
                                      call(Path('/home/user/mods/plugin2.esm'), '/home/user/datafiles')])
 
 
 def test_rm_copied_extra_ems():
-    from pathlib import Path
-    from moht.utils import rm_copied_extra_esm
     with patch.object(utils, 'remove') as remove_mock:
-        rm_copied_extra_esm(esm=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], data_files='/home/user/datafiles')
+        utils.rm_copied_extra_esm(esm=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], data_files='/home/user/datafiles')
         remove_mock.assert_has_calls([call('/home/user/datafiles/plugin1.esm'), call('/home/user/datafiles/plugin2.esm')])
 
 
 def test_rm_copied_extra_esm_exception_handling():
-    from pathlib import Path
-    from moht.utils import rm_copied_extra_esm
     with patch.object(utils, 'remove', side_effect=FileNotFoundError):
-        rm_copied_extra_esm(esm=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], data_files='/home/user/datafiles')
+        utils.rm_copied_extra_esm(esm=[Path('/home/user/mods/plugin1.esm'), Path('/home/user/mods/plugin2.esm')], data_files='/home/user/datafiles')
 
 
 @mark.parametrize('args, result', [
@@ -345,13 +324,10 @@ def test_parent_dir_windows_file(args, result):
 
 @mark.skipif(condition=platform != 'win32', reason='Run only on Windows')
 def test_set_path_hidden_windows():
-    from moht.utils import set_path_hidden
-    import stat
-    import os
     hidden_file = path.join(gettempdir(), '.hidden.file')
     with open(hidden_file, 'w+') as f:
         f.write(',')
     assert not bool(os.stat(hidden_file).st_file_attributes & stat.FILE_ATTRIBUTE_HIDDEN)
-    assert set_path_hidden(hidden_file)
+    assert utils.set_path_hidden(hidden_file)
     assert bool(os.stat(hidden_file).st_file_attributes & stat.FILE_ATTRIBUTE_HIDDEN)
     remove(hidden_file)
