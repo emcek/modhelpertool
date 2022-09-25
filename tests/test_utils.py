@@ -1,8 +1,7 @@
-import os
-from tempfile import gettempdir
+from os import remove, path
 from pathlib import Path
 from sys import platform
-from os import remove, path
+from tempfile import gettempdir
 from unittest.mock import call, patch
 
 from pytest import mark
@@ -348,6 +347,7 @@ def test_parent_dir_windows_file(args, result):
 def test_set_path_hidden_windows():
     from moht.utils import set_path_hidden
     import stat
+    import os
     hidden_file = path.join(gettempdir(), '.hidden.file')
     with open(hidden_file, 'w+') as f:
         f.write(',')
