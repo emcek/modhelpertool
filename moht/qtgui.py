@@ -454,8 +454,14 @@ dnf install perl-Config-IniFiles.noarch''')
             self.cb_auto_save.toggled.disconnect()
             self.auto_save = True
             self.config['moht']['auto_save'] = False
-        for cfg_section in self.config:
-            getattr(self, '_apply_cfg_{}'.format(cfg_section))(self.config[cfg_section])
+        try:
+            for cfg_section in self.config:
+                getattr(self, '_apply_cfg_{}'.format(cfg_section))(self.config[cfg_section])
+        except (AttributeError, KeyError):
+            self.config = read_config(path.join(utils.here(__file__), 'default.yaml'))
+            self.conf_file = ''
+            for cfg_section in self.config:
+                getattr(self, '_apply_cfg_{}'.format(cfg_section))(self.config[cfg_section])
         if self.auto_save:
             self.config['moht']['auto_save'] = True
             self.cb_auto_save.setChecked(True)
