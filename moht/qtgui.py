@@ -3,7 +3,7 @@ import webbrowser
 from argparse import Namespace
 from functools import partial
 from logging import getLogger
-from os import path, chdir, remove
+from os import path, chdir, remove, makedirs
 from pathlib import Path
 from pprint import pformat
 from shutil import move, copy2
@@ -21,7 +21,7 @@ from PyQt5.QtWidgets import (
 )
 
 from moht import VERSION, TES3CMD, OMWCMD, utils, qtgui_rc
-from moht.utils import write_config, read_config
+from moht.utils import write_config, read_config, set_path_hidden
 
 _ = qtgui_rc  # prevent to remove import statement accidentally
 REP_COL_PLUGIN = 0
@@ -81,14 +81,39 @@ class MohtQtGui(QMainWindow):
         self._init_tes3cmd_clean()
         self._init_omwcmd_masters()
         self.omwcmd = MohtQtGui._set_executable_path(OMWCMD[platform])
-        yamlfile = path.join(utils.here(__file__), 'default.yaml')
-        if cli_args.yamlfile:
-            yamlfile = cli_args.yamlfile
-        self._apply_gui_configuration(yamlfile)
+        self._apply_gui_configuration(self._get_yaml_file(cli_args.yamlfile))
         # need read configuration first
         self._init_test3cmd_buttons()
         self.statusbar.showMessage(self.tr('ver. {0}').format(VERSION))
         self._set_icons()
+
+    def _get_yaml_file(self, cli_yaml_file: str) -> str:
+        """
+        Select best yaml configuration.
+
+        * First try yaml form CLI, then
+        * use default form package and in the end
+        * try load form user home directory
+
+        :param cli_yaml_file:
+        :return:
+        """
+        yaml_file = path.join(utils.here(__file__), 'default.yaml')
+        user_moht_dir = path.join(Path.home(), '.moht')
+        user_moht_yaml = path.join(user_moht_dir, 'moht.yaml')
+        if cli_yaml_file:
+            yaml_file = cli_yaml_file
+            self.conf_file = cli_yaml_file
+        elif not path.isfile(user_moht_yaml):
+            makedirs(name=user_moht_dir, exist_ok=True)
+            copy2(yaml_file, user_moht_yaml)
+            set_path_hidden(user_moht_dir)
+            self.conf_file = user_moht_yaml
+            yaml_file = user_moht_yaml
+        elif path.isfile(user_moht_yaml):
+            self.conf_file = user_moht_yaml
+            yaml_file = user_moht_yaml
+        return yaml_file
 
     def _init_menu_bar(self) -> None:
         self.actionLoad.triggered.connect(self.load_config)
@@ -417,25 +442,31 @@ dnf install perl-Config-IniFiles.noarch''')
         self.conf_file = ''
         self.save_config()
 
-    def _apply_gui_configuration(self, yamlfile: str) -> bool:
+    def _apply_gui_configuration(self, yamlfile: str) -> None:
         """
         Apply configuration from internal dict to GUI widgets.
 
         :param yamlfile: absolute path to configuration yaml
-        :return: True if success
         """
         self.config = read_config(yamlfile)
         if self.config.get('moht', {}).get('auto_save', False):
             self.cb_auto_save.toggled.disconnect()
             self.auto_save = True
             self.config['moht']['auto_save'] = False
-        for cfg_section in self.config:
-            getattr(self, '_apply_cfg_{}'.format(cfg_section))(self.config[cfg_section])
+        try:
+            self._apply_cfg_section()
+        except (AttributeError, KeyError):
+            self.config = read_config(path.join(utils.here(__file__), 'default.yaml'))
+            self.conf_file = ''
+            self._apply_cfg_section()
         if self.auto_save:
             self.config['moht']['auto_save'] = True
             self.cb_auto_save.setChecked(True)
             self.cb_auto_save.toggled.connect(self.autosave_toggled)
-        return True
+
+    def _apply_cfg_section(self) -> None:
+        for cfg_section in self.config:
+            getattr(self, '_apply_cfg_{}'.format(cfg_section))(self.config[cfg_section])
 
     def _apply_cfg_moht(self, cfg_dict: Dict[str, Union[str, int, bool]]) -> None:
         self.logger.debug(f'Apply configuration for API ver: {cfg_dict["api_ver"]}')

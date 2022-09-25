@@ -4,6 +4,7 @@
 * Add Manu bar apps icon (for Mac)
 * Support of `omwcmd masters` (Windows and Linux, Mac not tested) 
 * Add info about external files used within Moht
+* Save Moht configuration in user home directory
 
 # v0.8.1
 * Hotfix - add missing `default.yaml` into package
