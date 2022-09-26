@@ -1,6 +1,6 @@
 [![pipeline status](https://gitlab.com/modding-openmw/modhelpertool/badges/main/pipeline.svg)](https://gitlab.com/modding-openmw/modhelpertool/-/commits/main)
 [![coverage report](https://gitlab.com/modding-openmw/modhelpertool/badges/main/coverage.svg)](https://gitlab.com/modding-openmw/modhelpertool/-/commits/main)
-[![image](https://img.shields.io/badge/pypi-v0.8.1-blue.svg)](https://pypi.org/project/moht/)
+[![image](https://img.shields.io/badge/pypi-v0.9.0-blue.svg)](https://pypi.org/project/moht/)
 [![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE.md)
 [![image](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue.svg)](https://gitlab.com/modding-openmw/modhelpertool)
 [![release](https://gitlab.com/modding-openmw/modhelpertool/-/badges/release.svg)](https://gitlab.com/modding-openmw/modhelpertool/-/releases)
@@ -104,7 +104,7 @@ However, moht has v0.40 built-in as well which do not require perl package.
   ```
   Note: answer **No** to question. It will show you, where Moht was installed. Usually pip should install moht into your Python directory: i.e.:
   ``` 
-  C:\Python310\lib\site-packages\moht-0.8.1.dist-info\*
+  C:\Python310\lib\site-packages\moht-0.9.0.dist-info\*
   C:\Python310\lib\site-packages\moht\*
   C:\Python310\scripts\moht.exe
   C:\Python310\scripts\moht_qt.exe
