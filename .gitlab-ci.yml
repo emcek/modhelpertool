@@ -81,7 +81,7 @@ pypi:
     - pip install twine wheel
     - pip list
     - python setup.py bdist bdist_wheel
-    - twine upload dist/*
+    - twine upload --verbose --skip-existing dist/*
   only:
     - tags
 

@@ -84,6 +84,7 @@ class MohtQtGui(QMainWindow):
         self._apply_gui_configuration(self._get_yaml_file(cli_args.yamlfile))
         # need read configuration first
         self._init_test3cmd_buttons()
+        self._init_tree_report()
         self.statusbar.showMessage(self.tr('ver. {0}').format(VERSION))
         self._set_icons()
 
@@ -332,8 +333,8 @@ dnf install perl-Config-IniFiles.noarch''')
 
     # <=><=><=><=><=><=><=><=><=><=><=> tes3cmd report <=><=><=><=><=><=><=><=><=><=><=>
     def _init_tree_report(self):
-        self.tree_report.setColumnWidth(REP_COL_PLUGIN, 400)
-        self.tree_report.setColumnWidth(REP_COL_STATUS, 140)
+        self.tree_report.setColumnWidth(REP_COL_PLUGIN, 320)
+        self.tree_report.setColumnWidth(REP_COL_STATUS, 130)
         self.tree_report.setColumnWidth(REP_COL_TIME, 60)
         self.tree_report.itemDoubleClicked.connect(self._item_double_clicked)
         self.pb_back_clean.clicked.connect(partial(self.stacked_clean.setCurrentIndex, 0))

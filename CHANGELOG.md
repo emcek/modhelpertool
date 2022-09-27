@@ -1,6 +1,9 @@
 # v1.0.0
 * Remove Tk support
 
+# v0.9.1
+* fix Back button at report page - doesn't back to clean page
+
 # v0.9.0
 * Add toolbar with common actions
 * Add SystemTry icon (for Windows and Linux)
