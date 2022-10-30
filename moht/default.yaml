@@ -1,5 +1,5 @@
 moht:
-  api_ver: 0.9.1
+  api_ver: 1.0.0
   auto_save: false
 omwcmd_masters:
   omwcmd_bin: ''
