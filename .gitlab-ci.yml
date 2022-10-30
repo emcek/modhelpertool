@@ -1,4 +1,4 @@
-image: python:3.10
+image: python:3.11
 
 #variables:
 #  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
@@ -40,16 +40,12 @@ stages:
   extends: '.check'
   image: 'python:3.9'
 
-'check py311':
-  stage: test
-  extends: '.check'
-  image: 'python:3.11'
-
 'check py310':
   stage: test
   extends: '.check'
+  image: 'python:3.10'
 
-'check cov310':
+'check cov311':
   stage: test
   extends: '.check'
   coverage: '/TOTAL\s+\d+\s+\d+\s+(\d+%)/'
