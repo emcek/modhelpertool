@@ -40,6 +40,11 @@ stages:
   extends: '.check'
   image: 'python:3.9'
 
+'check py311':
+  stage: test
+  extends: '.check'
+  image: 'python:3.11'
+
 'check py310':
   stage: test
   extends: '.check'
