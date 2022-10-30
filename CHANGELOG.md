@@ -1,3 +1,6 @@
+# v1.0.0
+* Remove Tk support
+
 # v0.9.1
 * fix Back button at report page - doesn't back to clean page
 
